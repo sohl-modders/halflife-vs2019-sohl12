@@ -780,11 +780,6 @@ void ScorePanel::FillGrid()
 					// Don't show classes if this client hasnt picked a team yet
 					if ( g_iTeamNumber == 0 )
 						bShowClass = false;
-#ifdef _TFC
-					// in TFC show all classes in spectator mode
-					if ( g_iUser1 )
-						bShowClass = true;
-#endif
 
 					if (bShowClass)
 					{
@@ -823,21 +818,6 @@ void ScorePanel::FillGrid()
 					}
 					*/
 					break;
-
-#ifdef _TFC
-				case COLUMN_KILLS:
-					if (g_PlayerExtraInfo[ m_iSortedRows[row] ].teamnumber)
-						sprintf(sz, "%d",  g_PlayerExtraInfo[ m_iSortedRows[row] ].frags );
-					break;
-				case COLUMN_DEATHS:
-					if (g_PlayerExtraInfo[ m_iSortedRows[row] ].teamnumber)
-						sprintf(sz, "%d",  g_PlayerExtraInfo[ m_iSortedRows[row] ].deaths );
-					break;
-				case COLUMN_LATENCY:
-					if (g_PlayerExtraInfo[ m_iSortedRows[row] ].teamnumber)
-						sprintf(sz, "%d", g_PlayerInfoList[ m_iSortedRows[row] ].ping );
-					break;
-#else
 				case COLUMN_KILLS:
 					sprintf(sz, "%d",  g_PlayerExtraInfo[ m_iSortedRows[row] ].frags );
 					break;
@@ -847,7 +827,7 @@ void ScorePanel::FillGrid()
 				case COLUMN_LATENCY:
 					sprintf(sz, "%d", g_PlayerInfoList[ m_iSortedRows[row] ].ping );
 					break;
-#endif
+
 				default:
 					break;
 				}

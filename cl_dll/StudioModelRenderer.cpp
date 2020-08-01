@@ -1109,52 +1109,6 @@ void CStudioModelRenderer::StudioMergeBones ( model_t *m_pSubModel )
 	}
 }
 
-#if defined( _TFC )
-#include "pm_shared.h"
-const Vector& GetTeamColor( int team_no );
-#define IS_FIRSTPERSON_SPEC ( g_iUser1 == OBS_IN_EYE || (g_iUser1 && (gHUD.m_Spectator.m_pip->value == INSET_IN_EYE)) )
-
-int GetRemapColor( int iTeam, bool bTopColor )
-{
-	int retVal = 0;
-
-	switch( iTeam )
-	{
-	default:
-	case 1: 
-		if ( bTopColor )
-			retVal = TEAM1_COLOR;
-		else
-			retVal = TEAM1_COLOR - 10;
-
-		break;
-	case 2: 
-		if ( bTopColor )
-			retVal = TEAM2_COLOR;
-		else
-			retVal = TEAM2_COLOR - 10;
-
-		break;
-	case 3: 
-		if ( bTopColor )
-			retVal = TEAM3_COLOR;
-		else
-			retVal = TEAM3_COLOR - 10;
-
-		break;
-	case 4: 
-		if ( bTopColor )
-			retVal = TEAM4_COLOR;
-		else
-			retVal = TEAM4_COLOR - 10;
-
-		break;
-	}
-
-	return retVal;
-}
-#endif 
-
 /*
 ====================
 StudioDrawModel
