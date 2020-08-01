@@ -214,6 +214,7 @@
     <ClCompile Include="..\..\pm_shared\pm_shared.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\common\CBitSet.h" />
     <ClInclude Include="..\..\common\const.h" />
     <ClInclude Include="..\..\common\Platform.h" />
     <ClInclude Include="..\..\dlls\activity.h" />

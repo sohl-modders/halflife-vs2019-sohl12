@@ -340,11 +340,15 @@ BOOL CBarney::CheckRangeAttack1(float flDot, float flDist)
 void CBarney::BarneyFirePistol()
 {
 	UTIL_MakeVectors(pev->angles);
+	
 	Vector vecShootOrigin = pev->origin + Vector(0, 0, 55);
+	
 	Vector vecShootDir = ShootAtEnemy(vecShootOrigin);
 
 	Vector angDir = UTIL_VecToAngles(vecShootDir);
+	
 	SetBlending(0, angDir.x);
+	
 	pev->effects = EF_MUZZLEFLASH;
 
 	if (pev->frags)
@@ -426,7 +430,6 @@ void CBarney::Spawn()
 	
 	m_bloodColor = BLOOD_COLOR_RED;
 
-	
 	if (pev->health == 0) //LRC
 		pev->health = gSkillData.barneyHealth;
 

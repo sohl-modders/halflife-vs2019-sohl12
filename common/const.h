@@ -1482,4 +1482,28 @@ enum USE_STATE
 	STATE_IN_USE
 };
 
+/**
+*	Possible values for entvars_t::fixangle
+*
+*	Solokiller
+*/
+enum FixAngleMode
+{
+	/**
+	*	Do nothing
+	*/
+	FIXANGLE_NO = 0,
+
+	/**
+	*	Set view angles to GetAbsAngles()
+	*/
+	FIXANGLE_SET = 1,
+
+	/**
+	*	Add avelocity yaw value to view angles
+	*	avelocity yaw value is set to 0 after this
+	*/
+	FIXANGLE_ADD_AVEL = 2
+};
+
 #endif

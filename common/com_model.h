@@ -38,7 +38,7 @@
 
 #define	ZISCALE	((float)0x8000)
 
-#define CACHE_SIZE	32		// used to align key data structures
+#define CACHE_SIZE 128
 
 typedef enum
 {

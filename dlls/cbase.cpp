@@ -127,7 +127,6 @@ int GetEntityAPI2( DLL_FUNCTIONS *pFunctionTable, int *interfaceVersion )
 
 }
 
-
 int DispatchSpawn( edict_t *pent )
 {
 	CBaseEntity *pEntity = (CBaseEntity *)GET_PRIVATE(pent);
@@ -519,6 +518,28 @@ void CBaseEntity::Activate( void )
 	m_activated = TRUE;
 	InitMoveWith();
 	PostSpawn();
+}
+
+// give health
+float CBaseEntity::GiveHealth(float flHealth, int bitsDamageType)
+{
+	if (GetTakeDamageMode() == DAMAGE_NO)
+		return 0;
+
+	// heal
+	if (GetHealth() >= GetMaxHealth())
+		return 0;
+
+	const float flOldHealth = GetHealth();
+
+	float flNewHealth = GetHealth() + flHealth;
+
+	if (flNewHealth > GetMaxHealth())
+		flNewHealth = GetMaxHealth();
+
+	SetHealth(flNewHealth);
+
+	return GetHealth() - flOldHealth;
 }
 
 //LRC- called by activate() to support movewith

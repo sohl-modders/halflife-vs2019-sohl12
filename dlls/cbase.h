@@ -423,6 +423,8 @@ public:
 	int IsDormant(void);
 	BOOL IsLockedByMaster(void) { return FALSE; }
 
+	float GiveHealth(float flHealth, int bitsDamageType);
+
 	static CBaseEntity* Instance(edict_t* pent)
 	{
 		if (!pent)
