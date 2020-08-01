@@ -61,7 +61,7 @@ class CBaseDMStart : public CPointEntity
 {
 public:
 	void		KeyValue( KeyValueData *pkvd );
-	STATE		GetState( CBaseEntity *pEntity );
+	USE_STATE		GetState( CBaseEntity *pEntity );
 
 private:
 };
@@ -82,7 +82,7 @@ void CBaseDMStart::KeyValue( KeyValueData *pkvd )
 		CPointEntity::KeyValue( pkvd );
 }
 
-STATE CBaseDMStart::GetState( CBaseEntity *pEntity )
+USE_STATE CBaseDMStart::GetState( CBaseEntity *pEntity )
 {
 	if (UTIL_IsMasterTriggered( pev->netname, pEntity ))
 		return STATE_ON;
@@ -94,83 +94,25 @@ STATE CBaseDMStart::GetState( CBaseEntity *pEntity )
 void CBaseEntity::UpdateOnRemove( void )
 {
 	int	i;
-	CBaseEntity* pTemp;
 
-	if (!g_pWorld)
+	ResetParent();
+
+	if (FBitSet(pev->flags, FL_GRAPHED))
 	{
-		ALERT(at_debug, "UpdateOnRemove has no AssistList!\n");
-		return;
-	}
-
-	//LRC - remove this from the AssistList.
-	for (pTemp = g_pWorld; pTemp->m_pAssistLink != NULL; pTemp = pTemp->m_pAssistLink)
-	{
-		if (this == pTemp->m_pAssistLink)
+		// this entity was a LinkEnt in the world node graph, so we must remove it from
+		// the graph since we are removing it from the world.
+		for (i = 0; i < WorldGraph.m_cLinks; i++)
 		{
-//			ALERT(at_console,"REMOVE: %s removed from the Assist List.\n", STRING(pev->classname));
-			pTemp->m_pAssistLink = this->m_pAssistLink;
-			this->m_pAssistLink = NULL;
-			break;
-		}
-	}
-
-	//LRC
-	if (m_pMoveWith)
-	{
-		// if I'm moving with another entity, take me out of the list. (otherwise things crash!)
-		pTemp = m_pMoveWith->m_pChildMoveWith;
-		if (pTemp == this)
-		{
-			m_pMoveWith->m_pChildMoveWith = this->m_pSiblingMoveWith;
-		}
-		else
-		{
-			while (pTemp->m_pSiblingMoveWith)
-			{
-				if (pTemp->m_pSiblingMoveWith == this)
-				{
-					pTemp->m_pSiblingMoveWith = this->m_pSiblingMoveWith;
-					break;
-				}
-				pTemp = pTemp->m_pSiblingMoveWith;
-			}
-
-		}
-//		ALERT(at_console,"REMOVE: %s removed from the %s ChildMoveWith list.\n", STRING(pev->classname), STRING(m_pMoveWith->pev->targetname));
-	}
-
-	//LRC - do the same thing if another entity is moving with _me_.
-	if (m_pChildMoveWith)
-	{
-		CBaseEntity* pCur = m_pChildMoveWith;
-		CBaseEntity* pNext;
-		while (pCur != NULL)
-		{
-			pNext = pCur->m_pSiblingMoveWith;
-			// bring children to a stop
-			UTIL_SetMoveWithVelocity(pCur, g_vecZero, 100);
-			UTIL_SetMoveWithAvelocity(pCur, g_vecZero, 100);
-			pCur->m_pMoveWith = NULL;
-			pCur->m_pSiblingMoveWith = NULL;
-			pCur = pNext;
-		}
-	}
-
-	if ( FBitSet( pev->flags, FL_GRAPHED ) )
-	{
-	// this entity was a LinkEnt in the world node graph, so we must remove it from
-	// the graph since we are removing it from the world.
-		for ( i = 0 ; i < WorldGraph.m_cLinks ; i++ )
-		{
-			if ( WorldGraph.m_pLinkPool [ i ].m_pLinkEnt == pev )
+			if (WorldGraph.m_pLinkPool[i].m_pLinkEnt == pev)
 			{
 				// if this link has a link ent which is the same ent that is removing itself, remove it!
-				WorldGraph.m_pLinkPool [ i ].m_pLinkEnt = NULL;
+				WorldGraph.m_pLinkPool[i].m_pLinkEnt = NULL;
 			}
 		}
 	}
-	if ( pev->globalname )
-		gGlobalState.EntitySetState( pev->globalname, GLOBAL_DEAD );
+	
+	if (pev->globalname)
+		gGlobalState.EntitySetState(pev->globalname, GLOBAL_DEAD);
 }
 
 // Convenient way to delay removing oneself
@@ -665,7 +607,7 @@ BOOL CBaseToggle :: IsLockedByMaster( void )
 }
 
 //LRC- mapping toggle-states to global states
-STATE CBaseToggle :: GetState ( void )
+USE_STATE CBaseToggle :: GetState ( void )
 {
 	switch (m_toggle_state)
 	{
@@ -757,11 +699,11 @@ void CBaseToggle :: AngularMoveDoneNow( void )
 	UTIL_SetAvelocity(this, g_vecZero);
 	if (m_pMoveWith)
 	{
-		UTIL_SetAngles(this, m_vecFinalAngle + m_pMoveWith->pev->angles);
+		UTIL_AssignAngles(this, m_vecFinalAngle + m_pMoveWith->pev->angles);
 	}
 	else
 	{
-		UTIL_SetAngles(this, m_vecFinalAngle);
+		UTIL_AssignAngles(this, m_vecFinalAngle);
 	}
 	DontThink();
 	if ( m_pfnCallWhenMoveDone )
@@ -848,7 +790,7 @@ public:
 	void Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value );
 	virtual int	ObjectCaps( void ) { return CBaseEntity :: ObjectCaps() & ~FCAP_ACROSS_TRANSITION; }
 
-	STATE GetState() { return (pev->spawnflags & SF_IMW_INACTIVE)?STATE_OFF:STATE_ON; }
+	USE_STATE GetState() { return (pev->spawnflags & SF_IMW_INACTIVE)?STATE_OFF:STATE_ON; }
 };
 
 LINK_ENTITY_TO_CLASS(info_movewith, CInfoMoveWith);
@@ -935,6 +877,6 @@ void CInfoMoveWith :: Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TY
 	// add this entity to the list of children
 	m_pSiblingMoveWith = m_pMoveWith->m_pChildMoveWith; // may be null: that's fine by me.
 	m_pMoveWith->m_pChildMoveWith = this;
-	m_vecMoveWithOffset = pev->origin - m_pMoveWith->pev->origin;
+	m_vecOffsetOrigin = pev->origin - m_pMoveWith->pev->origin;
 	UTIL_SetVelocity(this, g_vecZero); // match speed with the new entity
 }

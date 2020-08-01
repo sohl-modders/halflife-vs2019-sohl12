@@ -15,18 +15,17 @@
 #ifndef EIFACE_H
 #define EIFACE_H
 
+#ifndef ARCHTYPES_H
 #include "archtypes.h"     // DAL
+#endif
 
-#ifdef HLDEMO_BUILD
-#define INTERFACE_VERSION       001
-#else  // !HLDEMO_BUILD, i.e., regular version of HL
 #define INTERFACE_VERSION		140
-#endif // !HLDEMO_BUILD
 
 #include <stdio.h>
 #include "custom.h"
 #include "cvardef.h"
 #include "Sequence.h"
+
 //
 // Defines entity interface between engine and DLLs.
 // This header file included by engine files and DLL files.
@@ -44,18 +43,9 @@
 #endif
 */
 
-typedef enum
-	{
-	at_notice,
-	at_console,		// same as at_notice, but forces a ConPrintf, not a message box
-	at_aiconsole,	// same as at_console, but only shown if developer level is 2!
-	at_warning,
-	at_error,
-	at_logged		// Server print to console ( only in multiplayer games ).
-	} ALERT_TYPE;
-
 //LRC- identifies the ALERT statements which don't need removing before release
 #define at_debug at_console
+
 //#define at_aiconsole at_console
 // 4-22-98  JOHN: added for use in pfnClientPrintf
 typedef enum

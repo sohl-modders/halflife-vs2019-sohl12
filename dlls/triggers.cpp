@@ -480,8 +480,8 @@ public:
 
 	static	TYPEDESCRIPTION m_SaveData[];
 
-	STATE	m_iState;
-	virtual STATE GetState( void ) { return m_iState; };
+	USE_STATE	m_iState;
+	virtual USE_STATE GetState( void ) { return m_iState; };
 
 	int		m_cTargets;	// the total number of targets in this manager's fire list.
 	int		m_index;	// Current target
@@ -1031,8 +1031,8 @@ public:
 	void Spawn ( void );
 	void EXPORT Think ( void );
 	void KeyValue( KeyValueData *pkvd );
-	virtual STATE GetState( void );
-	virtual STATE GetState( CBaseEntity *pActivator );
+	virtual USE_STATE GetState( void );
+	virtual USE_STATE GetState( CBaseEntity *pActivator );
 	virtual int	ObjectCaps( void ) { return CBaseEntity :: ObjectCaps() & ~FCAP_ACROSS_TRANSITION; }
 
 	virtual int		Save( CSave &save );
@@ -1106,7 +1106,7 @@ void CStateWatcher :: Spawn ( void )
 		SetNextThink( 0.5 );
 }
 
-STATE CStateWatcher :: GetState( void )
+USE_STATE CStateWatcher :: GetState( void )
 {
 	if (EvalLogic( NULL ))
 		return STATE_ON;
@@ -1114,7 +1114,7 @@ STATE CStateWatcher :: GetState( void )
 		return STATE_OFF;
 }
 
-STATE CStateWatcher :: GetState( CBaseEntity *pActivator )
+USE_STATE CStateWatcher :: GetState( CBaseEntity *pActivator )
 {
 //	if (pActivator)
 //		ALERT(at_console, "GetState( %s \"%s\" )\n", STRING(pActivator->pev->classname), STRING(pActivator->pev->targetname));
@@ -1273,7 +1273,7 @@ class CWatcherCount : public CBaseToggle
 public:
 	void Spawn ( void );
 	void EXPORT Think ( void );
-	virtual STATE GetState( void ) { return (pev->spawnflags & SF_SWATCHER_VALID)?STATE_ON:STATE_OFF; };
+	virtual USE_STATE GetState( void ) { return (pev->spawnflags & SF_SWATCHER_VALID)?STATE_ON:STATE_OFF; };
 	virtual int	ObjectCaps( void ) { return CBaseEntity :: ObjectCaps() & ~FCAP_ACROSS_TRANSITION; }
 };
 
@@ -2952,7 +2952,7 @@ public:
 	virtual int		Restore( CRestore &restore );
 	static	TYPEDESCRIPTION m_SaveData[];
 
-	STATE GetState() { return m_pRegister->IsEmpty()?STATE_OFF:STATE_ON; }
+	USE_STATE GetState() { return m_pRegister->IsEmpty()?STATE_OFF:STATE_ON; }
 
 	string_t m_iszAltTarget;
 	string_t m_iszBothTarget;
@@ -3903,7 +3903,7 @@ public:
 	BOOL CanSee(CBaseEntity *pLooker, CBaseEntity *pSeen);
 	virtual int	ObjectCaps( void ) { return CBaseEntity :: ObjectCaps() & ~FCAP_ACROSS_TRANSITION; }
 
-	STATE GetState();
+	USE_STATE GetState();
 };
 
 LINK_ENTITY_TO_CLASS( trigger_onsight, CTriggerOnSight );
@@ -3924,7 +3924,7 @@ void CTriggerOnSight :: Spawn( void )
 	}
 }
 
-STATE CTriggerOnSight :: GetState( void )
+USE_STATE CTriggerOnSight :: GetState( void )
 {
 	if (pev->spawnflags & SF_ONSIGHT_DEMAND)
 		return VisionCheck()?STATE_ON:STATE_OFF;
@@ -4695,7 +4695,7 @@ void CMotionThread::Think( void )
 			{
 				if (pev->spawnflags & SF_MOTION_DEBUG)
 					ALERT(at_debug, "DEBUG: Set angles from %f %f %f ", m_hTarget->pev->angles.x, m_hTarget->pev->angles.y, m_hTarget->pev->angles.z);
-				UTIL_SetAngles(m_hTarget, UTIL_VecToAngles( vecTemp ));
+				UTIL_AssignAngles(m_hTarget, UTIL_VecToAngles( vecTemp ));
 				if (pev->spawnflags & SF_MOTION_DEBUG)
 					ALERT(at_debug, "to %f %f %f\n", m_hTarget->pev->angles.x, m_hTarget->pev->angles.y, m_hTarget->pev->angles.z);
 			}
@@ -4710,7 +4710,7 @@ void CMotionThread::Think( void )
 			{
 				if (pev->spawnflags & SF_MOTION_DEBUG)
 					ALERT(at_debug, "DEBUG: Offset angles from %f %f %f ", m_hTarget->pev->angles.x, m_hTarget->pev->angles.y, m_hTarget->pev->angles.z);
-				UTIL_SetAngles(m_hTarget, m_hTarget->pev->angles + gpGlobals->frametime * UTIL_VecToAngles( vecTemp ));
+				UTIL_AssignAngles(m_hTarget, m_hTarget->pev->angles + gpGlobals->frametime * UTIL_VecToAngles( vecTemp ));
 				if (pev->spawnflags & SF_MOTION_DEBUG)
 					ALERT(at_debug, "to %f %f %f\n", m_hTarget->pev->angles.x, m_hTarget->pev->angles.y, m_hTarget->pev->angles.z);
 			}
@@ -4723,7 +4723,7 @@ void CMotionThread::Think( void )
 			UTIL_StringToRandomVector( vecVelAngles, STRING(m_iszFacing) );
 			if (pev->spawnflags & SF_MOTION_DEBUG)
 				ALERT(at_debug, "DEBUG: Rotate angles from %f %f %f ", m_hTarget->pev->angles.x, m_hTarget->pev->angles.y, m_hTarget->pev->angles.z);
-			UTIL_SetAngles(m_hTarget, m_hTarget->pev->angles + gpGlobals->frametime * vecVelAngles);
+			UTIL_AssignAngles(m_hTarget, m_hTarget->pev->angles + gpGlobals->frametime * vecVelAngles);
 			if (pev->spawnflags & SF_MOTION_DEBUG)
 				ALERT(at_debug, "to %f %f %f\n", m_hTarget->pev->angles.x, m_hTarget->pev->angles.y, m_hTarget->pev->angles.z);
 			break;

@@ -85,7 +85,7 @@ public:
 	int		m_bubbleModel;
 	int		m_state;
 
-	virtual STATE GetState( void ) { return m_state?STATE_ON:STATE_OFF; };
+	virtual USE_STATE GetState( void ) { return m_state?STATE_ON:STATE_OFF; };
 };
 
 LINK_ENTITY_TO_CLASS( env_bubbles, CBubbling );
@@ -433,7 +433,7 @@ public:
 	void	BeamUpdatePoints( void ); //LRC
 	void	BeamUpdateVars( void );
 
-	virtual STATE GetState( void ) { return m_active?STATE_OFF:STATE_ON; };
+	virtual USE_STATE GetState( void ) { return m_active?STATE_OFF:STATE_ON; };
 
 	int		m_active;
 	int		m_iszStartEntity;
@@ -1692,7 +1692,7 @@ class CEnvModel : public CBaseAnimating
 	void Precache( void );
 	void EXPORT Think( void );
 	void KeyValue( KeyValueData *pkvd );
-	STATE GetState( void );
+	USE_STATE GetState( void );
 	void Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value );
 	virtual int	ObjectCaps( void ) { return CBaseEntity :: ObjectCaps() & ~FCAP_ACROSS_TRANSITION; }
 
@@ -1778,7 +1778,7 @@ void CEnvModel::Precache( void )
 	PRECACHE_MODEL( (char *)STRING(pev->model) );
 }
 
-STATE CEnvModel::GetState( void )
+USE_STATE CEnvModel::GetState( void )
 {
 	if (pev->spawnflags & SF_ENVMODEL_OFF)
 		return STATE_OFF;
@@ -2662,8 +2662,8 @@ public:
 	inline	void	SetDuration( float duration ) { pev->dmg_take = duration; }
 	inline	void	SetRadius( float radius ) { pev->dmg = radius; }
 
-	STATE m_iState; //LRC
-	virtual STATE GetState( void ) { return m_iState; }; //LRC
+	USE_STATE m_iState; //LRC
+	virtual USE_STATE GetState( void ) { return m_iState; }; //LRC
 	void	Think( void ) { m_iState = STATE_OFF; }; //LRC
 private:
 };
@@ -2738,7 +2738,7 @@ public:
 	void	Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value );
 	void	KeyValue( KeyValueData *pkvd );
 
-	virtual STATE GetState( void ) { return m_iState; }; // LRC
+	virtual USE_STATE GetState( void ) { return m_iState; }; // LRC
 	void	Think( void ); //LRC
 
 	inline	float	Duration( void ) { return pev->dmg_take; }
@@ -2747,7 +2747,7 @@ public:
 	inline	void	SetDuration( float duration ) { pev->dmg_take = duration; }
 	inline	void	SetHoldTime( float hold ) { pev->dmg_save = hold; }
 
-	STATE   m_iState; // LRC. Don't saverestore this value, it's not worth it.
+	USE_STATE   m_iState; // LRC. Don't saverestore this value, it's not worth it.
 private:
 };
 
@@ -3082,7 +3082,7 @@ public:
 	void	Spawn( void );
 	void	Precache( void );
 	void	Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value );
-	STATE	GetState( void );
+	USE_STATE	GetState( void );
 	void	EXPORT StartTrailThink ( void );
 	void	Affect( CBaseEntity *pTarget, USE_TYPE useType );
 
@@ -3099,7 +3099,7 @@ void CEnvBeamTrail :: Precache ( void )
 
 LINK_ENTITY_TO_CLASS( env_beamtrail, CEnvBeamTrail );
 
-STATE CEnvBeamTrail :: GetState ( void )
+USE_STATE CEnvBeamTrail :: GetState ( void )
 {
 	if (pev->spawnflags & SF_BEAMTRAIL_OFF)
 		return STATE_OFF;
@@ -3197,8 +3197,8 @@ public:
 	void	Precache( void );
 	void	Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value );
 	virtual int	ObjectCaps( void ) { return CBaseEntity :: ObjectCaps() & ~FCAP_ACROSS_TRANSITION; }
-	STATE	GetState( void );
-	STATE	GetState( CBaseEntity* pEnt );
+	USE_STATE	GetState( void );
+	USE_STATE	GetState( CBaseEntity* pEnt );
 	void	PrecacheNoise ( const char* szNoise );
 };
 
@@ -3241,13 +3241,13 @@ void CEnvFootsteps :: Precache ( void )
 		PrecacheNoise(STRING(pev->noise3));
 }
 
-STATE CEnvFootsteps::GetState()
+USE_STATE CEnvFootsteps::GetState()
 {
 	if (pev->spawnflags & SF_FOOTSTEPS_SET) return STATE_OFF;
 	return pev->impulse ? STATE_ON : STATE_OFF;
 }
 
-STATE CEnvFootsteps::GetState(CBaseEntity* pEnt)
+USE_STATE CEnvFootsteps::GetState(CBaseEntity* pEnt)
 {
 	if (pev->spawnflags & SF_FOOTSTEPS_SET)
 		return STATE_OFF;
@@ -3375,7 +3375,7 @@ public:
 	virtual int		Restore( CRestore &restore );
 	static	TYPEDESCRIPTION m_SaveData[];
 
-	STATE	m_iState;
+	USE_STATE	m_iState;
 	int		m_spriteTexture;
 	int		m_iszSpriteName; // have to saverestore this, the beams keep a link to it
 	int		m_dripSize;
@@ -3392,7 +3392,7 @@ public:
 	float m_fLifeTime;
 	int m_iNoise;
 
-	virtual STATE GetState( void ) { return m_iState; };
+	virtual USE_STATE GetState( void ) { return m_iState; };
 };
 
 LINK_ENTITY_TO_CLASS( env_rain, CEnvRain );
@@ -3885,7 +3885,7 @@ public:
 	virtual int		Save( CSave &save );
 	virtual int		Restore( CRestore &restore );
 	static	TYPEDESCRIPTION m_SaveData[];
-	STATE	GetState( void )
+	USE_STATE	GetState( void )
 	{
 		if (pev->spawnflags & SF_DLIGHT_STARTON)
 			return STATE_ON;
@@ -4171,7 +4171,7 @@ public:
 	void	Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value );
 
 	// it's 'on' while there are cans left
-	virtual STATE GetState( void ) { return (pev->health > 0)?STATE_ON:STATE_OFF; };
+	virtual USE_STATE GetState( void ) { return (pev->health > 0)?STATE_ON:STATE_OFF; };
 };
 
 void CEnvBeverage :: Precache ( void )
@@ -4321,7 +4321,7 @@ public:
 	static	TYPEDESCRIPTION m_SaveData[];
 	void Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value );
 
-	STATE GetState( void );
+	USE_STATE GetState( void );
 
 	int m_iStartDist;
 	int m_iEndDist;
@@ -4374,7 +4374,7 @@ void CEnvFog :: KeyValue( KeyValueData *pkvd )
 		CBaseEntity::KeyValue( pkvd );
 }
 
-STATE CEnvFog::GetState( void )
+USE_STATE CEnvFog::GetState( void )
 {
 	if (pev->spawnflags & SF_FOG_ACTIVE)
 	{

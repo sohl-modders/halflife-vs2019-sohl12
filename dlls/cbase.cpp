@@ -522,23 +522,67 @@ void CBaseEntity::Activate( void )
 }
 
 //LRC- called by activate() to support movewith
-void CBaseEntity::InitMoveWith( void )
+void CBaseEntity::InitMoveWith(void)
 {
-	if (!m_MoveWith) return;
+	SetParent(m_MoveWith);
+}
 
-	m_pMoveWith = UTIL_FindEntityByTargetname(NULL, STRING(m_MoveWith));
+//g-cont. upgrade system to xashParentSystem 0.3 beta
+void CBaseEntity::SetParent(int m_iNewParent, int m_iAttachment)
+{
+	if (!m_iNewParent) //unlink entity from chain
+	{
+		//ResetParent(); //g-cont. temporary disabled
+		return;//disable
+	}
+
+	CBaseEntity* pParent;
+
+	if (!m_iAttachment) //try to extract aiment from name
+	{
+		char* name = (char*)STRING(m_iNewParent);
+		for (char* c = name; *c; c++)
+		{
+			if (*c == '.')
+			{
+				m_iAttachment = atoi(c + 1);
+				name[strlen(name) - 2] = 0;
+				pParent = UTIL_FindEntityByTargetname(NULL, name);
+				SetParent(pParent, m_iAttachment);
+				return;
+			}
+		}
+	}
+
+	pParent = UTIL_FindEntityByTargetname(NULL, STRING(m_iNewParent));
+	SetParent(pParent, m_iAttachment);//check pointer to valid later
+}
+
+void CBaseEntity::SetParent(CBaseEntity* pParent, int m_iAttachment)
+{
+	//if (!m_MoveWith) return;
+
+	m_pMoveWith = pParent; //UTIL_FindEntityByTargetname(NULL, STRING(m_MoveWith));
+
 	if (!m_pMoveWith)
 	{
-		ALERT(at_debug,"Missing movewith entity %s\n", STRING(m_MoveWith));
+		ALERT(at_debug, "Missing movewith entity %s\n", STRING(m_MoveWith));
 		return;
 	}
 
-//	if (pev->targetname)
-//		ALERT(at_console,"Init: %s %s moves with %s\n", STRING(pev->classname), STRING(pev->targetname), STRING(m_MoveWith));
-//	else
-//		ALERT(at_console,"Init: %s moves with %s\n", STRING(pev->classname), STRING(m_MoveWith));
+	//	if (pev->targetname)
+	//		ALERT(at_console,"Init: %s %s moves with %s\n", STRING(pev->classname), STRING(pev->targetname), STRING(m_MoveWith));
+	//	else
+	//		ALERT(at_console,"Init: %s moves with %s\n", STRING(pev->classname), STRING(m_MoveWith));
 
-	CBaseEntity *pSibling = m_pMoveWith->m_pChildMoveWith;
+		//check for himself parent
+	if (m_pMoveWith == this)
+	{
+		ALERT(at_debug, "%s has himself parent!\n", STRING(pev->classname));
+		return;
+	}
+
+	CBaseEntity* pSibling = m_pMoveWith->m_pChildMoveWith;
 	while (pSibling) // check that this entity isn't already in the list of children
 	{
 		if (pSibling == this) break;
@@ -550,12 +594,38 @@ void CBaseEntity::InitMoveWith( void )
 		m_pSiblingMoveWith = m_pMoveWith->m_pChildMoveWith; // may be null: that's fine by me.
 		m_pMoveWith->m_pChildMoveWith = this;
 
-		if (pev->movetype == MOVETYPE_NONE)
+		if (m_iAttachment)//parent has attcahment
 		{
-			if (pev->solid == SOLID_BSP)
-				pev->movetype = MOVETYPE_PUSH;
-			else
-				pev->movetype = MOVETYPE_NOCLIP; // or _FLY, perhaps?
+			if (m_iLFlags & LF_POINTENTITY || pev->flags & FL_MONSTER)
+			{
+				pev->skin = ENTINDEX(m_pMoveWith->edict());
+				pev->body = m_iAttachment;
+				pev->aiment = m_pMoveWith->edict();
+				pev->movetype = MOVETYPE_FOLLOW;
+			}
+			else //error
+			{
+				ALERT(at_debug, "%s not following with aiment %d!(yet)\n", STRING(pev->classname), m_iAttachment);
+			}
+			return;
+		}
+		else//appllayed to origin
+		{
+			if (pev->movetype == MOVETYPE_NONE)
+			{
+				if (pev->solid == SOLID_BSP)
+					pev->movetype = MOVETYPE_PUSH;
+				else pev->movetype = MOVETYPE_NOCLIP; // or _FLY, perhaps?
+				SetBits(m_iLFlags, LF_MOVENONE); //member movetype
+			}
+
+			if (m_pMoveWith->pev->movetype == MOVETYPE_WALK)//parent is walking monster?
+			{
+				SetBits(m_iLFlags, LF_POSTORG);//copy pos from parent every frame
+				pev->solid = SOLID_NOT;//set non solid
+			}
+			m_vecParentOrigin = m_pMoveWith->pev->origin;
+			m_vecParentAngles = m_pMoveWith->pev->angles;
 		}
 
 		// was the parent shifted at spawn-time?
@@ -567,16 +637,103 @@ void CBaseEntity::InitMoveWith( void )
 			//...and inherit the same offset.
 			m_vecSpawnOffset = m_vecSpawnOffset + m_pMoveWith->m_vecSpawnOffset;
 		}
-		else
+
+		m_vecOffsetOrigin = pev->origin - m_vecParentOrigin;
+		m_vecOffsetAngles = pev->angles - m_vecParentAngles;
+
+		if ((m_pMoveWith->m_iLFlags & LF_ANGULAR && m_vecOffsetOrigin != g_vecZero) || m_pMoveWith->m_iLFlags & LF_POINTENTITY)
 		{
-			// This gets set up by AssignOrigin, but otherwise we'll need to do it manually.
-			m_vecMoveWithOffset = pev->origin - m_pMoveWith->pev->origin;
+			SetBits(m_iLFlags, LF_POSTORG);//magic stuff
+			//GetPInfo( this );
 		}
-		m_vecRotWithOffset = pev->angles - m_pMoveWith->pev->angles;
+
+		if (g_serveractive)//maybe parent is moving ?
+		{
+			pev->velocity = pev->velocity + m_pMoveWith->pev->velocity;
+			pev->avelocity = pev->avelocity + m_pMoveWith->pev->avelocity;
+		}
 	}
 
-//	if (pev->flags & FL_WORLDBRUSH) // not sure what this does, exactly.
-//		pev->flags &= ~FL_WORLDBRUSH;
+	//	if (pev->flags & FL_WORLDBRUSH) // not sure what this does, exactly.
+	//		pev->flags &= ~FL_WORLDBRUSH;
+}
+
+void CBaseEntity::ResetParent(void)
+{
+	CBaseEntity* pTemp;
+
+	if (m_iLFlags & LF_MOVENONE)//this entity was static e.g. func_wall
+	{
+		ClearBits(m_iLFlags, LF_MOVENONE);
+		pev->movetype = MOVETYPE_NONE;
+	}
+
+	if (!g_pWorld)
+	{
+		ALERT(at_debug, "ResetParent has no AssistList!\n");
+		return;
+	}
+
+	//LRC - remove this from the AssistList.
+	for (pTemp = g_pWorld; pTemp->m_pAssistLink != NULL; pTemp = pTemp->m_pAssistLink)
+	{
+		if (this == pTemp->m_pAssistLink)
+		{
+			//			ALERT(at_console,"REMOVE: %s removed from the Assist List.\n", STRING(pev->classname));
+			pTemp->m_pAssistLink = this->m_pAssistLink;
+			this->m_pAssistLink = NULL;
+			break;
+		}
+	}
+
+	//LRC
+	if (m_pMoveWith)
+	{
+		// if I'm moving with another entity, take me out of the list. (otherwise things crash!)
+		pTemp = m_pMoveWith->m_pChildMoveWith;
+		if (pTemp == this)
+		{
+			m_pMoveWith->m_pChildMoveWith = this->m_pSiblingMoveWith;
+		}
+		else
+		{
+			while (pTemp->m_pSiblingMoveWith)
+			{
+				if (pTemp->m_pSiblingMoveWith == this)
+				{
+					pTemp->m_pSiblingMoveWith = this->m_pSiblingMoveWith;
+					break;
+				}
+				pTemp = pTemp->m_pSiblingMoveWith;
+			}
+
+		}
+		//		ALERT(at_console,"REMOVE: %s removed from the %s ChildMoveWith list.\n", STRING(pev->classname), STRING(m_pMoveWith->pev->targetname));
+	}
+
+	//LRC - do the same thing if another entity is moving with _me_.
+	if (m_pChildMoveWith)
+	{
+		CBaseEntity* pCur = m_pChildMoveWith;
+		CBaseEntity* pNext;
+		while (pCur != NULL)
+		{
+			pNext = pCur->m_pSiblingMoveWith;
+			// bring children to a stop
+			UTIL_SetMoveWithVelocity(pCur, g_vecZero, 100);
+			UTIL_SetMoveWithAvelocity(pCur, g_vecZero, 100);
+			pCur->m_pMoveWith = NULL;
+			pCur->m_pSiblingMoveWith = NULL;
+			pCur = pNext;
+		}
+	}
+}
+
+void CBaseEntity::ClearPointers(void)
+{
+	m_pChildMoveWith = NULL;
+	m_pSiblingMoveWith = NULL;
+	m_pAssistLink = NULL;
 }
 
 //LRC
@@ -776,21 +933,22 @@ TYPEDESCRIPTION	CBaseEntity::m_SaveData[] =
 {
 	DEFINE_FIELD( CBaseEntity, m_pGoalEnt, FIELD_CLASSPTR ),
 
-	DEFINE_FIELD( CBaseEntity, m_MoveWith, FIELD_STRING ), //LRC
-	DEFINE_FIELD( CBaseEntity, m_pMoveWith, FIELD_CLASSPTR ), //LRC
-	DEFINE_FIELD( CBaseEntity, m_pChildMoveWith, FIELD_CLASSPTR ), //LRC
-	DEFINE_FIELD( CBaseEntity, m_pSiblingMoveWith, FIELD_CLASSPTR ), //LRC
+	DEFINE_FIELD(CBaseEntity, m_MoveWith, FIELD_STRING), //LRC
+	DEFINE_FIELD(CBaseEntity, m_pMoveWith, FIELD_CLASSPTR), //LRC
+	DEFINE_FIELD(CBaseEntity, m_pChildMoveWith, FIELD_CLASSPTR), //LRC
+	DEFINE_FIELD(CBaseEntity, m_pSiblingMoveWith, FIELD_CLASSPTR), //LRC
 
-	DEFINE_FIELD( CBaseEntity, m_iLFlags, FIELD_INTEGER ), //LRC
-	DEFINE_FIELD( CBaseEntity, m_iStyle, FIELD_INTEGER ), //LRC
-	DEFINE_FIELD( CBaseEntity, m_vecMoveWithOffset, FIELD_VECTOR ), //LRC
-	DEFINE_FIELD( CBaseEntity, m_vecRotWithOffset, FIELD_VECTOR ), //LRC
-	DEFINE_FIELD( CBaseEntity, m_activated, FIELD_BOOLEAN ), //LRC
-	DEFINE_FIELD( CBaseEntity, m_fNextThink, FIELD_TIME ), //LRC
-	DEFINE_FIELD( CBaseEntity, m_fPevNextThink, FIELD_TIME ), //LRC
-//	DEFINE_FIELD( CBaseEntity, m_pAssistLink, FIELD_CLASSPTR ), //LRC - don't save this, we'll just rebuild the list on restore
-	DEFINE_FIELD( CBaseEntity, m_vecPostAssistVel, FIELD_VECTOR ), //LRC
-	DEFINE_FIELD( CBaseEntity, m_vecPostAssistAVel, FIELD_VECTOR ), //LRC
+	DEFINE_FIELD(CBaseEntity, m_iLFlags, FIELD_INTEGER), //LRC
+	DEFINE_FIELD(CBaseEntity, m_iStyle, FIELD_INTEGER), //LRC
+	DEFINE_FIELD(CBaseEntity, m_vecOffsetOrigin, FIELD_VECTOR), //LRC
+	DEFINE_FIELD(CBaseEntity, m_vecOffsetAngles, FIELD_VECTOR), //LRC
+	DEFINE_FIELD(CBaseEntity, m_vecPostAssistOrg, FIELD_VECTOR), //LRC
+	DEFINE_FIELD(CBaseEntity, m_vecPostAssistAng, FIELD_VECTOR), //LRC
+	DEFINE_FIELD(CBaseEntity, m_activated, FIELD_BOOLEAN), //LRC
+	DEFINE_FIELD(CBaseEntity, m_fNextThink, FIELD_TIME), //LRC
+	DEFINE_FIELD(CBaseEntity, m_fPevNextThink, FIELD_TIME), //LRC
+	DEFINE_FIELD(CBaseEntity, m_vecPostAssistVel, FIELD_VECTOR), //LRC
+	DEFINE_FIELD(CBaseEntity, m_vecPostAssistAVel, FIELD_VECTOR), //LRC
 
 	DEFINE_FIELD( CBaseEntity, m_pfnThink, FIELD_FUNCTION ),		// UNDONE: Build table of these!!!
 	DEFINE_FIELD( CBaseEntity, m_pfnTouch, FIELD_FUNCTION ),
@@ -966,7 +1124,7 @@ BOOL CBaseEntity::ShouldToggle( USE_TYPE useType, BOOL currentState )
 
 BOOL CBaseEntity::ShouldToggle( USE_TYPE useType )
 {
-	STATE currentState = GetState();
+	USE_STATE currentState = GetState();
 	if ( useType != USE_TOGGLE && useType != USE_SET )
 	{
 		switch(currentState)

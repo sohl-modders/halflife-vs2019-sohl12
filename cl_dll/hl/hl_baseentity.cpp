@@ -98,7 +98,7 @@ void ClientPrint( entvars_t *client, int msg_dest, const char *msg_name, const c
 int CBaseToggle::Restore( class CRestore & ) { return 1; }
 int CBaseToggle::Save( class CSave & ) { return 1; }
 void CBaseToggle :: KeyValue( struct KeyValueData_s * ) { }
-STATE CBaseToggle::GetState( void ) { return STATE_ON; } //LRC
+USE_STATE CBaseToggle::GetState( void ) { return STATE_ON; } //LRC
 
 // CGrenade Stubs
 void CGrenade::BounceSound( void ) { }
@@ -229,6 +229,7 @@ BOOL CBaseMonster :: GetEnemy ( void ) { return FALSE; }
 void CBaseMonster :: TraceAttack( entvars_t *pevAttacker, float flDamage, Vector vecDir, TraceResult *ptr, int bitsDamageType) { }
 CBaseEntity* CBaseMonster :: DropItem ( const char *pszItemName, const Vector &vecPos, const Vector &vecAng ) { return NULL; }
 BOOL CBaseMonster :: ShouldFadeOnDeath( void ) { return FALSE; }
+BOOL CBaseMonster :: IsFacing(entvars_t* pevTest, const Vector& reference) { return FALSE; }
 void CBaseMonster :: RadiusDamage(entvars_t* pevInflictor, entvars_t*	pevAttacker, float flDamage, int iClassIgnore, int bitsDamageType ) { }
 void CBaseMonster :: RadiusDamage( Vector vecSrc, entvars_t *pevInflictor, entvars_t *pevAttacker, float flDamage, int iClassIgnore, int bitsDamageType ) { }
 void CBaseMonster::FadeMonster( void ) { }

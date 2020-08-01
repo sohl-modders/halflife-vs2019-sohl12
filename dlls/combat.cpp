@@ -993,7 +993,7 @@ int CBaseMonster :: TakeDamage( entvars_t *pevInflictor, entvars_t *pevAttacker,
 				// try to decide whether it was deliberate... if I have an enemy, assume it was just crossfire.
 				if ( m_hEnemy == NULL )
 				{
-					if ( (m_afMemory & bits_MEMORY_SUSPICIOUS) || UTIL_IsFacing( pevAttacker, pev->origin ) )
+					if ( (m_afMemory & bits_MEMORY_SUSPICIOUS) || IsFacing( pevAttacker, pev->origin ) )
 						Remember( bits_MEMORY_PROVOKED );
 					else
 						Remember( bits_MEMORY_SUSPICIOUS );

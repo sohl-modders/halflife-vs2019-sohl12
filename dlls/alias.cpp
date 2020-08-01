@@ -39,7 +39,7 @@ class CInfoAlias : public CBaseAlias
 public:
 	void Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value);
 	void Spawn( void );
-	STATE GetState() { return (pev->spawnflags & SF_ALIAS_OFF)?STATE_OFF:STATE_ON; }
+	USE_STATE GetState() { return (pev->spawnflags & SF_ALIAS_OFF)?STATE_OFF:STATE_ON; }
 
 	CBaseEntity *FollowAlias( CBaseEntity *pFrom );
 	void ChangeValue( int iszValue );

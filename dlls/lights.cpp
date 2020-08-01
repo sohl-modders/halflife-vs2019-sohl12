@@ -106,7 +106,7 @@ public:
 
 	virtual int		Save( CSave &save );
 	virtual int		Restore( CRestore &restore );
-	virtual STATE	GetState(void) { return m_iState; }; //LRC
+	virtual USE_STATE	GetState(void) { return m_iState; }; //LRC
 	
 	static	TYPEDESCRIPTION m_SaveData[];
 
@@ -116,7 +116,7 @@ public:
 	void	SetCorrectStyle( void ); //LRC
 
 private:
-	STATE	m_iState; // current state
+	USE_STATE	m_iState; // current state
 	int		m_iOnStyle; // style to use while on
 	int		m_iOffStyle; // style to use while off
 	int		m_iTurnOnStyle; // style to use while turning on
@@ -502,7 +502,7 @@ public:
 	void Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value );
 	int ObjectCaps( void ) { return CBaseEntity::ObjectCaps() & ~FCAP_ACROSS_TRANSITION; }
 	void SetEffects( void );
-	STATE GetState( void );
+	USE_STATE GetState( void );
 };
 
 LINK_ENTITY_TO_CLASS( light_glow, CLightDynamic );
@@ -557,7 +557,7 @@ void CLightDynamic::SetEffects( void )
 	}
 }
 
-STATE CLightDynamic::GetState( void )
+USE_STATE CLightDynamic::GetState( void )
 {
 	if (pev->health)
 		return STATE_ON;

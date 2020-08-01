@@ -43,7 +43,7 @@ public:
 	BOOL IsBreakable( void );
 	BOOL SparkWhenHit( void );
 
-	STATE GetState( void );
+	USE_STATE GetState( void );
 
 	int	 DamageDecal( int bitsDamageType );
 

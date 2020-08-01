@@ -155,11 +155,11 @@ public:
 	virtual int		Save( CSave &save );
 	virtual int		Restore( CRestore &restore );
 
-	virtual STATE	GetState() { return m_iState; }
+	virtual USE_STATE	GetState() { return m_iState; }
 
 	static	TYPEDESCRIPTION m_SaveData[];
 	
-	STATE		m_iState;
+	USE_STATE		m_iState;
 	float		m_fTurnOnTime;
 	float		m_fTurnOffTime;
 	int			m_sMaster;
@@ -405,7 +405,7 @@ void CMultiSource::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE 
 	// LRC (28/04/02)- that depends what the "obvious" manner is.
 
 	// store the state before the change, so we can compare it to the new state
-	STATE s = GetState();
+	USE_STATE s = GetState();
 
 	// do the change
 	m_rgTriggered[i-1] ^= 1;
@@ -436,7 +436,7 @@ void CMultiSource::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE 
 
 
 //LRC- while we're in STATE_OFF, mastered entities can't do anything.
-STATE CMultiSource::GetState( void )
+USE_STATE CMultiSource::GetState( void )
 {
 	// Is everything triggered?
 	int i = 0;
@@ -1514,8 +1514,8 @@ public:
 	static	TYPEDESCRIPTION m_SaveData[];
 
 	float	m_flDelay;
-	STATE	m_iState; //LRC
-	virtual STATE	GetState( void ) { return m_iState; };
+	USE_STATE	m_iState; //LRC
+	virtual USE_STATE	GetState( void ) { return m_iState; };
 };
 
 

@@ -903,7 +903,7 @@ public:
 	void EXPORT DurationThink( void );
 	int	 ObjectCaps( void ) { return (CBaseToggle :: ObjectCaps() & ~FCAP_ACROSS_TRANSITION); }
 
-	STATE GetState() { return m_playing?STATE_ON:STATE_OFF; }
+	USE_STATE GetState() { return m_playing?STATE_ON:STATE_OFF; }
 
 	virtual int		Save( CSave &save );
 	virtual int		Restore( CRestore &restore );

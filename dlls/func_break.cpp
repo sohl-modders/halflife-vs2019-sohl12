@@ -217,7 +217,7 @@ void CBreakable::Spawn( void )
 		LIGHT_STYLE(-m_iStyle, "a");
 }
 
-STATE CBreakable::GetState( void )
+USE_STATE CBreakable::GetState( void )
 {
 	if (m_iRespawnTime)
 	{

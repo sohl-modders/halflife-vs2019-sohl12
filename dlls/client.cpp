@@ -57,6 +57,7 @@ extern int gmsgSayText;
 extern cvar_t allow_spectators;
 
 extern int g_teamplay;
+DLL_GLOBAL int g_serveractive = 0;
 
 void LinkUserMessages( void );
 
@@ -631,6 +632,12 @@ void ClientCommand( edict_t *pEntity )
 	{
 		// MenuSelect returns true only if the command is properly handled,  so don't print a warning
 	}
+	else if (FStrEq(pcmd, "VModEnable")) //LRC - shut up about VModEnable...
+	{
+		// g-cont. VModEnable at top the cases broke VoiceMod system in multiplayer
+		// you don't know about it Laurie!
+		return;
+	}
 	else
 	{
 		// tell the user they entered an unknown command
@@ -715,16 +722,14 @@ void ClientUserInfoChanged( edict_t *pEntity, char *infobuffer )
 	g_pGameRules->ClientUserInfoChanged( GetClassPtr((CBasePlayer *)&pEntity->v), infobuffer );
 }
 
-static int g_serveractive = 0;
-
 void ServerDeactivate( void )
 {
 	// make sure they reinitialise the World in the next server
 	g_pWorld = NULL;
-	
+
 	// It's possible that the engine will call this function more times than is necessary
-	//  Therefore, only run it one time for each call to ServerActivate 
-	if ( g_serveractive != 1 )
+	//  Therefore, only run it one time for each call to ServerActivate
+	if (g_serveractive != 1)
 	{
 		return;
 	}

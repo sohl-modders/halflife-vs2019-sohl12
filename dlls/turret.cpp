@@ -115,7 +115,7 @@ public:
 	float m_fTurnRate;		// actual turn rate
 	int m_iOrientation;		// 0 = floor, 1 = Ceiling
 	int	m_iOn;
-	virtual STATE getState() { if (m_iOn) { return STATE_ON; } else { return STATE_OFF; } }
+	virtual USE_STATE getState() { if (m_iOn) { return STATE_ON; } else { return STATE_OFF; } }
 
 	int m_fBeserk;			// Sometimes this bitch will just freak out
 	int m_iAutoStart;		// true if the turret auto deploys when a target

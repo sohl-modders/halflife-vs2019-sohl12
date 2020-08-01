@@ -12,7 +12,6 @@
 *   without written permission from Valve LLC.
 *
 ****/
-#if !defined( OEM_BUILD ) && !defined( HLDEMO_BUILD )
 
 #include "extdll.h"
 #include "util.h"
@@ -516,8 +515,6 @@ void CCrossbow::WeaponIdle( void )
 	}
 }
 
-
-
 class CCrossbowAmmo : public CBasePlayerAmmo
 {
 	void Spawn( void )
@@ -542,7 +539,3 @@ class CCrossbowAmmo : public CBasePlayerAmmo
 	}
 };
 LINK_ENTITY_TO_CLASS( ammo_crossbow, CCrossbowAmmo );
-
-
-
-#endif

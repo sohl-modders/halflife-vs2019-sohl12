@@ -55,7 +55,7 @@ public:
 	void Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value );
 //	void Think( void );
 	void	KeyValue( KeyValueData *pkvd );
-	STATE GetState(void) { return m_active?STATE_ON:STATE_OFF; }
+	USE_STATE GetState(void) { return m_active?STATE_ON:STATE_OFF; }
 
 	virtual int	Save( CSave &save );
 	virtual int	Restore( CRestore &restore );
@@ -101,7 +101,7 @@ public:
 	void EndThink( void );
 	void TimeOutThink( void );
 	void	KeyValue( KeyValueData *pkvd );
-	STATE	GetState( void ) { return m_pTank?STATE_ON:STATE_OFF; }
+	USE_STATE	GetState( void ) { return m_pTank?STATE_ON:STATE_OFF; }
 	virtual int	ObjectCaps( void );
 
 	void StopSequence( void );

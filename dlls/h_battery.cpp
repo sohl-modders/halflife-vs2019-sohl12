@@ -39,7 +39,7 @@ public:
 	virtual int	ObjectCaps( void ) { return (CBaseToggle :: ObjectCaps() | FCAP_CONTINUOUS_USE) & ~FCAP_ACROSS_TRANSITION; }
 	virtual int		Save( CSave &save );
 	virtual int		Restore( CRestore &restore );
-	virtual STATE GetState( void );
+	virtual USE_STATE GetState( void );
 
 	static	TYPEDESCRIPTION m_SaveData[];
 
@@ -209,7 +209,7 @@ void CRecharge::Off(void)
 		SetThink( &CRecharge::SUB_DoNothing );
 }
 
-STATE CRecharge::GetState( void )
+USE_STATE CRecharge::GetState( void )
 {
 	if (m_iOn == 2)
 		return STATE_IN_USE;
