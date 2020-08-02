@@ -52,6 +52,8 @@ public:
 
 	void GibMonster() override { }
 
+	void UpdateOnRemove() override;
+
 	// Think functions
 
 	void EXPORT ActiveThink();

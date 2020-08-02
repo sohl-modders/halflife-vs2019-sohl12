@@ -449,7 +449,6 @@ void EV_FireGlock1( event_args_t *args )
 	vec3_t origin;
 	vec3_t angles;
 	vec3_t velocity;
-	int empty;
 
 	vec3_t ShellVelocity;
 	vec3_t ShellOrigin;
@@ -462,7 +461,7 @@ void EV_FireGlock1( event_args_t *args )
 	VectorCopy( args->angles, angles );
 	VectorCopy( args->velocity, velocity );
 
-	empty = args->bparam1;
+	const bool empty = args->bparam1 != 0;
 	AngleVectors( angles, forward, right, up );
 
 	shell = gEngfuncs.pEventAPI->EV_FindModelIndex ("models/shell.mdl");// brass shell
@@ -470,7 +469,7 @@ void EV_FireGlock1( event_args_t *args )
 	if ( EV_IsLocal( idx ) )
 	{
 		EV_MuzzleFlash();
-		gEngfuncs.pEventAPI->EV_WeaponAnimation( empty ? GLOCK_SHOOT_EMPTY : GLOCK_SHOOT, 2 );
+		gEngfuncs.pEventAPI->EV_WeaponAnimation(empty ? GLOCK_SHOOT_EMPTY : GLOCK_SHOOT, 2);
 
 		V_PunchAxis( 0, -2.0 );
 	}
@@ -1405,6 +1404,12 @@ void EV_EgonFire( event_args_t *args )
 	}
 	else
 	{
+		//If there is any sound playing already, kill it. - Solokiller
+		//This is necessary because multiple sounds can play on the same channel at the same time.
+		//In some cases, more than 1 run sound plays when the egon stops firing, in which case only the earliest entry in the list is stopped.
+		//This ensures no more than 1 of those is ever active at the same time.
+		gEngfuncs.pEventAPI->EV_StopSound(idx, CHAN_STATIC, EGON_SOUND_RUN);
+		
 		if ( iFireMode == FIRE_WIDE )
 			gEngfuncs.pEventAPI->EV_PlaySound( idx, origin, CHAN_STATIC, EGON_SOUND_RUN, 0.98, ATTN_NORM, 0, 125 );
 		else

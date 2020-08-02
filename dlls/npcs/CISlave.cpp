@@ -90,9 +90,16 @@ int CISlave::IRelationship( CBaseEntity *pTarget )
 	if ( (pTarget->IsPlayer()) )
 		if ( (pev->spawnflags & SF_MONSTER_WAIT_UNTIL_PROVOKED ) && ! (m_afMemory & bits_MEMORY_PROVOKED ))
 			return R_NO;
-	return CBaseMonster::IRelationship( pTarget );
+	
+	return CSquadMonster::IRelationship( pTarget );
 }
 
+void CISlave::UpdateOnRemove()
+{
+	CSquadMonster::UpdateOnRemove();
+
+	ClearBeams();
+}
 
 void CISlave :: CallForHelp( const char *szClassname, float flDist, EHANDLE hEnemy, Vector &vecLocation )
 {

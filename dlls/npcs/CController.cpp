@@ -333,7 +333,24 @@ void CController :: Precache()
 
 	UTIL_PrecacheOther( "controller_energy_ball" );
 	UTIL_PrecacheOther( "controller_head_ball" );
-}	
+}
+
+void CController::UpdateOnRemove()
+{
+	CSquadMonster::UpdateOnRemove();
+
+	if (m_pBall[0])
+	{
+		UTIL_Remove(m_pBall[0]);
+		m_pBall[0] = nullptr;
+	}
+
+	if (m_pBall[1])
+	{
+		UTIL_Remove(m_pBall[1]);
+		m_pBall[1] = nullptr;
+	}
+}
 
 //=========================================================
 // AI Schedules Specific to this monster

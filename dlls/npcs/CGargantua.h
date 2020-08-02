@@ -80,6 +80,7 @@ public:
 	void TraceAttack(entvars_t* pevAttacker, float flDamage, Vector vecDir, TraceResult* ptr,
 	                 int bitsDamageType) override;
 	void HandleAnimEvent(MonsterEvent_t* pEvent) override;
+	void UpdateOnRemove() override;
 
 	BOOL CheckMeleeAttack1(float flDot, float flDist) override; // Swipe
 	BOOL CheckMeleeAttack2(float flDot, float flDist) override; // Flames

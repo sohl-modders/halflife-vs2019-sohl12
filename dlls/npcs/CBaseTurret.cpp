@@ -582,6 +582,17 @@ void CBaseTurret::Deploy(void)
 	m_flLastSight = gpGlobals->time + m_flMaxWait;
 }
 
+void CBaseTurret::UpdateOnRemove()
+{
+	CBaseMonster::UpdateOnRemove();
+
+	if (m_pEyeGlow)
+	{
+		UTIL_Remove(m_pEyeGlow);
+		m_pEyeGlow = nullptr;
+	}
+}
+
 void CBaseTurret::Retire(void)
 {
 	// make the turret level

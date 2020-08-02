@@ -520,12 +520,10 @@ void CWorld::Precache(void)
 	///!!!LATER - do we want a sound ent in deathmatch? (sjb)
 	//pSoundEnt = CBaseEntity::Create( "soundent", g_vecZero, g_vecZero, edict() );
 	pSoundEnt = GetClassPtr(static_cast<CSoundEnt*>(nullptr));
-	pSoundEnt->Spawn();
-
-	if (!pSoundEnt)
-	{
+	if (pSoundEnt)
+		pSoundEnt->Spawn();
+	else
 		ALERT(at_console, "**COULD NOT CREATE SOUNDENT**\n");
-	}
 
 	InitBodyQue();
 

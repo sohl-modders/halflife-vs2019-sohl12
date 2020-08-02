@@ -31,6 +31,7 @@ public:
 	int BloodColor(void) override { return BLOOD_COLOR_YELLOW; }
 	void Killed(entvars_t* pevAttacker, int iGib) override;
 	void GibMonster(void) override;
+	void UpdateOnRemove() override;
 
 	void SetObjectCollisionBox(void) override
 	{

@@ -24,6 +24,7 @@
 #include "doors.h"
 #include "trains.h"		// for func_traindoor
 #include "movewith.h"
+#include "weapons.h"
 
 extern void SetMovedir(entvars_t* ev);
 
@@ -933,7 +934,9 @@ void CBaseDoor::Blocked(CBaseEntity* pOther)
 {
 	//g-cont. simple recursive anouncer for parent system
 	//tell parent who blocked his
-	if (!FNullEnt(m_pMoveWith) && m_iLFlags & LF_PARENTMOVE) m_pMoveWith->Blocked(this);
+	if (!FNullEnt(m_pMoveWith) && m_iLFlags & LF_PARENTMOVE) 
+		m_pMoveWith->Blocked(this);
+	
 	if (!FNullEnt(m_pChildMoveWith))
 	{
 		if (m_pChildMoveWith == pOther)
@@ -945,17 +948,27 @@ void CBaseDoor::Blocked(CBaseEntity* pOther)
 
 	UTIL_AssignOrigin(this, pev->origin);
 	//make delay before retouching
-	if (gpGlobals->time < m_flBlockedTime) return;
+	if (gpGlobals->time < m_flBlockedTime) 
+		return;
+	
 	m_flBlockedTime = gpGlobals->time + 0.5;
 
-	if (pev->dmg) pOther->TakeDamage(pev, pev, pev->dmg, DMG_CRUSH);
+	if (pev->dmg) 
+		pOther->TakeDamage(pev, pev, pev->dmg, DMG_CRUSH);
+
+	// Detonate satchels
+	if (!strcmp("monster_satchel", STRING(pOther->pev->classname)))
+		((CSatchel*)pOther)->Use(this, this, USE_ON, 0);
 
 	if (m_flWait >= 0)
 	{
 		if (!FBitSet(pev->spawnflags, SF_DOOR_SILENT))
 			STOP_SOUND(ENT(pev), CHAN_STATIC, (char*)STRING(pev->noiseMoving));
-		if (m_toggle_state == TS_GOING_DOWN) DoorGoUp();
-		else DoorGoDown();
+		
+		if (m_toggle_state == TS_GOING_DOWN) 
+			DoorGoUp();
+		else 
+			DoorGoDown();
 	}
 
 	//what the hell does this ?
@@ -963,7 +976,6 @@ void CBaseDoor::Blocked(CBaseEntity* pOther)
 	SetNextThink(0);
 
 	CBaseEntity* pTarget = NULL;
-	CBaseDoor* pDoor = NULL;
 
 	// Block all door pieces with the same targetname here.
 	//LRC - in immediate mode don't do this, doors are expected to do it themselves.
@@ -978,7 +990,7 @@ void CBaseDoor::Blocked(CBaseEntity* pOther)
 
 			if (pTarget != this)
 			{
-				pDoor = GetClassPtr((CBaseDoor*)VARS(pTarget->pev));
+				CBaseDoor* pDoor = GetClassPtr((CBaseDoor*)VARS(pTarget->pev));
 				if (pDoor->m_flWait >= 0)
 				{
 					// avelocity == velocity!? LRC

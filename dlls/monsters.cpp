@@ -340,11 +340,10 @@ void CBaseMonster::Look(int iDistance)
 					{
 						if (pev->spawnflags & SF_MONSTER_WAIT_TILL_SEEN)
 						{
-							CBaseMonster* pClient;
+							CBaseMonster* pClient = pSightEnt->MyMonsterPointer();
 
-							pClient = pSightEnt->MyMonsterPointer();
 							// don't link this client in the list if the monster is wait till seen and the player isn't facing the monster
-							if (pSightEnt && !pClient->FInViewCone(this))
+							if (pClient && !pClient->FInViewCone(this))
 							{
 								// we're not in the player's view cone. 
 								continue;
@@ -3498,6 +3497,8 @@ CBaseEntity* CBaseMonster::DropItem(const char* pszItemName, const Vector& vecPo
 		// do we want this behavior to be default?! (sjb)
 		pItem->pev->velocity = pev->velocity;
 		pItem->pev->avelocity = Vector(0, RANDOM_FLOAT(0, 100), 0);
+		//Dropped items should never respawn (unless this rule changes in the future). - Solokiller
+		pItem->GetSpawnFlags() |= SF_NORESPAWN;
 		return pItem;
 	}
 	ALERT(at_console, "DropItem() - Didn't create!\n");

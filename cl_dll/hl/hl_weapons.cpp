@@ -379,6 +379,8 @@ Handles weapon firing, reloading, etc.
 */
 void CBasePlayerWeapon::ItemPostFrame( void )
 {
+	WeaponTick();
+	
 	if ((m_fInReload) && (m_pPlayer->m_flNextAttack <= 0.0))
 	{
 #if 0 // FIXME, need ammo on client to make this work right

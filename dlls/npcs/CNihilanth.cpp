@@ -220,6 +220,25 @@ void CNihilanth :: Spawn( void )
 	*/
 }
 
+void CNihilanth::UpdateOnRemove()
+{
+	CBaseMonster::UpdateOnRemove();
+
+	if (m_pBall)
+	{
+		UTIL_Remove(m_pBall);
+		m_pBall = nullptr;
+	}
+
+	for (auto& hSphere : m_hSphere)
+	{
+		if (CBaseEntity* pSphere = hSphere)
+		{
+			UTIL_Remove(pSphere);
+			hSphere = nullptr;
+		}
+	}
+}
 
 void CNihilanth::Precache( void )
 {

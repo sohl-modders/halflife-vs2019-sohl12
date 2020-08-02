@@ -147,8 +147,10 @@ void CCrowbar::PrimaryAttack()
 {
 	if (! Swing( 1 ))
 	{
-		SetThink( &CCrowbar::SwingAgain );
-		SetNextThink( 0.1 );
+#ifndef CLIENT_DLL
+		SetThink(&CCrowbar::SwingAgain);
+		SetNextThink(0.1);
+#endif
 	}
 }
 
@@ -196,7 +198,6 @@ int CCrowbar::Swing( int fFirst )
 	PLAYBACK_EVENT_FULL( FEV_NOTHOST, m_pPlayer->edict(), m_usCrowbar, 
 	0.0, (float *)&g_vecZero, (float *)&g_vecZero, 0, 0, 0,
 	0.0, 0, 0.0 );
-
 
 	if ( tr.flFraction >= 1.0 )
 	{
@@ -306,14 +307,15 @@ int CCrowbar::Swing( int fFirst )
 		}
 
 		m_pPlayer->m_iWeaponVolume = flVol * CROWBAR_WALLHIT_VOLUME;
-#endif
-		m_flNextPrimaryAttack = GetNextAttackDelay(0.25);
 		
 		SetThink( &CCrowbar::Smack );
 		SetNextThink( 0.2 );
+#endif
 
+		m_flNextPrimaryAttack = GetNextAttackDelay(0.25);
 		
 	}
+	
 	return fDidHit;
 }
 

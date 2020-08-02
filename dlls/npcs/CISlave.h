@@ -35,6 +35,7 @@ public:
 	void SetYawSpeed(void) override;
 	int ISoundMask(void) override;
 	int Classify(void) override;
+	void UpdateOnRemove() override;
 	int IRelationship(CBaseEntity* pTarget) override;
 	void HandleAnimEvent(MonsterEvent_t* pEvent) override;
 	BOOL CheckRangeAttack1(float flDot, float flDist) override;

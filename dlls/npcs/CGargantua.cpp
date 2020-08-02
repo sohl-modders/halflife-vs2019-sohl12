@@ -121,7 +121,6 @@ void CStomp::Think(void)
 	}
 }
 
-
 void StreakSplash(const Vector& origin, const Vector& direction, int color, int count, int speed, int velocityRange)
 {
 	MESSAGE_BEGIN(MSG_PVS, SVC_TEMPENTITY, origin);
@@ -416,6 +415,18 @@ void CGargantua::FlameControls(float angleX, float angleY)
 	SetBoneController(1, m_flameX);
 }
 
+void CGargantua::UpdateOnRemove()
+{
+	CBaseMonster::UpdateOnRemove();
+
+	if (m_pEyeGlow)
+	{
+		UTIL_Remove(m_pEyeGlow);
+		m_pEyeGlow = nullptr;
+	}
+
+	FlameDestroy();
+}
 
 void CGargantua::FlameUpdate(void)
 {
