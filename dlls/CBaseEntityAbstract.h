@@ -24,6 +24,13 @@
 #include <com_model.h>
 #endif
 
+#define DECLARE_CLASS_NOBASE( thisClass )	\
+typedef thisClass ThisClass
+
+#define DECLARE_CLASS( thisClass, baseClass )	\
+DECLARE_CLASS_NOBASE( thisClass );				\
+typedef baseClass BaseClass
+
 using CEntBitSet = CBitSet<int>;
 
 class CBaseEntityAbstract

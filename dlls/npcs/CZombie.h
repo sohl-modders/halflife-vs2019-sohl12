@@ -24,6 +24,8 @@
 class CZombie : public CBaseMonster
 {
 public:
+	DECLARE_CLASS(CZombie, CBaseMonster);
+	
 	void Spawn(void) override;
 	void Precache(void) override;
 	void SetYawSpeed(void) override;

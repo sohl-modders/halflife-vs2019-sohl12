@@ -30,6 +30,8 @@
 class CBarney : public CTalkMonster
 {
 public:
+	DECLARE_CLASS(CBarney, CTalkMonster);
+	
 	void Spawn() override;
 	void Precache() override;
 	void SetYawSpeed() override;

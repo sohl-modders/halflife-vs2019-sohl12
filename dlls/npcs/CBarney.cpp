@@ -13,8 +13,6 @@
 *
 ****/
 
-// UNDONE: Holster weapon?
-
 #include "extdll.h"
 #include "util.h"
 #include "cbase.h"
@@ -152,7 +150,7 @@ IMPLEMENT_CUSTOM_SCHEDULES(CBarney, CTalkMonster);
 
 void CBarney::StartTask(Task_t* pTask)
 {
-	CTalkMonster::StartTask(pTask);
+	BaseClass::StartTask(pTask);
 }
 
 void CBarney::RunTask(Task_t* pTask)
@@ -163,10 +161,10 @@ void CBarney::RunTask(Task_t* pTask)
 		if (HasEnemy() && (GetEnemy()->IsPlayer()))
 			SetFrameRate(1.5);
 		
-		CTalkMonster::RunTask(pTask);
+		BaseClass::RunTask(pTask);
 		break;
 	default:
-		CTalkMonster::RunTask(pTask);
+		BaseClass::RunTask(pTask);
 		break;
 	}
 }
@@ -348,7 +346,7 @@ void CBarney::HandleAnimEvent(MonsterEvent_t* pEvent)
 		break;
 
 	default:
-		CTalkMonster::HandleAnimEvent(pEvent);
+		BaseClass::HandleAnimEvent(pEvent);
 	}
 }
 
@@ -426,7 +424,7 @@ void CBarney::Precache()
 	// when a level is loaded, nobody will talk (time is reset to 0)
 	TalkInit();
 	
-	CTalkMonster::Precache();
+	BaseClass::Precache();
 }
 
 //=========================================================
@@ -434,7 +432,7 @@ void CBarney::Precache()
 //=========================================================
 void CBarney::TalkInit()
 {
-	CTalkMonster::TalkInit();
+	BaseClass::TalkInit();
 
 	// scientists speach group names (group names are in sentences.txt)
 
@@ -620,9 +618,8 @@ void CBarney::TraceAttack(entvars_t* pevAttacker, float flDamage, Vector vecDir,
 		break;
 	}
 
-	CTalkMonster::TraceAttack(pevAttacker, flDamage, vecDir, ptr, bitsDamageType);
+	BaseClass::TraceAttack(pevAttacker, flDamage, vecDir, ptr, bitsDamageType);
 }
-
 
 void CBarney::Killed(entvars_t* pevAttacker, int iGib)
 {
@@ -643,7 +640,7 @@ void CBarney::Killed(entvars_t* pevAttacker, int iGib)
 	}
 
 	SetUse(NULL);
-	CTalkMonster::Killed(pevAttacker, iGib);
+	BaseClass::Killed(pevAttacker, iGib);
 }
 
 //=========================================================
@@ -679,7 +676,7 @@ Schedule_t* CBarney::GetScheduleOfType(int Type)
 	case SCHED_IDLE_STAND:
 		// call base class default so that scientist will talk
 		// when standing during idle
-		psched = CTalkMonster::GetScheduleOfType(Type);
+		psched = BaseClass::GetScheduleOfType(Type);
 
 		if (psched == slIdleStand)
 		{
@@ -689,7 +686,7 @@ Schedule_t* CBarney::GetScheduleOfType(int Type)
 		return psched;
 	}
 
-	return CTalkMonster::GetScheduleOfType(Type);
+	return BaseClass::GetScheduleOfType(Type);
 }
 
 //=========================================================
@@ -782,12 +779,12 @@ Schedule_t* CBarney::GetSchedule()
 		break;
 	}
 
-	return CTalkMonster::GetSchedule();
+	return BaseClass::GetSchedule();
 }
 
 MONSTERSTATE CBarney::GetIdealState()
 {
-	return CTalkMonster::GetIdealState();
+	return BaseClass::GetIdealState();
 }
 
 void CBarney::DeclineFollowing()

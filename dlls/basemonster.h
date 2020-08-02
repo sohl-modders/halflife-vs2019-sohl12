@@ -91,7 +91,9 @@ public:
 	int m_cAmmoLoaded; // how much ammo is in the weapon (used to trigger reload anim sequences)
 
 	int m_afCapability; // tells us what a monster can/can't do.
-
+	void SetCapability(int afCapability) { m_afCapability = afCapability; }
+	int GetCapability() { return m_afCapability; }
+	
 	float m_flNextAttack; // cannot attack again until this time
 
 	int m_bitsDamageType; // what types of damage has monster (player) taken
