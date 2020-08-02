@@ -127,6 +127,7 @@ void CBreakable::KeyValue( KeyValueData* pkvd )
 	}
 	else if (FStrEq(pkvd->szKeyName, "m_iClass") )
 	{
+
 		m_iClass = atoi( pkvd->szValue );
 		pkvd->fHandled = TRUE;
 	}

@@ -40,11 +40,18 @@ public:
 
 	// these fields have been added in the process of reworking the state machine. (sjb)
 	EHANDLE m_hEnemy; // the entity that the monster is fighting.
+	bool HasEnemy() { return m_hEnemy != nullptr; }
+	void SetEnemy(EHANDLE hEnemy) { m_hEnemy = hEnemy; }
+	EHANDLE GetEnemy() const { return m_hEnemy; }
+	
 	EHANDLE m_hTargetEnt; // the entity that the monster is trying to reach
 	EHANDLE m_hOldEnemy[MAX_OLD_ENEMIES];
 	Vector m_vecOldEnemy[MAX_OLD_ENEMIES];
 
 	float m_flFieldOfView; // width of monster's field of view ( dot product )
+	void SetFieldOfView(float FieldOfView) { m_flFieldOfView = FieldOfView; }
+	float GetFieldOfView() const { return m_flFieldOfView; }
+	
 	float m_flWaitFinished; // if we're told to wait, this is the time that the wait will be over.
 	float m_flMoveWaitFinished;
 
@@ -92,7 +99,10 @@ public:
 
 	int m_lastDamageAmount; // how much damage did monster (player) last take
 	// time based damage counters, decr. 1 per 2 seconds
+	// 
 	int m_bloodColor; // color of blood particless
+	void SetBloodColor(int bloodColor) { m_bloodColor = bloodColor; }
+	int GetBloodColor() { return m_bloodColor; }
 
 	int m_failSchedule; // Schedule type to choose if current schedule fails
 
@@ -125,9 +135,12 @@ public:
 	// overrideable Monster member functions
 
 	// LRC- to allow level-designers to change monster allegiances
-	int m_iClass;
+	ClassType m_iClass;
+	int Classify() override { return m_iClass ? m_iClass : CLASS_NONE; }
+	bool HasClassify() const { return m_iClass != CLASS_NONE; }
+	ClassType GetClassify() const { return m_iClass; }
+
 	int m_iPlayerReact;
-	int Classify(void) override { return m_iClass ? m_iClass : CLASS_NONE; }
 
 	int BloodColor(void) override { return m_bloodColor; }
 
@@ -320,7 +333,7 @@ public:
 	{
 	};
 
-	BOOL GetEnemy(void);
+	BOOL FindEnemy(void);
 	void MakeDamageBloodDecal(int cCount, float flNoise, TraceResult* ptr, const Vector& vecDir);
 	void TraceAttack(entvars_t* pevAttacker, float flDamage, Vector vecDir, TraceResult* ptr,
 	                 int bitsDamageType) override;

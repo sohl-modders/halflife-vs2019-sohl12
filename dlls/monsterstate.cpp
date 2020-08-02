@@ -88,7 +88,7 @@ void CBaseMonster :: RunAI ( void )
 			// now filter conditions.
 			ClearConditions( IgnoreConditions() );
 
-			GetEnemy();
+			FindEnemy();
 		}
 
 		// do these calculations if monster has an enemy.

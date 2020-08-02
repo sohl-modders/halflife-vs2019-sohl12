@@ -3019,7 +3019,7 @@ void CBaseMonster::KeyValue(KeyValueData* pkvd)
 	}
 	else if (FStrEq(pkvd->szKeyName, "m_iClass")) //LRC
 	{
-		m_iClass = atoi(pkvd->szValue);
+		m_iClass = static_cast<ClassType>(atoi(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else if (FStrEq(pkvd->szKeyName, "m_iPlayerReact")) //LRC
@@ -3428,7 +3428,7 @@ BOOL CBaseMonster::BBoxFlat(void)
 //=========================================================
 // Get Enemy - tries to find the best suitable enemy for the monster.
 //=========================================================
-BOOL CBaseMonster::GetEnemy(void)
+BOOL CBaseMonster::FindEnemy(void)
 {
 	CBaseEntity* pNewEnemy;
 

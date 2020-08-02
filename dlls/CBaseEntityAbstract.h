@@ -1044,7 +1044,9 @@ public:
 	*/
 	void SetHealth(const float flHealth)
 	{
-		//TODO: this could cause inconsistent behavior if health < 1. - Solokiller
+		if (pev->max_health == 0)
+			pev->max_health = flHealth;
+		
 		pev->health = flHealth;
 	}
 

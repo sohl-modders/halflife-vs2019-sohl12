@@ -1415,7 +1415,7 @@ Schedule_t *CBaseMonster :: GetSchedule ( void )
 				// clear the current (dead) enemy and try to find another.
 				m_hEnemy = NULL;
 
-				if ( GetEnemy() )
+				if (FindEnemy() )
 				{
 					ClearConditions( bits_COND_ENEMY_DEAD );
 					return GetSchedule();

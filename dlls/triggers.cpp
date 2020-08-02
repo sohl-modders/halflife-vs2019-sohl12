@@ -1599,7 +1599,7 @@ public:
 
 	float	m_flRadius;
 	int		m_iszModel;
-	int		m_iClass;
+	ClassType m_iClass;
 	int		m_iPlayerReact;
 	int		m_iPrisoner;
 	int		m_iMonsterClip;
@@ -1673,7 +1673,7 @@ void CEnvCustomize :: KeyValue( KeyValueData *pkvd )
 	}
 	else if (FStrEq(pkvd->szKeyName, "m_iClass"))
 	{
-		m_iClass = atoi(pkvd->szValue);
+		m_iClass = static_cast<ClassType>(atoi(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else if (FStrEq(pkvd->szKeyName, "m_iPlayerReact"))
@@ -1951,7 +1951,7 @@ void CEnvCustomize :: Affect (CBaseEntity *pTarget, USE_TYPE useType)
 			ALERT(at_debug, " voicePitch=unchanged");
 	}
 
-	if (m_iClass != 0)
+	if (m_iClass != CLASS_NONE)
 	{
 		pMonster->m_iClass = m_iClass;
 		if (pev->spawnflags & SF_CUSTOM_DEBUG)

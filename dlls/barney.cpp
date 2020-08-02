@@ -203,7 +203,7 @@ DEFINE_CUSTOM_SCHEDULES(CBarney)
 	slBaFollow,
 	slBarneyEnemyDraw,
 	slBaFaceTarget,
-	slIdleBaStand,
+	slIdleBaStand
 };
 
 IMPLEMENT_CUSTOM_SCHEDULES(CBarney, CTalkMonster);
@@ -218,10 +218,9 @@ void CBarney::RunTask(Task_t* pTask)
 	switch (pTask->iTask)
 	{
 	case TASK_RANGE_ATTACK1:
-		if (m_hEnemy != NULL && (m_hEnemy->IsPlayer()))
-		{
-			pev->framerate = 1.5;
-		}
+		if (HasEnemy() && (GetEnemy()->IsPlayer()))
+			SetFrameRate(1.5);
+		
 		CTalkMonster::RunTask(pTask);
 		break;
 	default:
@@ -251,7 +250,7 @@ int CBarney::ISoundMask()
 //=========================================================
 int CBarney::Classify()
 {
-	return m_iClass ? m_iClass : CLASS_PLAYER_ALLY;
+	return HasClassify() ? GetClassify() : CLASS_PLAYER_ALLY;
 }
 
 //=========================================================
@@ -259,7 +258,7 @@ int CBarney::Classify()
 //=========================================================
 void CBarney::AlertSound()
 {
-	if (m_hEnemy != NULL)
+	if (HasEnemy())
 	{
 		if (FOkToSpeak())
 		{
@@ -308,13 +307,13 @@ BOOL CBarney::CheckRangeAttack1(float flDot, float flDist)
 		{
 			TraceResult tr;
 
-			Vector shootOrigin = pev->origin + Vector(0, 0, 55);
+			Vector shootOrigin = GetAbsOrigin() + Vector(0, 0, 55);
 			
-			CBaseEntity* pEnemy = m_hEnemy;
+			CBaseEntity* pEnemy = GetEnemy();
 			
-			Vector shootTarget = ((pEnemy->BodyTarget(shootOrigin) - pEnemy->pev->origin) + m_vecEnemyLKP);
+			Vector shootTarget = ((pEnemy->BodyTarget(shootOrigin) - pEnemy->GetAbsOrigin()) + m_vecEnemyLKP);
 			
-			UTIL_TraceLine(shootOrigin, shootTarget, dont_ignore_monsters, ENT(pev), &tr);
+			UTIL_TraceLine(shootOrigin, shootTarget, dont_ignore_monsters, edict(), &tr);
 			
 			m_checkAttackTime = gpGlobals->time + 1;
 			
@@ -339,9 +338,9 @@ BOOL CBarney::CheckRangeAttack1(float flDot, float flDist)
 //=========================================================
 void CBarney::BarneyFirePistol()
 {
-	UTIL_MakeVectors(pev->angles);
+	UTIL_MakeVectors(GetAbsAngles());
 	
-	Vector vecShootOrigin = pev->origin + Vector(0, 0, 55);
+	Vector vecShootOrigin = GetAbsOrigin() + Vector(0, 0, 55);
 	
 	Vector vecShootDir = ShootAtEnemy(vecShootOrigin);
 
@@ -355,9 +354,9 @@ void CBarney::BarneyFirePistol()
 	{
 		FireBullets(1, vecShootOrigin, vecShootDir, VECTOR_CONE_2DEGREES, 1024, BULLET_PLAYER_357);
 		if (RANDOM_LONG(0, 1))
-			EMIT_SOUND_DYN(ENT(pev), CHAN_WEAPON, "weapons/357_shot1.wav", 1, ATTN_NORM, 0, 100);
+			EMIT_SOUND_DYN(edict(), CHAN_WEAPON, "weapons/357_shot1.wav", 1, ATTN_NORM, 0, 100);
 		else
-			EMIT_SOUND_DYN(ENT(pev), CHAN_WEAPON, "weapons/357_shot2.wav", 1, ATTN_NORM, 0, 100);
+			EMIT_SOUND_DYN(edict(), CHAN_WEAPON, "weapons/357_shot2.wav", 1, ATTN_NORM, 0, 100);
 	}
 	else
 	{
@@ -370,10 +369,11 @@ void CBarney::BarneyFirePistol()
 			pitchShift = 0;
 		else
 			pitchShift -= 5;
-		EMIT_SOUND_DYN(ENT(pev), CHAN_WEAPON, "barney/ba_attack2.wav", 1, ATTN_NORM, 0, 100 + pitchShift);
+		
+		EMIT_SOUND_DYN(edict(), CHAN_WEAPON, "barney/ba_attack2.wav", 1, ATTN_NORM, 0, 100 + pitchShift);
 	}
 
-	CSoundEnt::InsertSound(bits_SOUND_COMBAT, pev->origin, 384, 0.3);
+	CSoundEnt::InsertSound(bits_SOUND_COMBAT, GetAbsOrigin(), 384, 0.3);
 
 	// UNDONE: Reload?
 	m_cAmmoLoaded--; // take away a bullet!
@@ -395,13 +395,13 @@ void CBarney::HandleAnimEvent(MonsterEvent_t* pEvent)
 
 	case BARNEY_AE_DRAW:
 		// barney's bodygroup switches here so he can pull gun from holster
-		pev->body = m_iBaseBody + BARNEY_BODY_GUNDRAWN;
+		SetBody(m_iBaseBody + BARNEY_BODY_GUNDRAWN);
 		m_fGunDrawn = TRUE;
 		break;
 
 	case BARNEY_AE_HOLSTER:
 		// change bodygroup to replace gun in holster
-		pev->body = m_iBaseBody + BARNEY_BODY_GUNHOLSTERED;
+		SetBody(m_iBaseBody + BARNEY_BODY_GUNHOLSTERED);
 		m_fGunDrawn = FALSE;
 		break;
 
@@ -417,31 +417,32 @@ void CBarney::Spawn()
 {
 	Precache();
 
-	if (pev->model)
-		SetModel(pev->model); //LRC
+	if (HasModel())
+		SetModel(GetModelName()); //LRC
 	else
 		SetModel("models/barney.mdl");
 	
-	UTIL_SetSize(pev, VEC_HUMAN_HULL_MIN, VEC_HUMAN_HULL_MAX);
+	SetSize(VEC_HUMAN_HULL_MIN, VEC_HUMAN_HULL_MAX);
 
-	pev->solid = SOLID_SLIDEBOX;
+	SetSolidType(SOLID_SLIDEBOX);
 
-	pev->movetype = MOVETYPE_STEP;
-	
-	m_bloodColor = BLOOD_COLOR_RED;
+	SetMoveType(MOVETYPE_STEP);
 
-	if (pev->health == 0) //LRC
-		pev->health = gSkillData.barneyHealth;
+	SetBloodColor(BLOOD_COLOR_RED);
+
+	if (GetHealth() == 0) //LRC
+		SetHealth(gSkillData.barneyHealth);
 
 	// position of the eyes relative to monster's origin.
 	SetViewOffset(Vector(0, 0, 50));
 	
-	m_flFieldOfView = VIEW_FIELD_WIDE; // NOTE: we need a wide field of view so npc will notice player and say hello
+	SetFieldOfView(VIEW_FIELD_WIDE); // NOTE: we need a wide field of view so npc will notice player and say hello
 	
 	SetMonsterState(MONSTERSTATE_NONE);
 
-	m_iBaseBody = pev->body; //LRC
-	pev->body = m_iBaseBody + BARNEY_BODY_GUNHOLSTERED; // gun in holster
+	m_iBaseBody = GetBody(); //LRC
+	SetBody(m_iBaseBody + BARNEY_BODY_GUNHOLSTERED); // gun in holster
+	
 	m_fGunDrawn = FALSE;
 
 	m_afCapability = bits_CAP_HEAR | bits_CAP_TURN_HEAD | bits_CAP_DOORS_GROUP;
@@ -456,13 +457,20 @@ void CBarney::Spawn()
 //=========================================================
 void CBarney::Precache()
 {
-	if (pev->model)
-		PrecacheModel(pev->model); //LRC
+	if (HasModel())
+		PrecacheModel(GetModelName()); //LRC
 	else
 		PrecacheModel("models/barney.mdl");
 
 	PrecacheSound("barney/ba_attack1.wav");
-	PrecacheSound("barney/ba_attack2.wav");
+
+	if (pev->frags)
+	{
+		PrecacheSound("weapons/357_shot1.wav");
+		PrecacheSound("weapons/357_shot2.wav");
+	}
+	else
+		PrecacheSound("barney/ba_attack2.wav");
 
 	PrecacheSound("barney/ba_pain1.wav");
 	PrecacheSound("barney/ba_pain2.wav");
@@ -537,11 +545,12 @@ int CBarney::TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, float f
 {
 	// make sure friends talk about it if player hurts talkmonsters...
 	int ret = CTalkMonster::TakeDamage(pevInflictor, pevAttacker, flDamage, bitsDamageType);
-	if (!IsAlive() || pev->deadflag == DEAD_DYING)
+	if (!IsAlive() || GetDeadFlag() == DEAD_DYING)
 		return ret;
 
 	// LRC - if my reaction to the player has been overridden, don't do this stuff
-	if (m_iPlayerReact) return ret;
+	if (m_iPlayerReact) 
+		return ret;
 
 	if (GetMonsterState() != MONSTERSTATE_PRONE && (pevAttacker->flags & FL_CLIENT))
 	{
@@ -549,10 +558,10 @@ int CBarney::TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, float f
 
 		// This is a heurstic to determine if the player intended to harm me
 		// If I have an enemy, we can't establish intent (may just be crossfire)
-		if (m_hEnemy == NULL)
+		if (!HasEnemy())
 		{
 			// If the player was facing directly at me, or I'm already suspicious, get mad
-			if ((m_afMemory & bits_MEMORY_SUSPICIOUS) || IsFacing(pevAttacker, pev->origin))
+			if ((m_afMemory & bits_MEMORY_SUSPICIOUS) || IsFacing(pevAttacker, GetAbsOrigin()))
 			{
 				// Alright, now I'm pissed!
 				if (m_iszSpeakAs)
@@ -587,7 +596,7 @@ int CBarney::TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, float f
 				Remember(bits_MEMORY_SUSPICIOUS);
 			}
 		}
-		else if (!(m_hEnemy->IsPlayer()) && pev->deadflag == DEAD_NO)
+		else if (!(GetEnemy()->IsPlayer()) && GetDeadFlag() == DEAD_NO)
 		{
 			if (m_iszSpeakAs)
 			{
@@ -618,11 +627,11 @@ void CBarney::PainSound()
 
 	switch (RANDOM_LONG(0, 2))
 	{
-	case 0: EMIT_SOUND_DYN(ENT(pev), CHAN_VOICE, "barney/ba_pain1.wav", 1, ATTN_NORM, 0, GetVoicePitch());
+	case 0: EMIT_SOUND_DYN(edict(), CHAN_VOICE, "barney/ba_pain1.wav", 1, ATTN_NORM, 0, GetVoicePitch());
 		break;
-	case 1: EMIT_SOUND_DYN(ENT(pev), CHAN_VOICE, "barney/ba_pain2.wav", 1, ATTN_NORM, 0, GetVoicePitch());
+	case 1: EMIT_SOUND_DYN(edict(), CHAN_VOICE, "barney/ba_pain2.wav", 1, ATTN_NORM, 0, GetVoicePitch());
 		break;
-	case 2: EMIT_SOUND_DYN(ENT(pev), CHAN_VOICE, "barney/ba_pain3.wav", 1, ATTN_NORM, 0, GetVoicePitch());
+	case 2: EMIT_SOUND_DYN(edict(), CHAN_VOICE, "barney/ba_pain3.wav", 1, ATTN_NORM, 0, GetVoicePitch());
 		break;
 	}
 }
@@ -634,11 +643,11 @@ void CBarney::DeathSound()
 {
 	switch (RANDOM_LONG(0, 2))
 	{
-	case 0: EMIT_SOUND_DYN(ENT(pev), CHAN_VOICE, "barney/ba_die1.wav", 1, ATTN_NORM, 0, GetVoicePitch());
+	case 0: EMIT_SOUND_DYN(edict(), CHAN_VOICE, "barney/ba_die1.wav", 1, ATTN_NORM, 0, GetVoicePitch());
 		break;
-	case 1: EMIT_SOUND_DYN(ENT(pev), CHAN_VOICE, "barney/ba_die2.wav", 1, ATTN_NORM, 0, GetVoicePitch());
+	case 1: EMIT_SOUND_DYN(edict(), CHAN_VOICE, "barney/ba_die2.wav", 1, ATTN_NORM, 0, GetVoicePitch());
 		break;
-	case 2: EMIT_SOUND_DYN(ENT(pev), CHAN_VOICE, "barney/ba_die3.wav", 1, ATTN_NORM, 0, GetVoicePitch());
+	case 2: EMIT_SOUND_DYN(edict(), CHAN_VOICE, "barney/ba_die3.wav", 1, ATTN_NORM, 0, GetVoicePitch());
 		break;
 	}
 }
@@ -675,13 +684,13 @@ void CBarney::TraceAttack(entvars_t* pevAttacker, float flDamage, Vector vecDir,
 
 void CBarney::Killed(entvars_t* pevAttacker, int iGib)
 {
-	if (pev->body < m_iBaseBody + BARNEY_BODY_GUNGONE && !(pev->spawnflags & SF_MONSTER_NO_WPN_DROP))
+	if (GetBody() < m_iBaseBody + BARNEY_BODY_GUNGONE && !(pev->spawnflags & SF_MONSTER_NO_WPN_DROP))
 	{
 		// drop the gun!
 		Vector vecGunPos;
 		Vector vecGunAngles;
 
-		pev->body = m_iBaseBody + BARNEY_BODY_GUNGONE;
+		SetBody(m_iBaseBody + BARNEY_BODY_GUNGONE);
 
 		GetAttachment(0, vecGunPos, vecGunAngles);
 
@@ -698,7 +707,6 @@ void CBarney::Killed(entvars_t* pevAttacker, int iGib)
 //=========================================================
 // AI Schedules Specific to this monster
 //=========================================================
-
 Schedule_t* CBarney::GetScheduleOfType(int Type)
 {
 	Schedule_t* psched;
@@ -706,7 +714,7 @@ Schedule_t* CBarney::GetScheduleOfType(int Type)
 	switch (Type)
 	{
 	case SCHED_ARM_WEAPON:
-		if (m_hEnemy != NULL)
+		if (HasEnemy())
 		{
 			// face enemy, then draw.
 			return slBarneyEnemyDraw;
@@ -748,6 +756,7 @@ Schedule_t* CBarney::GetScheduleOfType(int Type)
 // monster's member function to get a pointer to a schedule
 // of the proper type.
 //=========================================================
+// ReSharper disable once CppNotAllPathsReturnValue
 Schedule_t* CBarney::GetSchedule()
 {
 	if (HasConditions(bits_COND_HEAR_SOUND))
@@ -758,6 +767,7 @@ Schedule_t* CBarney::GetSchedule()
 		if (pSound && (pSound->m_iType & bits_SOUND_DANGER))
 			return GetScheduleOfType(SCHED_TAKE_COVER_FROM_BEST_SOUND);
 	}
+	
 	if (HasConditions(bits_COND_ENEMY_DEAD) && FOkToSpeak())
 	{
 		// Hey, be careful with that
@@ -828,8 +838,6 @@ Schedule_t* CBarney::GetSchedule()
 		// try to say something about smells
 		TrySmellTalk();
 		break;
-	default:
-		return CTalkMonster::GetSchedule();
 	}
 
 	return CTalkMonster::GetSchedule();
@@ -892,8 +900,11 @@ void CDeadBarney::Spawn()
 	SetModel("models/barney.mdl");
 
 	pev->effects = 0;
+	
 	pev->yaw_speed = 8;
+	
 	pev->sequence = 0;
+	
 	m_bloodColor = BLOOD_COLOR_RED;
 
 	pev->sequence = LookupSequence(m_szPoses[m_iPose]);
