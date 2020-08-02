@@ -12,13 +12,6 @@
 *   use or distribution of this code by or to any unlicensed person is illegal.
 *
 ****/
-/*
-
-===== monsters.cpp ========================================================
-
-  Monster-related utility code
-
-*/
 
 #include "extdll.h"
 #include "util.h"
@@ -29,10 +22,13 @@
 #include "saverestore.h"
 #include "weapons.h"
 #include "scripted.h"
-#include "squadmonster.h"
 #include "decals.h"
 #include "soundent.h"
 #include "gamerules.h"
+
+#ifndef CSQUADMONSTER_H
+#include "npcs/CSquadMonster.h"
+#endif
 
 #define MONSTER_CUT_CORNER_DIST		8 // 8 means the monster's bounding box is contained without the box of the node in WC
 

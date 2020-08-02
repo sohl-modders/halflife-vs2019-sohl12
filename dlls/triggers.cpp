@@ -27,7 +27,11 @@
 #include "saverestore.h"
 #include "trains.h"			// trigger_camera has train functionality
 #include "gamerules.h"
-#include "talkmonster.h"
+
+#ifndef CTALKMONSTER_H
+#include "npcs/CTalkMonster.h"
+#endif
+
 #include "weapons.h" //LRC, for trigger_hevcharge
 #include "movewith.h" //LRC
 #include "locus.h" //LRC

@@ -196,8 +196,6 @@ int gmsgTeamNames = 0;
 int gmsgStatusIcon = 0; //LRC
 int gmsgStatusText = 0;
 int gmsgStatusValue = 0; 
-int gmsg2DSound = 0; // Admer
-
 
 void LinkUserMessages( void )
 {
@@ -230,8 +228,6 @@ void LinkUserMessages( void )
 	gmsgHUDColor = REG_USER_MSG( "HUDColor", 4 );		//LRC
 	gmsgAddShine = REG_USER_MSG( "AddShine", -1 );      //LRC
 	gmsgParticle = REG_USER_MSG( "Particle", -1);		//LRC
-
-	gmsg2DSound = REG_USER_MSG( "Sound2D", -1 );		// Admer
 
 	gmsgShowGameTitle = REG_USER_MSG("GameTitle", 1);
 	gmsgDeathMsg = REG_USER_MSG( "DeathMsg", -1 );

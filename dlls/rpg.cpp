@@ -12,19 +12,14 @@
 *   without written permission from Valve LLC.
 *
 ****/
-#if !defined( OEM_BUILD )
 
 #include "extdll.h"
 #include "util.h"
 #include "cbase.h"
 #include "monsters.h"
 #include "weapons.h"
-#include "nodes.h"
 #include "player.h"
 #include "gamerules.h"
-
-
-
 
 enum rpg_e {
 	RPG_IDLE = 0,
@@ -629,6 +624,5 @@ class CRpgAmmo : public CBasePlayerAmmo
 		return FALSE;
 	}
 };
-LINK_ENTITY_TO_CLASS( ammo_rpgclip, CRpgAmmo );
 
-#endif
+LINK_ENTITY_TO_CLASS( ammo_rpgclip, CRpgAmmo );

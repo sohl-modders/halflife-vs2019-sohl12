@@ -255,19 +255,3 @@ int CHud :: MsgFunc_Concuss( const char *pszName, int iSize, void *pbuf )
 
 // In view.cpp
 extern vec3_t v_origin;
-
-int CHud::MsgFunc_Sound2D( const char* name, int size, void* buffer )
-{
-	BEGIN_READ( buffer, size );
-
-	float soundVolume = READ_BYTE() / 255.f;
-	int soundChannel = READ_BYTE();
-	int soundPitch = READ_BYTE();
-	char* soundName = READ_STRING();
-
-	int index = gEngfuncs.GetLocalPlayer()->index;
-
-	gEngfuncs.pEventAPI->EV_PlaySound( index, v_origin, soundChannel, soundName, soundVolume, ATTN_NONE, 0, soundPitch );
-
-	return 1;
-}

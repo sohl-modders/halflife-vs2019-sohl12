@@ -1461,9 +1461,8 @@ int V_FindViewModelByWeaponModel(int weaponindex)
 
 		return 0;
 	}
-	else
-		return 0;
 
+	return 0;
 }
 
 

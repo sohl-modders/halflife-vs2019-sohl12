@@ -21,7 +21,11 @@
 #include "cbase.h"
 #include "weapons.h"
 #include "player.h"
-#include "talkmonster.h"
+
+#ifndef CTALKMONSTER_H
+#include "npcs/CTalkMonster.h"
+#endif
+
 #include "gamerules.h"
 
 #if !defined ( _WIN32 )
