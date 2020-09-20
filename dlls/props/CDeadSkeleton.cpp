@@ -16,29 +16,36 @@
 #include "extdll.h"
 #include "util.h"
 #include "cbase.h"
-#include "monsters.h"
-#include "squadmonster.h"
 #include "weapons.h"
 
-#include "npcs/CHGrunt.h"
+#include "CDeadSkeleton.h"
 
-#include "CDeadHGrunt.h"
-
-const char* CDeadHGrunt::m_szPoses[] = {
-	"deadstomach",
-	"deadside",
-	"deadsitting"
+const char* CDeadSkeleton::m_szPoses[] = {
+	"s_onback",
+	"s_sitting",
+	"dead_against_wall",
+	"dead_stomach"
 };
 
 //=========================================================
 // Link
 //=========================================================
-LINK_ENTITY_TO_CLASS(monster_hgrunt_dead, CDeadHGrunt);
+LINK_ENTITY_TO_CLASS(monster_skeleton_dead, CDeadSkeleton);
+
+//=========================================================
+// Save and Restore
+//=========================================================
+TYPEDESCRIPTION CDeadSkeleton::m_SaveData[] =
+{
+	DEFINE_FIELD(CDeadSkeleton, m_iPose, FIELD_INTEGER),
+};
+
+IMPLEMENT_SAVERESTORE(CDeadSkeleton, CBaseMonster);
 
 //=========================================================
 // KeyValue
 //=========================================================
-void CDeadHGrunt::KeyValue(KeyValueData* pkvd)
+void CDeadSkeleton::KeyValue(KeyValueData* pkvd)
 {
 	if (FStrEq(pkvd->szKeyName, "pose"))
 	{
@@ -52,74 +59,34 @@ void CDeadHGrunt::KeyValue(KeyValueData* pkvd)
 //=========================================================
 // Spawn
 //=========================================================
-void CDeadHGrunt::Spawn()
+void CDeadSkeleton::Spawn()
 {
 	Precache();
 
 	if (pev->model)
 		SET_MODEL(ENT(pev), STRING(pev->model)); //LRC
 	else
-		SET_MODEL(ENT(pev), "models/hgrunt.mdl");
+		SET_MODEL(ENT(pev), "models/skeleton.mdl");
 
 	pev->effects = 0;
 	pev->yaw_speed = 8;
 	pev->sequence = 0;
-	m_bloodColor = BLOOD_COLOR_RED;
+	
+	m_bloodColor = DONT_BLEED;
 
+	if ((m_iPose == -1))
+		m_iPose = RANDOM_LONG(0, ARRAYSIZE(m_szPoses) - 1);
+	
 	pev->sequence = LookupSequence(m_szPoses[m_iPose]);
+
 	if (pev->sequence == -1)
 	{
-		ALERT(at_debug, "Dead hgrunt with bad pose\n");
+		ALERT(at_console, "Dead skeleton with bad pose\n");
+		pev->sequence = 0;
 	}
 
 	// Corpses have less health
 	pev->health = 8;
-
-	if ((m_iPose == -1))
-		m_iPose = RANDOM_LONG(0, ARRAYSIZE(m_szPoses) - 1);
-
-	const int oldBody = pev->body;
-	pev->body = 0;
-
-	if (oldBody >= 5 && oldBody <= 7)
-		pev->skin = 1;
-	else
-		pev->skin = 0;
-
-	switch (pev->weapons)
-	{
-	case 0: // MP5
-		SetBodygroup(HGruntBodygroup::Weapons, HGruntWeapon::MP5);
-		break;
-	case 1: // Shotgun
-		SetBodygroup(HGruntBodygroup::Weapons, HGruntWeapon::Shotgun);
-		break;
-	case 2: // No gun
-		SetBodygroup(HGruntBodygroup::Weapons, HGruntWeapon::None);
-		break;
-	}
-
-	switch (oldBody)
-	{
-	case 2: // Gasmask, no gun
-		SetBodygroup(HGruntBodygroup::Weapons, HGruntWeapon::None); //fall through
-	case 0:
-	case 6: // Gasmask (white/black)
-		SetBodygroup(HGruntBodygroup::Heads, HGruntHead::Grunt);
-		break;
-	case 3: // Commander, no gun
-		SetBodygroup(HGruntBodygroup::Weapons, HGruntWeapon::None); //fall through
-	case 1: // Commander
-		SetBodygroup(HGruntBodygroup::Heads, HGruntHead::Commander);
-		break;
-	case 4:
-	case 7: // Skimask (white/black)
-		SetBodygroup(HGruntBodygroup::Heads, HGruntHead::Shotgun);
-		break;
-	case 5: // Commander
-		SetBodygroup(HGruntBodygroup::Heads, HGruntHead::M203);
-		break;
-	}
 
 	MonsterInitDead();
 }
@@ -127,10 +94,10 @@ void CDeadHGrunt::Spawn()
 //=========================================================
 // Precache
 //=========================================================
-void CDeadHGrunt::Precache()
+void CDeadSkeleton::Precache()
 {
 	if (pev->model)
 		PRECACHE_MODEL((char*)STRING(pev->model)); //LRC
 	else
-		PRECACHE_MODEL("models/hgrunt.mdl");
+		PRECACHE_MODEL("models/skeleton.mdl");
 }

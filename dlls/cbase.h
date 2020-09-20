@@ -145,6 +145,7 @@ class CBaseMonster;
 class CBasePlayerItem;
 class CSquadMonster;
 class CThinker;
+class CSquadTalkMonster;
 
 #define	SF_NORESPAWN	( 1 << 30 )// !!!set this bit on guns and stuff that should never respawn.
 
@@ -166,6 +167,12 @@ public:
 
 	CBaseEntity * operator = (CBaseEntity *pEntity);
 	CBaseEntity * operator ->();
+
+	template<typename T>
+	T* Entity()
+	{
+		return static_cast<T*>(operator CBaseEntity * ());
+	}
 };
 
 /**
@@ -309,6 +316,7 @@ public:
 //	virtual BOOL    IsTriggered( CBaseEntity *pActivator ) {return TRUE;}
 	virtual CBaseMonster *MyMonsterPointer( void ) { return NULL;}
 	virtual CSquadMonster *MySquadMonsterPointer( void ) { return NULL;}
+	virtual CSquadTalkMonster* MySquadTalkMonsterPointer(void) { return nullptr; }
 	virtual	int		GetToggleState( void ) { return TS_AT_TOP; }
 	virtual void	AddPoints( int score, BOOL bAllowNegativeScore ) {}
 	virtual void	AddPointsToTeam( int score, BOOL bAllowNegativeScore ) {}
@@ -398,6 +406,7 @@ public:
 	{ 
 		if ( !pent )
 			pent = ENT(0);
+		
 		CBaseEntity *pEnt = (CBaseEntity *)GET_PRIVATE(pent); 
 		return pEnt; 
 	}
@@ -405,6 +414,18 @@ public:
 	static CBaseEntity *Instance( entvars_t *pev ) { return Instance( ENT( pev ) ); }
 	static CBaseEntity *Instance( int eoffset) { return Instance( ENT( eoffset) ); }
 
+	template<typename T>
+	static T* Instance(edict_t* pent)
+	{
+		if (!pent)
+			pent = ENT(0);
+		CBaseEntity* pEnt = (CBaseEntity*)GET_PRIVATE(pent);
+		return static_cast<T*>(pEnt);
+	}
+
+	template<typename T>
+	static T* Instance(entvars_t* pev) { return Instance<T>(ENT(pev)); }
+	
 	CBaseMonster *GetMonsterPointer( entvars_t *pevMonster ) 
 	{ 
 		CBaseEntity *pEntity = Instance( pevMonster );
@@ -412,6 +433,7 @@ public:
 			return pEntity->MyMonsterPointer();
 		return NULL;
 	}
+	
 	CBaseMonster *GetMonsterPointer( edict_t *pentMonster ) 
 	{ 
 		CBaseEntity *pEntity = Instance( pentMonster );

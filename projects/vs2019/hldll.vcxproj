@@ -111,11 +111,13 @@
     <ClCompile Include="..\..\dlls\animation.cpp" />
     <ClCompile Include="..\..\dlls\bmodels.cpp" />
     <ClCompile Include="..\..\dlls\buttons.cpp" />
+    <ClCompile Include="..\..\dlls\CAllyMonster.cpp" />
     <ClCompile Include="..\..\dlls\cbase.cpp" />
     <ClCompile Include="..\..\dlls\client.cpp" />
     <ClCompile Include="..\..\dlls\combat.cpp" />
     <ClCompile Include="..\..\dlls\crossbow.cpp" />
     <ClCompile Include="..\..\dlls\crowbar.cpp" />
+    <ClCompile Include="..\..\dlls\CSquadTalkMonster.cpp" />
     <ClCompile Include="..\..\dlls\defaultai.cpp" />
     <ClCompile Include="..\..\dlls\doors.cpp" />
     <ClCompile Include="..\..\dlls\effects.cpp" />
@@ -140,6 +142,10 @@
     <ClCompile Include="..\..\dlls\h_cycler.cpp" />
     <ClCompile Include="..\..\dlls\h_export.cpp" />
     <ClCompile Include="..\..\dlls\items.cpp" />
+    <ClCompile Include="..\..\dlls\items\CGenericItem.cpp" />
+    <ClCompile Include="..\..\dlls\items\CNuclearBomb.cpp" />
+    <ClCompile Include="..\..\dlls\items\CNuclearBombButton.cpp" />
+    <ClCompile Include="..\..\dlls\items\CNuclearBombTimer.cpp" />
     <ClCompile Include="..\..\dlls\lights.cpp" />
     <ClCompile Include="..\..\dlls\locus.cpp" />
     <ClCompile Include="..\..\dlls\maprules.cpp" />
@@ -176,6 +182,8 @@
     <ClCompile Include="..\..\dlls\npcs\CIchthyosaur.cpp" />
     <ClCompile Include="..\..\dlls\npcs\CISlave.cpp" />
     <ClCompile Include="..\..\dlls\npcs\CLeech.cpp" />
+    <ClCompile Include="..\..\dlls\npcs\CMaleAssassin.cpp" />
+    <ClCompile Include="..\..\dlls\npcs\CMaleAssassinRepel.cpp" />
     <ClCompile Include="..\..\dlls\npcs\CMiniTurret.cpp" />
     <ClCompile Include="..\..\dlls\npcs\CNihilanth.cpp" />
     <ClCompile Include="..\..\dlls\npcs\COsprey.cpp" />
@@ -187,6 +195,8 @@
     <ClCompile Include="..\..\dlls\npcs\CTentacleMaw.cpp" />
     <ClCompile Include="..\..\dlls\npcs\CTurret.cpp" />
     <ClCompile Include="..\..\dlls\npcs\CZombie.cpp" />
+    <ClCompile Include="..\..\dlls\npcs\CZombieBarney.cpp" />
+    <ClCompile Include="..\..\dlls\npcs\CZombieSoldier.cpp" />
     <ClCompile Include="..\..\dlls\observer.cpp" />
     <ClCompile Include="..\..\dlls\pathcorner.cpp" />
     <ClCompile Include="..\..\dlls\plane.cpp" />
@@ -202,7 +212,9 @@
     <ClCompile Include="..\..\dlls\props\CDeadBarney.cpp" />
     <ClCompile Include="..\..\dlls\props\CDeadGenericMonster.cpp" />
     <ClCompile Include="..\..\dlls\props\CDeadHGrunt.cpp" />
+    <ClCompile Include="..\..\dlls\props\CDeadMaleAssassin.cpp" />
     <ClCompile Include="..\..\dlls\props\CDeadScientist.cpp" />
+    <ClCompile Include="..\..\dlls\props\CDeadSkeleton.cpp" />
     <ClCompile Include="..\..\dlls\props\CSittingScientist.cpp" />
     <ClCompile Include="..\..\dlls\python.cpp" />
     <ClCompile Include="..\..\dlls\rpg.cpp" />
@@ -219,8 +231,8 @@
     <ClCompile Include="..\..\dlls\squeakgrenade.cpp" />
     <ClCompile Include="..\..\dlls\subs.cpp" />
     <ClCompile Include="..\..\dlls\talkmonster.cpp" />
+    <ClCompile Include="..\..\dlls\Tasks.cpp" />
     <ClCompile Include="..\..\dlls\teamplay_gamerules.cpp" />
-    <ClCompile Include="..\..\dlls\tempmonster.cpp" />
     <ClCompile Include="..\..\dlls\triggers.cpp" />
     <ClCompile Include="..\..\dlls\tripmine.cpp" />
     <ClCompile Include="..\..\dlls\util.cpp" />
@@ -240,9 +252,11 @@
     <ClInclude Include="..\..\dlls\activitymap.h" />
     <ClInclude Include="..\..\dlls\animation.h" />
     <ClInclude Include="..\..\dlls\basemonster.h" />
+    <ClInclude Include="..\..\dlls\CAllyMonster.h" />
     <ClInclude Include="..\..\dlls\cbase.h" />
     <ClInclude Include="..\..\dlls\cdll_dll.h" />
     <ClInclude Include="..\..\dlls\client.h" />
+    <ClInclude Include="..\..\dlls\CSquadTalkMonster.h" />
     <ClInclude Include="..\..\dlls\decals.h" />
     <ClInclude Include="..\..\dlls\defaultai.h" />
     <ClInclude Include="..\..\dlls\doors.h" />
@@ -253,10 +267,13 @@
     <ClInclude Include="..\..\dlls\enginecallback.h" />
     <ClInclude Include="..\..\dlls\explode.h" />
     <ClInclude Include="..\..\dlls\extdll.h" />
-    <ClInclude Include="..\..\dlls\flyingmonster.h" />
     <ClInclude Include="..\..\dlls\func_break.h" />
     <ClInclude Include="..\..\dlls\gamerules.h" />
     <ClInclude Include="..\..\dlls\items.h" />
+    <ClInclude Include="..\..\dlls\items\CGenericItem.h" />
+    <ClInclude Include="..\..\dlls\items\CNuclearBomb.h" />
+    <ClInclude Include="..\..\dlls\items\CNuclearBombButton.h" />
+    <ClInclude Include="..\..\dlls\items\CNuclearBombTimer.h" />
     <ClInclude Include="..\..\dlls\locus.h" />
     <ClInclude Include="..\..\dlls\monsterevent.h" />
     <ClInclude Include="..\..\dlls\monsters.h" />
@@ -287,6 +304,8 @@
     <ClInclude Include="..\..\dlls\npcs\CIchthyosaur.h" />
     <ClInclude Include="..\..\dlls\npcs\CISlave.h" />
     <ClInclude Include="..\..\dlls\npcs\CLeech.h" />
+    <ClInclude Include="..\..\dlls\npcs\CMaleAssassin.h" />
+    <ClInclude Include="..\..\dlls\npcs\CMaleAssassinRepel.h" />
     <ClInclude Include="..\..\dlls\npcs\CMiniTurret.h" />
     <ClInclude Include="..\..\dlls\npcs\CNihilanth.h" />
     <ClInclude Include="..\..\dlls\npcs\COsprey.h" />
@@ -298,6 +317,8 @@
     <ClInclude Include="..\..\dlls\npcs\CTentacleMaw.h" />
     <ClInclude Include="..\..\dlls\npcs\CTurret.h" />
     <ClInclude Include="..\..\dlls\npcs\CZombie.h" />
+    <ClInclude Include="..\..\dlls\npcs\CZombieBarney.h" />
+    <ClInclude Include="..\..\dlls\npcs\CZombieSoldier.h" />
     <ClInclude Include="..\..\dlls\plane.h" />
     <ClInclude Include="..\..\dlls\player.h" />
     <ClInclude Include="..\..\dlls\projectiles\CApacheHVR.h" />
@@ -310,7 +331,9 @@
     <ClInclude Include="..\..\dlls\props\CDeadBarney.h" />
     <ClInclude Include="..\..\dlls\props\CDeadGenericMonster.h" />
     <ClInclude Include="..\..\dlls\props\CDeadHGrunt.h" />
+    <ClInclude Include="..\..\dlls\props\CDeadMaleAssassin.h" />
     <ClInclude Include="..\..\dlls\props\CDeadScientist.h" />
+    <ClInclude Include="..\..\dlls\props\CDeadSkeleton.h" />
     <ClInclude Include="..\..\dlls\props\CSittingScientist.h" />
     <ClInclude Include="..\..\dlls\saverestore.h" />
     <ClInclude Include="..\..\dlls\schedule.h" />
@@ -321,6 +344,7 @@
     <ClInclude Include="..\..\dlls\spectator.h" />
     <ClInclude Include="..\..\dlls\squadmonster.h" />
     <ClInclude Include="..\..\dlls\talkmonster.h" />
+    <ClInclude Include="..\..\dlls\Tasks.h" />
     <ClInclude Include="..\..\dlls\teamplay_gamerules.h" />
     <ClInclude Include="..\..\dlls\trains.h" />
     <ClInclude Include="..\..\dlls\util.h" />

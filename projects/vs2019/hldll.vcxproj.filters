@@ -52,6 +52,9 @@
     <Filter Include="Source Files\dlls\effects">
       <UniqueIdentifier>{8afb3d29-ebdf-4af4-939c-0b4488723ef0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\dlls\items">
+      <UniqueIdentifier>{05b9472d-ddae-44d3-b0e0-f3d0d42858ba}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\dlls\airtank.cpp">
@@ -238,9 +241,6 @@
       <Filter>Source Files\dlls</Filter>
     </ClCompile>
     <ClCompile Include="..\..\dlls\teamplay_gamerules.cpp">
-      <Filter>Source Files\dlls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\dlls\tempmonster.cpp">
       <Filter>Source Files\dlls</Filter>
     </ClCompile>
     <ClCompile Include="..\..\dlls\triggers.cpp">
@@ -444,6 +444,45 @@
     <ClCompile Include="..\..\dlls\projectiles\CHornet.cpp">
       <Filter>Source Files\dlls\projectiles</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\dlls\CAllyMonster.cpp">
+      <Filter>Source Files\dlls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dlls\CSquadTalkMonster.cpp">
+      <Filter>Source Files\dlls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dlls\items\CGenericItem.cpp">
+      <Filter>Source Files\dlls\items</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dlls\props\CDeadSkeleton.cpp">
+      <Filter>Source Files\dlls\props</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dlls\items\CNuclearBombButton.cpp">
+      <Filter>Source Files\dlls\items</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dlls\items\CNuclearBombTimer.cpp">
+      <Filter>Source Files\dlls\items</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dlls\items\CNuclearBomb.cpp">
+      <Filter>Source Files\dlls\items</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dlls\npcs\CZombieBarney.cpp">
+      <Filter>Source Files\dlls\npcs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dlls\npcs\CZombieSoldier.cpp">
+      <Filter>Source Files\dlls\npcs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dlls\npcs\CMaleAssassin.cpp">
+      <Filter>Source Files\dlls\npcs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dlls\Tasks.cpp">
+      <Filter>Source Files\dlls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dlls\props\CDeadMaleAssassin.cpp">
+      <Filter>Source Files\dlls\props</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dlls\npcs\CMaleAssassinRepel.cpp">
+      <Filter>Source Files\dlls\npcs</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\dlls\doors.h">
@@ -489,9 +528,6 @@
       <Filter>Header Files\dlls</Filter>
     </ClInclude>
     <ClInclude Include="..\..\dlls\extdll.h">
-      <Filter>Header Files\dlls</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\dlls\flyingmonster.h">
       <Filter>Header Files\dlls</Filter>
     </ClInclude>
     <ClInclude Include="..\..\dlls\func_break.h">
@@ -739,6 +775,45 @@
     </ClInclude>
     <ClInclude Include="..\..\dlls\projectiles\CHornet.h">
       <Filter>Source Files\dlls\projectiles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\dlls\CAllyMonster.h">
+      <Filter>Source Files\dlls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\dlls\CSquadTalkMonster.h">
+      <Filter>Source Files\dlls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\dlls\items\CGenericItem.h">
+      <Filter>Source Files\dlls\items</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\dlls\props\CDeadSkeleton.h">
+      <Filter>Source Files\dlls\props</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\dlls\items\CNuclearBombButton.h">
+      <Filter>Source Files\dlls\items</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\dlls\items\CNuclearBombTimer.h">
+      <Filter>Source Files\dlls\items</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\dlls\items\CNuclearBomb.h">
+      <Filter>Source Files\dlls\items</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\dlls\npcs\CZombieBarney.h">
+      <Filter>Source Files\dlls\npcs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\dlls\npcs\CZombieSoldier.h">
+      <Filter>Source Files\dlls\npcs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\dlls\npcs\CMaleAssassin.h">
+      <Filter>Source Files\dlls\npcs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\dlls\Tasks.h">
+      <Filter>Source Files\dlls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\dlls\props\CDeadMaleAssassin.h">
+      <Filter>Source Files\dlls\props</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\dlls\npcs\CMaleAssassinRepel.h">
+      <Filter>Source Files\dlls\npcs</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
