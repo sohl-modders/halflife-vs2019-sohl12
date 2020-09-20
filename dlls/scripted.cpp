@@ -311,11 +311,9 @@ void CCineMonster :: Pain( void )
 //LRC: now redefined... find a viable entity with the given name, and return it (or NULL if not found).
 CBaseMonster* CCineMonster :: FindEntity( const char* sName, CBaseEntity *pActivator )
 {
-	CBaseEntity *pEntity;
-
-	pEntity = UTIL_FindEntityByTargetname(NULL, sName, pActivator);
-	//m_hTargetEnt = NULL;
-	CBaseMonster	*pMonster = NULL;
+	CBaseEntity* pEntity = UTIL_FindEntityByTargetname(NULL, sName, pActivator);
+	m_hTargetEnt = NULL;
+	CBaseMonster *pMonster = NULL;
 
 	while (pEntity)
 	{
@@ -865,7 +863,8 @@ BOOL CBaseMonster :: CineCleanup( )
 
 		// We should have some animation to put these guys in, but for now it's idle.
 		// Due to NOINTERP above, there won't be any blending between this anim & the sequence
-		m_Activity = ACT_RESET;
+		if (!FBitSet(pOldCine->pev->spawnflags, SF_SCRIPT_NORESETENTITY))
+			m_Activity = ACT_RESET;
 	}
 	// set them back into a normal state
 	pev->enemy = NULL;

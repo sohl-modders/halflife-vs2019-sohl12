@@ -39,6 +39,8 @@
 #include "effects.h" //LRC
 #include "movewith.h" //LRC
 
+#include "rope/CRope.h"
+
 // #define DUCKFIX
 
 extern DLL_GLOBAL ULONG		g_ulModelIndexPlayer;
@@ -120,36 +122,15 @@ TYPEDESCRIPTION	CBasePlayer::m_playerSaveData[] =
 	DEFINE_FIELD( CBasePlayer, m_pTank, FIELD_EHANDLE ),
 	DEFINE_FIELD( CBasePlayer, m_iHideHUD, FIELD_INTEGER ),
 	DEFINE_FIELD( CBasePlayer, m_iFOV, FIELD_INTEGER ),
-	
-	//DEFINE_FIELD( CBasePlayer, m_fDeadTime, FIELD_FLOAT ), // only used in multiplayer games
-	//DEFINE_FIELD( CBasePlayer, m_fGameHUDInitialized, FIELD_INTEGER ), // only used in multiplayer games
-	//DEFINE_FIELD( CBasePlayer, m_flStopExtraSoundTime, FIELD_TIME ),
-	//DEFINE_FIELD( CBasePlayer, m_fKnownItem, FIELD_INTEGER ), // reset to zero on load
-	//DEFINE_FIELD( CBasePlayer, m_iPlayerSound, FIELD_INTEGER ),	// Don't restore, set in Precache()
-	//DEFINE_FIELD( CBasePlayer, m_pentSndLast, FIELD_EDICT ),	// Don't restore, client needs reset
-	//DEFINE_FIELD( CBasePlayer, m_flSndRoomtype, FIELD_FLOAT ),	// Don't restore, client needs reset
-	//DEFINE_FIELD( CBasePlayer, m_flSndRange, FIELD_FLOAT ),	// Don't restore, client needs reset
-	//DEFINE_FIELD( CBasePlayer, m_fNewAmmo, FIELD_INTEGER ), // Don't restore, client needs reset
-	//DEFINE_FIELD( CBasePlayer, m_flgeigerRange, FIELD_FLOAT ),	// Don't restore, reset in Precache()
-	//DEFINE_FIELD( CBasePlayer, m_flgeigerDelay, FIELD_FLOAT ),	// Don't restore, reset in Precache()
-	//DEFINE_FIELD( CBasePlayer, m_igeigerRangePrev, FIELD_FLOAT ),	// Don't restore, reset in Precache()
-	//DEFINE_FIELD( CBasePlayer, m_iStepLeft, FIELD_INTEGER ), // Don't need to restore
-	//DEFINE_ARRAY( CBasePlayer, m_szTextureName, FIELD_CHARACTER, CBTEXTURENAMEMAX ), // Don't need to restore
-	//DEFINE_FIELD( CBasePlayer, m_chTextureType, FIELD_CHARACTER ), // Don't need to restore
-	//DEFINE_FIELD( CBasePlayer, m_fNoPlayerSound, FIELD_BOOLEAN ), // Don't need to restore, debug
-	//DEFINE_FIELD( CBasePlayer, m_iUpdateTime, FIELD_INTEGER ), // Don't need to restore
-	//DEFINE_FIELD( CBasePlayer, m_iClientHealth, FIELD_INTEGER ), // Don't restore, client needs reset
-	//DEFINE_FIELD( CBasePlayer, m_iClientBattery, FIELD_INTEGER ), // Don't restore, client needs reset
-	//DEFINE_FIELD( CBasePlayer, m_iClientHideHUD, FIELD_INTEGER ), // Don't restore, client needs reset
-	//DEFINE_FIELD( CBasePlayer, m_fWeapon, FIELD_BOOLEAN ),  // Don't restore, client needs reset
-	//DEFINE_FIELD( CBasePlayer, m_nCustomSprayFrames, FIELD_INTEGER ), // Don't restore, depends on server message after spawning and only matters in multiplayer
-	//DEFINE_FIELD( CBasePlayer, m_vecAutoAim, FIELD_VECTOR ), // Don't save/restore - this is recomputed
-	//DEFINE_ARRAY( CBasePlayer, m_rgAmmoLast, FIELD_INTEGER, MAX_AMMO_SLOTS ), // Don't need to restore
-	//DEFINE_FIELD( CBasePlayer, m_fOnTarget, FIELD_BOOLEAN ), // Don't need to restore
-	//DEFINE_FIELD( CBasePlayer, m_nCustomSprayFrames, FIELD_INTEGER ), // Don't need to restore
-	
-};	
 
+	DEFINE_FIELD(CBasePlayer, m_pRope, FIELD_CLASSPTR),
+	DEFINE_FIELD(CBasePlayer, m_flLastClimbTime, FIELD_TIME),
+	DEFINE_FIELD(CBasePlayer, m_bIsClimbing, FIELD_BOOLEAN),
+
+	//Vanilla Op4 doesn't restore this. Not a big deal but it can cause you to teleport to the wrong area after a restore
+	DEFINE_FIELD(CBasePlayer, m_DisplacerReturn, FIELD_POSITION_VECTOR),
+	DEFINE_FIELD(CBasePlayer, m_flDisplacerSndRoomtype, FIELD_FLOAT),
+};	
 
 int giPrecacheGrunt = 0;
 int gmsgShake = 0;
@@ -264,9 +245,7 @@ LINK_ENTITY_TO_CLASS( player, CBasePlayer );
 
 void CBasePlayer :: Pain( void )
 {
-	float	flRndSound;//sound randomizer
-
-	flRndSound = RANDOM_FLOAT ( 0 , 1 ); 
+	float flRndSound = RANDOM_FLOAT(0, 1); 
 	
 	if ( flRndSound <= 0.33 )
 		EMIT_SOUND(ENT(pev), CHAN_VOICE, "player/pl_pain5.wav", 1, ATTN_NORM);
@@ -2075,6 +2054,138 @@ void CBasePlayer::PreThink(void)
 		pev->flags |= FL_ONTRAIN;
 	else 
 		pev->flags &= ~FL_ONTRAIN;
+
+	//We're on a rope. - Solokiller
+	if (m_afPhysicsFlags & PFLAG_ONROPE && m_pRope)
+	{
+		pev->velocity = g_vecZero;
+
+		const Vector vecAttachPos = m_pRope->GetAttachedObjectsPosition();
+
+		pev->origin = vecAttachPos;
+
+		Vector vecForce;
+
+		if (pev->button & IN_MOVERIGHT)
+		{
+			vecForce.x = gpGlobals->v_right.x;
+			vecForce.y = gpGlobals->v_right.y;
+			vecForce.z = 0;
+
+			m_pRope->ApplyForceFromPlayer(vecForce);
+		}
+
+		if (pev->button & IN_MOVELEFT)
+		{
+			vecForce.x = -gpGlobals->v_right.x;
+			vecForce.y = -gpGlobals->v_right.y;
+			vecForce.z = 0;
+			
+			m_pRope->ApplyForceFromPlayer(vecForce);
+		}
+
+		//Determine if any force should be applied to the rope, or if we should move around. - Solokiller
+		if (pev->button & (IN_BACK | IN_FORWARD))
+		{
+			if ((gpGlobals->v_forward.x * gpGlobals->v_forward.x +
+				gpGlobals->v_forward.y * gpGlobals->v_forward.y -
+				gpGlobals->v_forward.z * gpGlobals->v_forward.z) <= 0)
+			{
+				if (m_bIsClimbing)
+				{
+					const float flDelta = gpGlobals->time - m_flLastClimbTime;
+					m_flLastClimbTime = gpGlobals->time;
+
+					if (pev->button & IN_FORWARD)
+					{
+						if (gpGlobals->v_forward.z < 0.0)
+						{
+							if (!m_pRope->MoveDown(flDelta))
+							{
+								//Let go of the rope, detach. - Solokiller
+								pev->movetype = MOVETYPE_WALK;
+								pev->solid = SOLID_SLIDEBOX;
+
+								m_afPhysicsFlags &= ~PFLAG_ONROPE;
+								m_pRope->DetachObject();
+								m_pRope = nullptr;
+								m_bIsClimbing = false;
+							}
+						}
+						else
+						{
+							m_pRope->MoveUp(flDelta);
+						}
+					}
+					if (pev->button & IN_BACK)
+					{
+						if (gpGlobals->v_forward.z < 0.0)
+						{
+							m_pRope->MoveUp(flDelta);
+						}
+						else if (!m_pRope->MoveDown(flDelta))
+						{
+							//Let go of the rope, detach. - Solokiller
+							pev->movetype = MOVETYPE_WALK;
+							pev->solid = SOLID_SLIDEBOX;
+							m_afPhysicsFlags &= ~PFLAG_ONROPE;
+							m_pRope->DetachObject();
+							m_pRope = nullptr;
+							m_bIsClimbing = false;
+						}
+					}
+				}
+				else
+				{
+					m_bIsClimbing = true;
+					m_flLastClimbTime = gpGlobals->time;
+				}
+			}
+			else
+			{
+				vecForce.x = gpGlobals->v_forward.x;
+				vecForce.y = gpGlobals->v_forward.y;
+				vecForce.z = 0.0;
+				if (pev->button & IN_BACK)
+				{
+					vecForce.x = -gpGlobals->v_forward.x;
+					vecForce.y = -gpGlobals->v_forward.y;
+					vecForce.z = 0;
+				}
+				
+				m_pRope->ApplyForceFromPlayer(vecForce);
+				m_bIsClimbing = false;
+			}
+		}
+		else
+		{
+			m_bIsClimbing = false;
+		}
+
+		if (m_afButtonPressed & IN_JUMP)
+		{
+			//We've jumped off the rope, give us some momentum - Solokiller
+			pev->movetype = MOVETYPE_WALK;
+			pev->solid = SOLID_SLIDEBOX;
+			m_afPhysicsFlags &= ~PFLAG_ONROPE;
+
+			Vector vecDir = gpGlobals->v_up * 165.0 + gpGlobals->v_forward * 150.0;
+
+			Vector vecVelocity = m_pRope->GetAttachedObjectsVelocity() * 2;
+
+			vecVelocity = vecVelocity.Normalize();
+
+			vecVelocity = vecVelocity * 200;
+
+			pev->velocity = vecVelocity + vecDir;
+
+			m_pRope->DetachObject();
+			m_pRope = nullptr;
+			m_bIsClimbing = false;
+		}
+
+		return;
+	}
 
 	// Train speed control
 	if ( m_afPhysicsFlags & PFLAG_ONTRAIN )
@@ -4457,7 +4568,12 @@ void CBasePlayer :: EnableControl(BOOL fControl)
 // Autoaim
 // set crosshair position to point to enemey
 //=========================================================
-Vector CBasePlayer :: GetAutoaimVector( float flDelta )
+Vector CBasePlayer::GetAutoaimVector(float flDelta)
+{
+	return GetAutoaimVectorFromPoint(GetGunPosition(), flDelta);
+}
+
+Vector CBasePlayer::GetAutoaimVectorFromPoint(const Vector& vecSrc, float flDelta)
 {
 	if (g_iSkillLevel == SKILL_HARD)
 	{
@@ -4465,7 +4581,6 @@ Vector CBasePlayer :: GetAutoaimVector( float flDelta )
 		return gpGlobals->v_forward;
 	}
 
-	Vector vecSrc = GetGunPosition( );
 	float flDist = 8192;
 
 	// always use non-sticky autoaim
@@ -4538,8 +4653,7 @@ Vector CBasePlayer :: GetAutoaimVector( float flDelta )
 	return gpGlobals->v_forward;
 }
 
-
-Vector CBasePlayer :: AutoaimDeflection( Vector &vecSrc, float flDist, float flDelta  )
+Vector CBasePlayer::AutoaimDeflection(const Vector& vecSrc, float flDist, float flDelta)
 {
 	edict_t		*pEdict = g_engfuncs.pfnPEntityOfEntIndex( 1 );
 	CBaseEntity	*pEntity;

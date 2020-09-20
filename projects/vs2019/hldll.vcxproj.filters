@@ -55,6 +55,9 @@
     <Filter Include="Source Files\dlls\items">
       <UniqueIdentifier>{05b9472d-ddae-44d3-b0e0-f3d0d42858ba}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\dlls\rope">
+      <UniqueIdentifier>{2e57c31e-dc94-4868-9603-92d23677256c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\dlls\airtank.cpp">
@@ -483,6 +486,24 @@
     <ClCompile Include="..\..\dlls\npcs\CMaleAssassinRepel.cpp">
       <Filter>Source Files\dlls\npcs</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\dlls\npcs\COtis.cpp">
+      <Filter>Source Files\dlls\npcs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dlls\props\CDeadOtis.cpp">
+      <Filter>Source Files\dlls\props</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dlls\rope\CElectrifiedWire.cpp">
+      <Filter>Source Files\dlls\rope</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dlls\rope\CRope.cpp">
+      <Filter>Source Files\dlls\rope</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dlls\rope\CRopeSample.cpp">
+      <Filter>Source Files\dlls\rope</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dlls\rope\CRopeSegment.cpp">
+      <Filter>Source Files\dlls\rope</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\dlls\doors.h">
@@ -814,6 +835,24 @@
     </ClInclude>
     <ClInclude Include="..\..\dlls\npcs\CMaleAssassinRepel.h">
       <Filter>Source Files\dlls\npcs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\dlls\npcs\COtis.h">
+      <Filter>Source Files\dlls\npcs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\dlls\props\CDeadOtis.h">
+      <Filter>Source Files\dlls\props</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\dlls\rope\CElectrifiedWire.h">
+      <Filter>Source Files\dlls\rope</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\dlls\rope\CRope.h">
+      <Filter>Source Files\dlls\rope</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\dlls\rope\CRopeSample.h">
+      <Filter>Source Files\dlls\rope</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\dlls\rope\CRopeSegment.h">
+      <Filter>Source Files\dlls\rope</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

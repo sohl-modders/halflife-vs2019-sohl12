@@ -125,7 +125,6 @@ extern "C" {
 	}
 }
 
-
 int DispatchSpawn( edict_t *pent )
 {
 	CBaseEntity *pEntity = (CBaseEntity *)GET_PRIVATE(pent);
@@ -156,7 +155,6 @@ int DispatchSpawn( edict_t *pent )
 			if (g_iSkillLevel == SKILL_HARD && pEntity->m_iLFlags & LF_NOTHARD )
 				return -1; //LRC
 		}
-
 
 		// Handle global stuff here
 		if ( pEntity && pEntity->pev->globalname ) 
@@ -418,7 +416,6 @@ int DispatchRestore( edict_t *pent, SAVERESTOREDATA *pSaveData, int globalEntity
 	return 0;
 }
 
-
 void DispatchObjectCollsionBox( edict_t *pent )
 {
 	CBaseEntity *pEntity = (CBaseEntity *)GET_PRIVATE(pent);
@@ -430,13 +427,11 @@ void DispatchObjectCollsionBox( edict_t *pent )
 		SetObjectCollisionBox( &pent->v );
 }
 
-
 void SaveWriteFields( SAVERESTOREDATA *pSaveData, const char *pname, void *pBaseData, TYPEDESCRIPTION *pFields, int fieldCount )
 {
 	CSave saveHelper( pSaveData );
 	saveHelper.WriteFields( pname, pBaseData, pFields, fieldCount );
 }
-
 
 void SaveReadFields( SAVERESTOREDATA *pSaveData, const char *pname, void *pBaseData, TYPEDESCRIPTION *pFields, int fieldCount )
 {
@@ -455,16 +450,24 @@ edict_t * EHANDLE::Get( void )
 	}
 	
 	return NULL; 
-};
+}
 
 edict_t * EHANDLE::Set( edict_t *pent ) 
 { 
-	m_pent = pent;  
-	if (pent) 
-		m_serialnumber = m_pent->serialnumber;
+	if (pent)
+	{
+		m_pent = pent;
+		if (pent)
+			m_serialnumber = m_pent->serialnumber;
+	}
+	else
+	{
+		m_pent = NULL;
+		m_serialnumber = 0;
+	}
 	
 	return pent; 
-};
+}
 
 EHANDLE :: operator CBaseEntity *() 
 { 

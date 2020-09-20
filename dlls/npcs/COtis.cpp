@@ -21,33 +21,34 @@
 #include "defaultai.h"
 #include "weapons.h"
 #include "soundent.h"
+
 #include "Tasks.h"
+#include "COtis.h"
+
 #include "CBarney.h"
 
 //=========================================================
 // Link
 //=========================================================
-LINK_ENTITY_TO_CLASS(monster_barney, CBarney);
+LINK_ENTITY_TO_CLASS(monster_otis, COtis);
 
 //=========================================================
 // Save and Restore
 //=========================================================
-TYPEDESCRIPTION CBarney::m_SaveData[] =
+TYPEDESCRIPTION COtis::m_SaveData[] =
 {
-	DEFINE_FIELD(CBarney, m_iBaseBody, FIELD_INTEGER), //LRC
-	DEFINE_FIELD(CBarney, m_fGunDrawn, FIELD_BOOLEAN),
-	DEFINE_FIELD(CBarney, m_painTime, FIELD_TIME),
-	DEFINE_FIELD(CBarney, m_checkAttackTime, FIELD_TIME),
-	DEFINE_FIELD(CBarney, m_lastAttackCheck, FIELD_BOOLEAN),
-	DEFINE_FIELD(CBarney, m_flPlayerDamage, FIELD_FLOAT),
+	DEFINE_FIELD(COtis, m_fGunDrawn, FIELD_BOOLEAN),
+	DEFINE_FIELD(COtis, m_painTime, FIELD_TIME),
+	DEFINE_FIELD(COtis, m_checkAttackTime, FIELD_TIME),
+	DEFINE_FIELD(COtis, m_lastAttackCheck, FIELD_BOOLEAN),
+	DEFINE_FIELD(COtis, m_flPlayerDamage, FIELD_FLOAT),
+	DEFINE_FIELD(COtis, m_iOtisBody, FIELD_INTEGER),
+	DEFINE_FIELD(COtis, m_iOtisHead, FIELD_INTEGER),
 };
 
-IMPLEMENT_SAVERESTORE(CBarney, CTalkMonster);
+IMPLEMENT_SAVERESTORE(COtis, CTalkMonster);
 
-//=========================================================
-// AI Schedules Specific to this monster
-//=========================================================
-DEFINE_CUSTOM_SCHEDULES(CBarney)
+DEFINE_CUSTOM_SCHEDULES(COtis)
 {
 	slBaFollow,
 	slBarneyEnemyDraw,
@@ -55,12 +56,12 @@ DEFINE_CUSTOM_SCHEDULES(CBarney)
 	slIdleBaStand,
 };
 
-IMPLEMENT_CUSTOM_SCHEDULES(CBarney, CTalkMonster);
+IMPLEMENT_CUSTOM_SCHEDULES(COtis, CTalkMonster);
 
 //=========================================================
 // StartTask
 //=========================================================
-void CBarney::StartTask(Task_t* pTask)
+void COtis::StartTask(Task_t* pTask)
 {
 	CTalkMonster::StartTask(pTask);
 }
@@ -68,7 +69,7 @@ void CBarney::StartTask(Task_t* pTask)
 //=========================================================
 // RunTask
 //=========================================================
-void CBarney::RunTask(Task_t* pTask)
+void COtis::RunTask(Task_t* pTask)
 {
 	switch (pTask->iTask)
 	{
@@ -89,7 +90,7 @@ void CBarney::RunTask(Task_t* pTask)
 // ISoundMask - returns a bit mask indicating which types
 // of sounds this monster regards. 
 //=========================================================
-int CBarney::ISoundMask()
+int COtis::ISoundMask()
 {
 	return bits_SOUND_WORLD |
 		bits_SOUND_COMBAT |
@@ -104,7 +105,7 @@ int CBarney::ISoundMask()
 // Classify - indicates this monster's place in the 
 // relationship table.
 //=========================================================
-int CBarney::Classify()
+int COtis::Classify()
 {
 	return m_iClass ? m_iClass : CLASS_PLAYER_ALLY;
 }
@@ -112,7 +113,7 @@ int CBarney::Classify()
 //=========================================================
 // ALertSound - barney says "Freeze!"
 //=========================================================
-void CBarney::AlertSound()
+void COtis::AlertSound()
 {
 	if (m_hEnemy != NULL)
 	{
@@ -127,7 +128,7 @@ void CBarney::AlertSound()
 			}
 			else
 			{
-				PlaySentence("BA_ATTACK", RANDOM_FLOAT(2.8, 3.2), VOL_NORM, ATTN_IDLE);
+				PlaySentence("OT_ATTACK", RANDOM_FLOAT(2.8, 3.2), VOL_NORM, ATTN_IDLE);
 			}
 		}
 	}
@@ -137,7 +138,7 @@ void CBarney::AlertSound()
 // SetYawSpeed - allows each sequence to have a different
 // turn rate associated with it.
 //=========================================================
-void CBarney::SetYawSpeed()
+void COtis::SetYawSpeed()
 {
 	switch (m_Activity)
 	{
@@ -155,7 +156,7 @@ void CBarney::SetYawSpeed()
 //=========================================================
 // CheckRangeAttack1
 //=========================================================
-BOOL CBarney::CheckRangeAttack1(float flDot, float flDist)
+BOOL COtis::CheckRangeAttack1(float flDot, float flDist)
 {
 	if (flDist <= 1024 && flDot >= 0.5)
 	{
@@ -187,7 +188,7 @@ BOOL CBarney::CheckRangeAttack1(float flDot, float flDist)
 // BarneyFirePistol - shoots one round from the pistol at
 // the enemy barney is facing.
 //=========================================================
-void CBarney::BarneyFirePistol()
+void COtis::OtisFirePistol()
 {
 	UTIL_MakeVectors(pev->angles);
 	
@@ -205,21 +206,10 @@ void CBarney::BarneyFirePistol()
 		pitchShift = 0;
 	else
 		pitchShift -= 5;
-	
-	if (pev->frags)
-	{
-		FireBullets(1, vecShootOrigin, vecShootDir, VECTOR_CONE_2DEGREES, 1024, BULLET_PLAYER_357);
-		if (RANDOM_LONG(0, 1))
-			EMIT_SOUND_DYN(ENT(pev), CHAN_WEAPON, "weapons/357_shot1.wav", 1, ATTN_NORM, 0, 100 + pitchShift);
-		else
-			EMIT_SOUND_DYN(ENT(pev), CHAN_WEAPON, "weapons/357_shot2.wav", 1, ATTN_NORM, 0, 100 + pitchShift);
-	}
-	else
-	{
-		FireBullets(1, vecShootOrigin, vecShootDir, VECTOR_CONE_2DEGREES, 1024, BULLET_MONSTER_9MM);
-		
-		EMIT_SOUND_DYN(ENT(pev), CHAN_WEAPON, "barney/ba_attack2.wav", 1, ATTN_NORM, 0, 100 + pitchShift);
-	}
+
+	FireBullets(1, vecShootOrigin, vecShootDir, VECTOR_CONE_2DEGREES, 1024, BULLET_PLAYER_357);
+
+	EMIT_SOUND_DYN(ENT(pev), CHAN_WEAPON, "weapons/de_shot1.wav", 1, ATTN_NORM, 0, 100 + pitchShift);
 
 	CSoundEnt::InsertSound(bits_SOUND_COMBAT, pev->origin, 384, 0.3);
 
@@ -233,22 +223,29 @@ void CBarney::BarneyFirePistol()
 //
 // Returns number of events handled, 0 if none.
 //=========================================================
-void CBarney::HandleAnimEvent(MonsterEvent_t* pEvent)
+void COtis::HandleAnimEvent(MonsterEvent_t* pEvent)
 {
 	switch (pEvent->event)
 	{
-		case BARNEY_AE_SHOOT:
-			BarneyFirePistol();
+		case OTIS_AE_SHOOT:
+			OtisFirePistol();
 		break;
-		case BARNEY_AE_DRAW:
-			// barney's bodygroup switches here so he can pull gun from holster
-			pev->body = m_iBaseBody + BARNEY_BODY_GUNDRAWN;
-			m_fGunDrawn = TRUE;
+		case OTIS_AE_DRAW:
+			// otis's bodygroup switches here so he can pull gun from holster
+			if (GetBodygroup(OtisBodyGroup::Weapons) == OtisWeapon::None)
+			{
+				SetBodygroup(OtisBodyGroup::Weapons, OtisWeapon::DesertEagle);
+				m_iOtisBody = OtisWeapon::DesertEagle;
+				m_fGunDrawn = true;
+			}
 		break;
-		case BARNEY_AE_HOLSTER:
-			// change bodygroup to replace gun in holster
-			pev->body = m_iBaseBody + BARNEY_BODY_GUNHOLSTERED;
-			m_fGunDrawn = FALSE;
+		case OTIS_AE_HOLSTER:
+			if (GetBodygroup(OtisBodyGroup::Weapons) == OtisWeapon::DesertEagle)
+			{
+				SetBodygroup(OtisBodyGroup::Weapons, OtisWeapon::None);
+				m_iOtisBody = OtisWeapon::None;
+				m_fGunDrawn = false;
+			}
 		break;
 		default:
 			CTalkMonster::HandleAnimEvent(pEvent);
@@ -258,14 +255,14 @@ void CBarney::HandleAnimEvent(MonsterEvent_t* pEvent)
 //=========================================================
 // Spawn
 //=========================================================
-void CBarney::Spawn()
+void COtis::Spawn()
 {
 	Precache();
 
 	if (pev->model)
 		SET_MODEL(ENT(pev), STRING(pev->model)); //LRC
 	else
-		SET_MODEL(ENT(pev), "models/barney.mdl");
+		SET_MODEL(ENT(pev), "models/otis.mdl");
 	
 	UTIL_SetSize(pev, VEC_HUMAN_HULL_MIN, VEC_HUMAN_HULL_MAX);
 
@@ -274,34 +271,45 @@ void CBarney::Spawn()
 	m_bloodColor = BLOOD_COLOR_RED;
 	
 	if (pev->health == 0) //LRC
-		pev->health = gSkillData.barneyHealth;
+		pev->health = gSkillData.otisHealth;
 	
 	pev->view_ofs = Vector(0, 0, 50); // position of the eyes relative to monster's origin.
 	m_flFieldOfView = VIEW_FIELD_WIDE; // NOTE: we need a wide field of view so npc will notice player and say hello
 	m_MonsterState = MONSTERSTATE_NONE;
 
-	m_iBaseBody = pev->body; //LRC
-	pev->body = m_iBaseBody + BARNEY_BODY_GUNHOLSTERED; // gun in holster
-	m_fGunDrawn = FALSE;
+	//Note: This originally didn't use SetBodygroup
+	if (m_iOtisHead == OtisHead::Random)
+	{
+		m_iOtisHead = RANDOM_LONG(0, 1);
+	}
+
+	if (m_iOtisBody == OtisWeapon::Random)
+	{
+		m_iOtisBody = OtisWeapon::None;
+	}
+
+	SetBodygroup(OtisBodyGroup::Weapons, m_iOtisBody);
+	SetBodygroup(OtisBodyGroup::Heads, m_iOtisHead);
+	
+	m_fGunDrawn = m_iOtisBody == OtisWeapon::DesertEagle;
 
 	m_afCapability = bits_CAP_HEAR | bits_CAP_TURN_HEAD | bits_CAP_DOORS_GROUP;
 
 	MonsterInit();
-	SetUse(&CBarney::FollowerUse);
+	SetUse(&COtis::FollowerUse);
 }
 
 //=========================================================
 // Precache - precaches all resources this monster needs
 //=========================================================
-void CBarney::Precache()
+void COtis::Precache()
 {
 	if (pev->model)
 		PRECACHE_MODEL((char*)STRING(pev->model)); //LRC
 	else
-		PRECACHE_MODEL("models/barney.mdl");
+		PRECACHE_MODEL("models/otis.mdl");
 
-	PRECACHE_SOUND("barney/ba_attack1.wav");
-	PRECACHE_SOUND("barney/ba_attack2.wav");
+	PRECACHE_SOUND("weapons/de_shot1.wav");
 
 	PRECACHE_SOUND("barney/ba_pain1.wav");
 	PRECACHE_SOUND("barney/ba_pain2.wav");
@@ -318,8 +326,31 @@ void CBarney::Precache()
 	CTalkMonster::Precache();
 }
 
+//=========================================================
+// KeyValue
+//=========================================================
+void COtis::KeyValue(KeyValueData* pkvd)
+{
+	if (FStrEq("head", pkvd->szKeyName))
+	{
+		m_iOtisHead = atoi(pkvd->szValue);
+		pkvd->fHandled = true;
+	}
+	else if (FStrEq("bodystate", pkvd->szKeyName))
+	{
+		m_iOtisBody = atoi(pkvd->szValue);
+		pkvd->fHandled = true;
+	}
+	else
+	{
+		CTalkMonster::KeyValue(pkvd);
+	}
+}
+
+//=========================================================
 // Init talk data
-void CBarney::TalkInit()
+//=========================================================
+void COtis::TalkInit()
 {
 	CTalkMonster::TalkInit();
 
@@ -327,50 +358,50 @@ void CBarney::TalkInit()
 
 	if (!m_iszSpeakAs)
 	{
-		m_szGrp[TLK_ANSWER] = "BA_ANSWER";
-		m_szGrp[TLK_QUESTION] = "BA_QUESTION";
-		m_szGrp[TLK_IDLE] = "BA_IDLE";
-		m_szGrp[TLK_STARE] = "BA_STARE";
+		m_szGrp[TLK_ANSWER] = "OT_ANSWER";
+		m_szGrp[TLK_QUESTION] = "OT_QUESTION";
+		m_szGrp[TLK_IDLE] = "OT_IDLE";
+		m_szGrp[TLK_STARE] = "OT_STARE";
 		
 		if (pev->spawnflags & SF_MONSTER_PREDISASTER) //LRC
-			m_szGrp[TLK_USE] = "BA_PFOLLOW";
+			m_szGrp[TLK_USE] = "OT_PFOLLOW";
 		else
-			m_szGrp[TLK_USE] = "BA_OK";
+			m_szGrp[TLK_USE] = "OT_OK";
 		
 		if (pev->spawnflags & SF_MONSTER_PREDISASTER)
-			m_szGrp[TLK_UNUSE] = "BA_PWAIT";
+			m_szGrp[TLK_UNUSE] = "OT_PWAIT";
 		else
-			m_szGrp[TLK_UNUSE] = "BA_WAIT";
+			m_szGrp[TLK_UNUSE] = "OT_WAIT";
 		
 		if (pev->spawnflags & SF_MONSTER_PREDISASTER)
-			m_szGrp[TLK_DECLINE] = "BA_POK";
+			m_szGrp[TLK_DECLINE] = "OT_POK";
 		else
-			m_szGrp[TLK_DECLINE] = "BA_NOTOK";
+			m_szGrp[TLK_DECLINE] = "OT_NOTOK";
 		
-		m_szGrp[TLK_STOP] = "BA_STOP";
+		m_szGrp[TLK_STOP] = "OT_STOP";
 
-		m_szGrp[TLK_NOSHOOT] = "BA_SCARED";
-		m_szGrp[TLK_HELLO] = "BA_HELLO";
+		m_szGrp[TLK_NOSHOOT] = "OT_SCARED";
+		m_szGrp[TLK_HELLO] = "OT_HELLO";
 
-		m_szGrp[TLK_PLHURT1] = "!BA_CUREA";
-		m_szGrp[TLK_PLHURT2] = "!BA_CUREB";
-		m_szGrp[TLK_PLHURT3] = "!BA_CUREC";
+		m_szGrp[TLK_PLHURT1] = "!OT_CUREA";
+		m_szGrp[TLK_PLHURT2] = "!OT_CUREB";
+		m_szGrp[TLK_PLHURT3] = "!OT_CUREC";
 
-		m_szGrp[TLK_PHELLO] = nullptr; //"BA_PHELLO";		// UNDONE
-		m_szGrp[TLK_PIDLE] = nullptr; //"BA_PIDLE";			// UNDONE
-		m_szGrp[TLK_PQUESTION] = "BA_PQUEST"; // UNDONE
+		m_szGrp[TLK_PHELLO] = nullptr; //"OT_PHELLO";		// UNDONE
+		m_szGrp[TLK_PIDLE] = nullptr; //"OT_PIDLE";			// UNDONE
+		m_szGrp[TLK_PQUESTION] = "OT_PQUEST"; // UNDONE
 
-		m_szGrp[TLK_SMELL] = "BA_SMELL";
+		m_szGrp[TLK_SMELL] = "OT_SMELL";
 
-		m_szGrp[TLK_WOUND] = "BA_WOUND";
-		m_szGrp[TLK_MORTAL] = "BA_MORTAL";
+		m_szGrp[TLK_WOUND] = "OT_WOUND";
+		m_szGrp[TLK_MORTAL] = "OT_MORTAL";
 	}
 
 	// get voice for head - just one barney voice for now
 	m_voicePitch = 100;
 }
 
-int CBarney::TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, float flDamage, int bitsDamageType)
+int COtis::TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, float flDamage, int bitsDamageType)
 {
 	// make sure friends talk about it if player hurts talkmonsters...
 	int ret = CTalkMonster::TakeDamage(pevInflictor, pevAttacker, flDamage, bitsDamageType);
@@ -403,7 +434,7 @@ int CBarney::TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, float f
 				}
 				else
 				{
-					PlaySentence("BA_MAD", 4, VOL_NORM, ATTN_NORM);
+					PlaySentence("OT_MAD", 4, VOL_NORM, ATTN_NORM);
 				}
 
 				Remember(bits_MEMORY_PROVOKED);
@@ -421,7 +452,7 @@ int CBarney::TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, float f
 				}
 				else
 				{
-					PlaySentence("BA_SHOT", 4, VOL_NORM, ATTN_NORM);
+					PlaySentence("OT_SHOT", 4, VOL_NORM, ATTN_NORM);
 				}
 				Remember(bits_MEMORY_SUSPICIOUS);
 			}
@@ -437,7 +468,7 @@ int CBarney::TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, float f
 			}
 			else
 			{
-				PlaySentence("BA_SHOT", 4, VOL_NORM, ATTN_NORM);
+				PlaySentence("OT_SHOT", 4, VOL_NORM, ATTN_NORM);
 			}
 		}
 	}
@@ -448,7 +479,7 @@ int CBarney::TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, float f
 //=========================================================
 // PainSound
 //=========================================================
-void CBarney::PainSound()
+void COtis::PainSound()
 {
 	if (gpGlobals->time < m_painTime)
 		return;
@@ -472,7 +503,7 @@ void CBarney::PainSound()
 //=========================================================
 // DeathSound 
 //=========================================================
-void CBarney::DeathSound()
+void COtis::DeathSound()
 {
 	switch (RANDOM_LONG(0, 2))
 	{
@@ -491,7 +522,7 @@ void CBarney::DeathSound()
 //=========================================================
 // TraceAttack 
 //=========================================================
-void CBarney::TraceAttack(entvars_t* pevAttacker, float flDamage, Vector vecDir, TraceResult* ptr, int bitsDamageType)
+void COtis::TraceAttack(entvars_t* pevAttacker, float flDamage, Vector vecDir, TraceResult* ptr, int bitsDamageType)
 {
 	switch (ptr->iHitgroup)
 	{
@@ -523,23 +554,21 @@ void CBarney::TraceAttack(entvars_t* pevAttacker, float flDamage, Vector vecDir,
 //=========================================================
 // Killed 
 //=========================================================
-void CBarney::Killed(entvars_t* pevAttacker, int iGib)
+void COtis::Killed(entvars_t* pevAttacker, int iGib)
 {
-	if (pev->body < m_iBaseBody + BARNEY_BODY_GUNGONE && 
+	if (GetBodygroup(OtisBodyGroup::Weapons) == OtisWeapon::DesertEagle &&
 		!(pev->spawnflags & SF_MONSTER_NO_WPN_DROP))
 	{
 		// drop the gun!
 		Vector vecGunPos;
 		Vector vecGunAngles;
 
-		pev->body = m_iBaseBody + BARNEY_BODY_GUNGONE;
+		SetBodygroup(OtisBodyGroup::Weapons, OtisWeapon::None);
+		m_iOtisBody = OtisWeapon::None;
 
 		GetAttachment(0, vecGunPos, vecGunAngles);
 
-		if (pev->frags)
-			DropItem("weapon_357", vecGunPos, vecGunAngles);
-		else
-			DropItem("weapon_9mmhandgun", vecGunPos, vecGunAngles);
+		DropItem("weapon_eagle", vecGunPos, vecGunAngles);
 	}
 
 	SetUse(NULL);
@@ -549,7 +578,7 @@ void CBarney::Killed(entvars_t* pevAttacker, int iGib)
 //=========================================================
 // AI Schedules Specific to this monster
 //=========================================================
-Schedule_t* CBarney::GetScheduleOfType(int Type)
+Schedule_t* COtis::GetScheduleOfType(int Type)
 {
 	Schedule_t* psched;
 
@@ -596,7 +625,7 @@ Schedule_t* CBarney::GetScheduleOfType(int Type)
 // monster's member function to get a pointer to a schedule
 // of the proper type.
 //=========================================================
-Schedule_t* CBarney::GetSchedule()
+Schedule_t* COtis::GetSchedule()
 {
 	if (HasConditions(bits_COND_HEAR_SOUND))
 	{
@@ -619,7 +648,7 @@ Schedule_t* CBarney::GetSchedule()
 		}
 		else
 		{
-			PlaySentence("BA_KILL", 4, VOL_NORM, ATTN_NORM);
+			PlaySentence("OT_KILL", 4, VOL_NORM, ATTN_NORM);
 		}
 	}
 
@@ -685,7 +714,7 @@ Schedule_t* CBarney::GetSchedule()
 //=========================================================
 // GetIdealState 
 //=========================================================
-MONSTERSTATE CBarney::GetIdealState()
+MONSTERSTATE COtis::GetIdealState()
 {
 	return CTalkMonster::GetIdealState();
 }
@@ -693,7 +722,7 @@ MONSTERSTATE CBarney::GetIdealState()
 //=========================================================
 // DeclineFollowing 
 //=========================================================
-void CBarney::DeclineFollowing()
+void COtis::DeclineFollowing()
 {
 	PlaySentence(m_szGrp[TLK_DECLINE], 2, VOL_NORM, ATTN_NORM); //LRC
 }

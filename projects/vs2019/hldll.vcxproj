@@ -187,6 +187,7 @@
     <ClCompile Include="..\..\dlls\npcs\CMiniTurret.cpp" />
     <ClCompile Include="..\..\dlls\npcs\CNihilanth.cpp" />
     <ClCompile Include="..\..\dlls\npcs\COsprey.cpp" />
+    <ClCompile Include="..\..\dlls\npcs\COtis.cpp" />
     <ClCompile Include="..\..\dlls\npcs\CRat.cpp" />
     <ClCompile Include="..\..\dlls\npcs\CRoach.cpp" />
     <ClCompile Include="..\..\dlls\npcs\CScientist.cpp" />
@@ -213,10 +214,15 @@
     <ClCompile Include="..\..\dlls\props\CDeadGenericMonster.cpp" />
     <ClCompile Include="..\..\dlls\props\CDeadHGrunt.cpp" />
     <ClCompile Include="..\..\dlls\props\CDeadMaleAssassin.cpp" />
+    <ClCompile Include="..\..\dlls\props\CDeadOtis.cpp" />
     <ClCompile Include="..\..\dlls\props\CDeadScientist.cpp" />
     <ClCompile Include="..\..\dlls\props\CDeadSkeleton.cpp" />
     <ClCompile Include="..\..\dlls\props\CSittingScientist.cpp" />
     <ClCompile Include="..\..\dlls\python.cpp" />
+    <ClCompile Include="..\..\dlls\rope\CElectrifiedWire.cpp" />
+    <ClCompile Include="..\..\dlls\rope\CRope.cpp" />
+    <ClCompile Include="..\..\dlls\rope\CRopeSample.cpp" />
+    <ClCompile Include="..\..\dlls\rope\CRopeSegment.cpp" />
     <ClCompile Include="..\..\dlls\rpg.cpp" />
     <ClCompile Include="..\..\dlls\satchel.cpp" />
     <ClCompile Include="..\..\dlls\schedule.cpp" />
@@ -309,6 +315,7 @@
     <ClInclude Include="..\..\dlls\npcs\CMiniTurret.h" />
     <ClInclude Include="..\..\dlls\npcs\CNihilanth.h" />
     <ClInclude Include="..\..\dlls\npcs\COsprey.h" />
+    <ClInclude Include="..\..\dlls\npcs\COtis.h" />
     <ClInclude Include="..\..\dlls\npcs\CRat.h" />
     <ClInclude Include="..\..\dlls\npcs\CRoach.h" />
     <ClInclude Include="..\..\dlls\npcs\CScientist.h" />
@@ -332,9 +339,14 @@
     <ClInclude Include="..\..\dlls\props\CDeadGenericMonster.h" />
     <ClInclude Include="..\..\dlls\props\CDeadHGrunt.h" />
     <ClInclude Include="..\..\dlls\props\CDeadMaleAssassin.h" />
+    <ClInclude Include="..\..\dlls\props\CDeadOtis.h" />
     <ClInclude Include="..\..\dlls\props\CDeadScientist.h" />
     <ClInclude Include="..\..\dlls\props\CDeadSkeleton.h" />
     <ClInclude Include="..\..\dlls\props\CSittingScientist.h" />
+    <ClInclude Include="..\..\dlls\rope\CElectrifiedWire.h" />
+    <ClInclude Include="..\..\dlls\rope\CRope.h" />
+    <ClInclude Include="..\..\dlls\rope\CRopeSample.h" />
+    <ClInclude Include="..\..\dlls\rope\CRopeSegment.h" />
     <ClInclude Include="..\..\dlls\saverestore.h" />
     <ClInclude Include="..\..\dlls\schedule.h" />
     <ClInclude Include="..\..\dlls\scripted.h" />

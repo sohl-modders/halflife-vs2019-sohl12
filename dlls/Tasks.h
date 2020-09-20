@@ -41,4 +41,12 @@ extern Schedule_t slGruntRepel[];
 extern Schedule_t slGruntRepelAttack[];
 extern Schedule_t slGruntRepelLand[];
 
+//=========================================================
+// CBarney & COtis
+//=========================================================
+extern Schedule_t slBaFollow[];
+extern Schedule_t slBarneyEnemyDraw[];
+extern Schedule_t slBaFaceTarget[];
+extern Schedule_t slIdleBaStand[];
+
 #endif

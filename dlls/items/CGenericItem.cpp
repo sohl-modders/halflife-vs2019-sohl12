@@ -68,7 +68,7 @@ void CGenericItem::Spawn()
 	if (m_iSequence)
 	{
 		SetThink(&CGenericItem::StartItem);
-		pev->nextthink = gpGlobals->time + 0.1;
+		SetNextThink(0.1);
 	}
 
 	if (pev->spawnflags & SF_ITEMGENERIC_DROP_TO_FLOOR)
