@@ -504,6 +504,12 @@
     <ClCompile Include="..\..\dlls\rope\CRopeSegment.cpp">
       <Filter>Source Files\dlls\rope</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\dlls\npcs\CRecruit.cpp">
+      <Filter>Source Files\dlls\npcs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dlls\npcs\CDrillSergeant.cpp">
+      <Filter>Source Files\dlls\npcs</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\dlls\doors.h">
@@ -853,6 +859,12 @@
     </ClInclude>
     <ClInclude Include="..\..\dlls\rope\CRopeSegment.h">
       <Filter>Source Files\dlls\rope</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\dlls\npcs\CRecruit.h">
+      <Filter>Source Files\dlls\npcs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\dlls\npcs\CDrillSergeant.h">
+      <Filter>Source Files\dlls\npcs</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

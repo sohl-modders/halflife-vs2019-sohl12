@@ -381,6 +381,7 @@ public:
 	BOOL CineCleanup();
 
 	CBaseEntity* DropItem(const char* pszItemName, const Vector& vecPos, const Vector& vecAng); // drop an item.
+	BOOL JumpToTarget(Activity movementAct, float waitTime);
 	void StartPatrol(CBaseEntity* path);
 
 	//LRC

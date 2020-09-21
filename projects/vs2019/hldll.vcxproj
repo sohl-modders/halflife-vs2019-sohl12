@@ -168,6 +168,7 @@
     <ClCompile Include="..\..\dlls\npcs\CBloater.cpp" />
     <ClCompile Include="..\..\dlls\npcs\CBullsquid.cpp" />
     <ClCompile Include="..\..\dlls\npcs\CController.cpp" />
+    <ClCompile Include="..\..\dlls\npcs\CDrillSergeant.cpp" />
     <ClCompile Include="..\..\dlls\npcs\CFlockingFlyer.cpp" />
     <ClCompile Include="..\..\dlls\npcs\CFlockingFlyerFlock.cpp" />
     <ClCompile Include="..\..\dlls\npcs\CBaseFlyingMonster.cpp" />
@@ -189,6 +190,7 @@
     <ClCompile Include="..\..\dlls\npcs\COsprey.cpp" />
     <ClCompile Include="..\..\dlls\npcs\COtis.cpp" />
     <ClCompile Include="..\..\dlls\npcs\CRat.cpp" />
+    <ClCompile Include="..\..\dlls\npcs\CRecruit.cpp" />
     <ClCompile Include="..\..\dlls\npcs\CRoach.cpp" />
     <ClCompile Include="..\..\dlls\npcs\CScientist.cpp" />
     <ClCompile Include="..\..\dlls\npcs\CSentry.cpp" />
@@ -296,6 +298,7 @@
     <ClInclude Include="..\..\dlls\npcs\CBloater.h" />
     <ClInclude Include="..\..\dlls\npcs\CBullsquid.h" />
     <ClInclude Include="..\..\dlls\npcs\CController.h" />
+    <ClInclude Include="..\..\dlls\npcs\CDrillSergeant.h" />
     <ClInclude Include="..\..\dlls\npcs\CFlockingFlyer.h" />
     <ClInclude Include="..\..\dlls\npcs\CFlockingFlyerFlock.h" />
     <ClInclude Include="..\..\dlls\npcs\CBaseFlyingMonster.h" />
@@ -317,6 +320,7 @@
     <ClInclude Include="..\..\dlls\npcs\COsprey.h" />
     <ClInclude Include="..\..\dlls\npcs\COtis.h" />
     <ClInclude Include="..\..\dlls\npcs\CRat.h" />
+    <ClInclude Include="..\..\dlls\npcs\CRecruit.h" />
     <ClInclude Include="..\..\dlls\npcs\CRoach.h" />
     <ClInclude Include="..\..\dlls\npcs\CScientist.h" />
     <ClInclude Include="..\..\dlls\npcs\CSentry.h" />
