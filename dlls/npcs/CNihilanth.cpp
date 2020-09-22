@@ -308,6 +308,7 @@ void CNihilanth::StartupThink()
 //=========================================================
 void CNihilanth::Killed(entvars_t* pevAttacker, int iGib)
 {
+	ClearShockEffect();
 	CBaseMonster::Killed(pevAttacker, iGib);
 }
 

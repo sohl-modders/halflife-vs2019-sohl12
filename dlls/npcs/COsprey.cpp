@@ -497,6 +497,8 @@ void COsprey::Killed(entvars_t* pevAttacker, int iGib)
 	pev->health = 0;
 	pev->takedamage = DAMAGE_NO;
 
+	ClearShockEffect();
+	
 	m_startTime = gpGlobals->time + 4.0;
 }
 

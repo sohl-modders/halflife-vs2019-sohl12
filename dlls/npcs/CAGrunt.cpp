@@ -1112,5 +1112,7 @@ void CAGrunt::Killed(entvars_t* pevAttacker, int iGib)
 		DropItem("weapon_hornetgun", vecGunPos, vecGunAngles);
 	}
 
+	ClearShockEffect();
+
 	CSquadMonster::Killed(pevAttacker, iGib);
 }

@@ -138,6 +138,8 @@ void CController::Killed(entvars_t* pevAttacker, int iGib)
 		m_pBall[1] = nullptr;
 	}
 
+	ClearShockEffect();
+
 	CSquadMonster::Killed(pevAttacker, iGib);
 }
 

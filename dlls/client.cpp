@@ -1685,7 +1685,7 @@ int GetWeaponData( struct edict_s *player, struct weapon_data_s *info )
 						item->iuser2					= gun->m_fInAttack;
 						item->iuser3					= gun->m_fireState;
 						
-											
+						gun->GetWeaponData(*item);
 //						item->m_flPumpTime				= V_max( gun->m_flPumpTime, -0.001 );
 					}
 				}
@@ -1786,7 +1786,8 @@ void UpdateClientData ( const edict_t *ent, int sendweapons, struct clientdata_s
 			cd->ammo_rockets	= pl->ammo_rockets;
 			cd->ammo_cells		= pl->ammo_uranium;
 			cd->vuser2.x		= pl->ammo_hornets;
-			
+			cd->vuser2.y		= pl->ammo_spores;
+			cd->vuser2.z		= pl->ammo_762;
 
 			if ( pl->m_pActiveItem )
 			{

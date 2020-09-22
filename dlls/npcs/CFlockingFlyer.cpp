@@ -129,6 +129,8 @@ void CFlockingFlyer::Killed(entvars_t* pevAttacker, int iGib)
 
 	UTIL_SetSize(pev, Vector(0, 0, 0), Vector(0, 0, 0));
 
+	ClearShockEffect();
+	
 	SetThink(&CFlockingFlyer::FallHack);
 	SetNextThink(0.1);
 }

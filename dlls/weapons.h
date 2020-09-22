@@ -17,8 +17,11 @@
 
 #include <cassert> //solokiller
 
+#ifndef WEAPONS_NO_CLASSES
 #ifndef EFFECTS_H
 #include "effects.h"
+#endif
+#include "weaponinfo.h"
 #endif
 
 class CBasePlayer;
@@ -26,6 +29,7 @@ extern int gmsgWeapPickup;
 
 void DeactivateSatchels( CBasePlayer *pOwner );
 
+#ifndef WEAPONS_NO_CLASSES
 // Contact Grenade / Timed grenade / Satchel Charge
 class CGrenade : public CBaseMonster
 {
@@ -58,7 +62,7 @@ public:
 
 	BOOL m_fRegisteredSound;// whether or not this grenade has issued its DANGER sound to the world sound list yet.
 };
-
+#endif
 
 // constant items
 #define ITEM_HEALTHKIT		1
@@ -82,6 +86,15 @@ public:
 #define WEAPON_TRIPMINE			13
 #define	WEAPON_SATCHEL			14
 #define	WEAPON_SNARK			15
+#define WEAPON_GRAPPLE			16
+#define WEAPON_EAGLE			17
+#define WEAPON_PIPEWRENCH		18
+#define WEAPON_M249				19
+#define WEAPON_DISPLACER		20
+#define WEAPON_SHOCKRIFLE		22
+#define WEAPON_SPORELAUNCHER	23
+#define WEAPON_SNIPERRIFLE		24
+#define WEAPON_KNIFE			25
 
 #define WEAPON_ALLWEAPONS		(~(1<<WEAPON_SUIT))
 
@@ -108,6 +121,13 @@ public:
 #define SNARK_WEIGHT		5
 #define SATCHEL_WEIGHT		-10
 #define TRIPMINE_WEIGHT		-10
+#define EAGLE_WEIGHT		15
+#define SHOCKRIFLE_WEIGHT	15
+#define PIPEWRENCH_WEIGHT	2
+#define M249_WEIGHT			20
+#define DISPLACER_WEIGHT	10
+#define SPORELAUNCHER_WEIGHT	20
+#define SNIPERRIFLE_WEIGHT	10
 
 
 // weapon clip/carry ammo capacities
@@ -123,6 +143,9 @@ public:
 #define SNARK_MAX_CARRY			15
 #define HORNET_MAX_CARRY		8
 #define M203_GRENADE_MAX_CARRY	10
+#define M249_MAX_CARRY			200
+#define SPORELAUNCHER_MAX_CARRY	20
+#define SNIPERRIFLE_MAX_CARRY	15
 
 // the maximum amount of ammo each weapon's clip can hold
 #define WEAPON_NOCLIP			-1
@@ -142,12 +165,18 @@ public:
 #define SATCHEL_MAX_CLIP		WEAPON_NOCLIP
 #define TRIPMINE_MAX_CLIP		WEAPON_NOCLIP
 #define SNARK_MAX_CLIP			WEAPON_NOCLIP
+#define EAGLE_MAX_CLIP			7
+#define M249_MAX_CLIP			50
+#define SPORELAUNCHER_MAX_CLIP	5
+#define SHOCKRIFLE_MAX_CLIP		10
+#define SNIPERRIFLE_MAX_CLIP	5
 
 
 // the default amount of ammo that comes with each gun when it spawns
 #define GLOCK_DEFAULT_GIVE			17
 #define PYTHON_DEFAULT_GIVE			6
-#define MP5_DEFAULT_GIVE			25
+#define DEAGLE_DEFAULT_GIVE			7
+#define MP5_DEFAULT_GIVE			50 //Full magazine for Op4
 #define MP5_DEFAULT_AMMO			25
 #define MP5_M203_DEFAULT_GIVE		0
 #define SHOTGUN_DEFAULT_GIVE		12
@@ -160,6 +189,11 @@ public:
 #define TRIPMINE_DEFAULT_GIVE		1
 #define SNARK_DEFAULT_GIVE			5
 #define HIVEHAND_DEFAULT_GIVE		8
+#define M249_DEFAULT_GIVE			50
+#define DISPLACER_DEFAULT_GIVE		40
+#define SPORELAUNCHER_DEFAULT_GIVE	5
+#define SHOCKRIFLE_DEFAULT_GIVE		10
+#define SNIPERRIFLE_DEFAULT_GIVE	5
 
 // The amount of ammo given to a player by an ammo item.
 #define AMMO_URANIUMBOX_GIVE	20
@@ -173,6 +207,10 @@ public:
 #define AMMO_RPGCLIP_GIVE		RPG_MAX_CLIP
 #define AMMO_URANIUMBOX_GIVE	20
 #define AMMO_SNARKBOX_GIVE		5
+#define AMMO_M249_GIVE			50
+#define AMMO_EAGLE_GIVE			7
+#define AMMO_SPORE_GIVE			1
+#define AMMO_SNIPERRIFLE_GIVE	5
 
 // bullet types
 typedef	enum
@@ -201,6 +239,7 @@ typedef	enum
 
 #define WEAPON_IS_ONTARGET 0x40
 
+#ifndef WEAPONS_NO_CLASSES
 typedef struct
 {
 	int		iSlot;
@@ -235,6 +274,9 @@ public:
 
 	virtual int AddToPlayer( CBasePlayer *pPlayer );	// return TRUE if the item you want the item added to the player inventory
 	virtual int AddDuplicate( CBasePlayerItem *pItem ) { return FALSE; }	// return TRUE if you want your duplicate removed from world
+	virtual void GetWeaponData(weapon_data_t& data) {}
+	virtual void SetWeaponData(const weapon_data_t& data) {}
+	
 	void EXPORT DestroyItem( void );
 	void EXPORT DefaultTouch( CBaseEntity *pOther );	// default weapon touch
 	void EXPORT FallThink ( void );// when an item is first spawned, this think is run to determine when the object has hit the ground.
@@ -323,6 +365,7 @@ public:
 	virtual void ResetEmptySound( void );
 
 	virtual void SendWeaponAnim( int iAnim, int skiplocal = 1, int body = 0 );  // skiplocal is 1 if client is predicting weapon animations
+	void FindHullIntersection(const Vector& vecSrc, TraceResult& tr, float* mins, float* maxs, edict_t* pEntity);
 
 	virtual BOOL CanDeploy( void );
 	virtual BOOL IsUseable( void );
@@ -744,12 +787,12 @@ private:
 
 class CLaserSpot : public CBaseEntity
 {
+public:
 	void Spawn( void );
 	void Precache( void );
 
 	int	ObjectCaps( void ) { return FCAP_DONT_SAVE; }
 
-public:
 	void Suspend( float flSuspendTime );
 	void EXPORT Revive( void );
 	
@@ -1098,6 +1141,6 @@ public:
 private:
 	unsigned short m_usSnarkFire;
 };
-
+#endif
 
 #endif // WEAPONS_H

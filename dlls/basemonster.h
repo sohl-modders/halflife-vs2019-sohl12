@@ -384,6 +384,19 @@ public:
 	BOOL JumpToTarget(Activity movementAct, float waitTime);
 	void StartPatrol(CBaseEntity* path);
 
+	//Shock rifle shock effect
+	float m_flShockDuration;
+	float m_flShockTime;
+	int m_iOldRenderMode;
+	int m_iOldRenderFX;
+	Vector m_OldRenderColor;
+	float m_flOldRenderAmt;
+	BOOL m_fShockEffect;
+
+	void AddShockEffect(float r, float g, float b, float size, float flShockDuration);
+	void UpdateShockEffect();
+	void ClearShockEffect();
+
 	//LRC
 	float CalcRatio(CBaseEntity* pLocus) override
 	{

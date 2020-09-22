@@ -153,6 +153,8 @@ void CRoach::Killed(entvars_t* pevAttacker, int iGib)
 	{
 		pOwner->DeathNotice(pev);
 	}
+
+	ClearShockEffect();
 	
 	UTIL_Remove(this);
 }

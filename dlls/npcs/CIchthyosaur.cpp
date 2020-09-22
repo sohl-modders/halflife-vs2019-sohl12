@@ -302,6 +302,7 @@ void CIchthyosaur::SetYawSpeed()
 //
 void CIchthyosaur::Killed(entvars_t* pevAttacker, int iGib)
 {
+	ClearShockEffect();
 	CBaseFlyingMonster::Killed(pevAttacker, iGib);
 	pev->velocity = Vector(0, 0, 0);
 }

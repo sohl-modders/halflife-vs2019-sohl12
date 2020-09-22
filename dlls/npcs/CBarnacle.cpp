@@ -308,7 +308,8 @@ void CBarnacle::Killed(entvars_t* pevAttacker, int iGib)
 {
 	pev->solid = SOLID_NOT;
 	pev->takedamage = DAMAGE_NO;
-
+	pev->deadflag = DEAD_DYING;
+	
 	if (m_hEnemy != nullptr)
 	{
 		CBaseMonster* pVictim = m_hEnemy->MyMonsterPointer();
@@ -335,6 +336,8 @@ void CBarnacle::Killed(entvars_t* pevAttacker, int iGib)
 	SetBoneController(0, 0);
 
 	StudioFrameAdvance(0.1);
+
+	ClearShockEffect();
 
 	SetNextThink(0.1);
 	SetThink(&CBarnacle::WaitTillDead);

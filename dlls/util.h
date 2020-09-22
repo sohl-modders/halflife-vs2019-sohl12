@@ -589,4 +589,11 @@ int GetStdLightStyle (int iStyle); //LRC- declared here so it can be used by eve
 // LRC- for aliases and groups
 CBaseEntity* UTIL_FollowReference( CBaseEntity* pStartEntity, const char* szName );
 
+inline void WRITE_COORD_VECTOR(const Vector& vec)
+{
+	WRITE_COORD(vec.x);
+	WRITE_COORD(vec.y);
+	WRITE_COORD(vec.z);
+}
+
 #endif // UTIL_H

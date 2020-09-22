@@ -570,7 +570,7 @@ void COtis::Killed(entvars_t* pevAttacker, int iGib)
 
 		DropItem("weapon_eagle", vecGunPos, vecGunAngles);
 	}
-
+	
 	SetUse(NULL);
 	CTalkMonster::Killed(pevAttacker, iGib);
 }

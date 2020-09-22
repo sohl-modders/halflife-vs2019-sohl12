@@ -140,6 +140,9 @@ void CBaseFlyingMonster::Killed(entvars_t* pevAttacker, int iGib)
 	ClearBits(pev->flags, FL_ONGROUND);
 	pev->angles.z = 0;
 	pev->angles.x = 0;
+	
+	ClearShockEffect();
+	
 	CBaseMonster::Killed(pevAttacker, iGib);
 }
 

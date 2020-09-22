@@ -209,6 +209,7 @@ int CISlave::ISoundMask()
 //=========================================================
 void CISlave::Killed(entvars_t* pevAttacker, int iGib)
 {
+	ClearShockEffect();
 	ClearBeams();
 	CSquadMonster::Killed(pevAttacker, iGib);
 }

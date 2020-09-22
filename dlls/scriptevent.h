@@ -26,4 +26,7 @@
 #define SCRIPT_EVENT_SOUND_VOICE	1008		// Play named wave file (on CHAN_VOICE)
 #define	SCRIPT_EVENT_SENTENCE_RND1	1009		// Play sentence group 25% of the time
 #define SCRIPT_EVENT_NOT_DEAD		1010		// Bring back to life (for life/death sequences)
+#define SCRIPT_EVENT_SOUND_VOICE_BODY		1011		// Play named wave file with normal attenuation (on CHAN_BODY)
+#define SCRIPT_EVENT_SOUND_VOICE_VOICE		1012		// Play named wave file with normal attenuation (on CHAN_VOICE)
+#define SCRIPT_EVENT_SOUND_VOICE_WEAPON		1013		// Play named wave file with normal attenuation (on CHAN_WEAPON)
 #endif   //SCRIPTEVENT_H

@@ -56,7 +56,7 @@ BOOL gInitHUD = TRUE;
 extern void CopyToBodyQue(entvars_t* pev);
 extern void respawn(entvars_t *pev, BOOL fCopyCorpse);
 extern Vector VecBModelOrigin(entvars_t *pevBModel );
-extern edict_t *EntSelectSpawnPoint( CBaseEntity *pPlayer );
+extern edict_t* EntSelectSpawnPoint(CBasePlayer* pPlayer);
 
 // the world node graph
 extern CGraph	WorldGraph;
@@ -1075,6 +1075,8 @@ void CBasePlayer::Killed( entvars_t *pevAttacker, int iGib )
 	pev->angles.x = 0;
 	pev->angles.z = 0;
 
+	ClearShockEffect();
+
 	SetThink(&CBasePlayer::PlayerDeathThink);
 	SetNextThink( 0.1 );
 }
@@ -1141,6 +1143,32 @@ void CBasePlayer::SetAnimation( PLAYER_ANIM playerAnim )
 		else
 		{
 			m_IdealActivity = ACT_WALK;
+		}
+		break;
+		case PLAYER_GRAPPLE:
+		{
+			if (FBitSet(pev->flags, FL_ONGROUND))
+			{
+				if (pev->waterlevel > 1)
+				{
+					if (speed == 0)
+						m_IdealActivity = ACT_HOVER;
+					else
+						m_IdealActivity = ACT_SWIM;
+				}
+				else
+				{
+					m_IdealActivity = ACT_WALK;
+				}
+			}
+			else if (speed == 0)
+			{
+				m_IdealActivity = ACT_HOVER;
+			}
+			else
+			{
+				m_IdealActivity = ACT_SWIM;
+			}
 		}
 		break;
 	}
@@ -1268,8 +1296,9 @@ void CBasePlayer::TabulateAmmo()
 	ammo_rockets = AmmoInventory( GetAmmoIndex( "rockets" ) );
 	ammo_uranium = AmmoInventory( GetAmmoIndex( "uranium" ) );
 	ammo_hornets = AmmoInventory( GetAmmoIndex( "Hornets" ) );
+	ammo_spores = AmmoInventory(GetAmmoIndex("spores"));
+	ammo_762 = AmmoInventory(GetAmmoIndex("762"));
 }
-
 
 /*
 ===========
@@ -3050,44 +3079,44 @@ Returns the entity to spawn at
 USES AND SETS GLOBAL g_pLastSpawn
 ============
 */
-edict_t *EntSelectSpawnPoint( CBaseEntity *pPlayer )
+edict_t* EntSelectSpawnPoint(CBasePlayer* pPlayer)
 {
-	CBaseEntity *pSpot;
-	edict_t		*player;
+	CBaseEntity* pSpot;
+	edict_t* player;
 
 	player = pPlayer->edict();
 
-// choose a info_player_deathmatch point
+	// choose a info_player_deathmatch point
 	if (g_pGameRules->IsCoOp())
 	{
-		pSpot = UTIL_FindEntityByClassname( g_pLastSpawn, "info_player_coop");
-		if ( !FNullEnt(pSpot) )
+		pSpot = UTIL_FindEntityByClassname(g_pLastSpawn, "info_player_coop");
+		if (!FNullEnt(pSpot))
 			goto ReturnSpot;
-		pSpot = UTIL_FindEntityByClassname( g_pLastSpawn, "info_player_start");
-		if ( !FNullEnt(pSpot) ) 
+		pSpot = UTIL_FindEntityByClassname(g_pLastSpawn, "info_player_start");
+		if (!FNullEnt(pSpot))
 			goto ReturnSpot;
 	}
-	else if ( g_pGameRules->IsDeathmatch() )
+	else if (g_pGameRules->IsDeathmatch())
 	{
 		pSpot = g_pLastSpawn;
 		// Randomize the start spot
-		for ( int i = RANDOM_LONG(1,5); i > 0; i-- )
-			pSpot = UTIL_FindEntityByClassname( pSpot, "info_player_deathmatch" );
-		if ( FNullEnt( pSpot ) )  // skip over the null point
-			pSpot = UTIL_FindEntityByClassname( pSpot, "info_player_deathmatch" );
+		for (int i = RANDOM_LONG(1, 5); i > 0; i--)
+			pSpot = UTIL_FindEntityByClassname(pSpot, "info_player_deathmatch");
+		if (FNullEnt(pSpot))  // skip over the null point
+			pSpot = UTIL_FindEntityByClassname(pSpot, "info_player_deathmatch");
 
-		CBaseEntity *pFirstSpot = pSpot;
+		CBaseEntity* pFirstSpot = pSpot;
 
-		do 
+		do
 		{
-			if ( pSpot )
+			if (pSpot)
 			{
 				// check if pSpot is valid
-				if ( IsSpawnPointValid( pPlayer, pSpot ) )
+				if (IsSpawnPointValid(pPlayer, pSpot))
 				{
-					if ( pSpot->pev->origin == Vector( 0, 0, 0 ) )
+					if (pSpot->pev->origin == Vector(0, 0, 0))
 					{
-						pSpot = UTIL_FindEntityByClassname( pSpot, "info_player_deathmatch" );
+						pSpot = UTIL_FindEntityByClassname(pSpot, "info_player_deathmatch");
 						continue;
 					}
 
@@ -3096,39 +3125,39 @@ edict_t *EntSelectSpawnPoint( CBaseEntity *pPlayer )
 				}
 			}
 			// increment pSpot
-			pSpot = UTIL_FindEntityByClassname( pSpot, "info_player_deathmatch" );
-		} while ( pSpot != pFirstSpot ); // loop if we're not back to the start
+			pSpot = UTIL_FindEntityByClassname(pSpot, "info_player_deathmatch");
+		} while (pSpot != pFirstSpot); // loop if we're not back to the start
 
 		// we haven't found a place to spawn yet,  so kill any guy at the first spawn point and spawn there
-		if ( !FNullEnt( pSpot ) )
+		if (!FNullEnt(pSpot))
 		{
-			CBaseEntity *ent = NULL;
-			while ( (ent = UTIL_FindEntityInSphere( ent, pSpot->pev->origin, 128 )) != NULL )
+			CBaseEntity* ent = NULL;
+			while ((ent = UTIL_FindEntityInSphere(ent, pSpot->pev->origin, 128)) != NULL)
 			{
 				// if ent is a client, kill em (unless they are ourselves)
-				if ( ent->IsPlayer() && !(ent->edict() == player) )
-					ent->TakeDamage( VARS(INDEXENT(0)), VARS(INDEXENT(0)), 300, DMG_GENERIC );
+				if (ent->IsPlayer() && !(ent->edict() == player))
+					ent->TakeDamage(VARS(INDEXENT(0)), VARS(INDEXENT(0)), 300, DMG_GENERIC);
 			}
 			goto ReturnSpot;
 		}
 	}
 
 	// If startspot is set, (re)spawn there.
-	if ( FStringNull( gpGlobals->startspot ) || !strlen(STRING(gpGlobals->startspot)))
+	if (FStringNull(gpGlobals->startspot) || !strlen(STRING(gpGlobals->startspot)))
 	{
 		pSpot = UTIL_FindEntityByClassname(NULL, "info_player_start");
-		if ( !FNullEnt(pSpot) )
+		if (!FNullEnt(pSpot))
 			goto ReturnSpot;
 	}
 	else
 	{
-		pSpot = UTIL_FindEntityByTargetname( NULL, STRING(gpGlobals->startspot) );
-		if ( !FNullEnt(pSpot) )
+		pSpot = UTIL_FindEntityByTargetname(NULL, STRING(gpGlobals->startspot));
+		if (!FNullEnt(pSpot))
 			goto ReturnSpot;
 	}
 
 ReturnSpot:
-	if ( FNullEnt( pSpot ) )
+	if (FNullEnt(pSpot))
 	{
 		ALERT(at_error, "PutClientInServer: no info_player_start on level");
 		return INDEXENT(0);
@@ -3308,8 +3337,8 @@ int CBasePlayer::Restore( CRestore &restore )
 		ALERT( at_console, "No Landmark:%s\n", pSaveData->szLandmarkName );
 
 		// default to normal spawn
-		edict_t* pentSpawnSpot = EntSelectSpawnPoint( this );
-		pev->origin = VARS(pentSpawnSpot)->origin + Vector(0,0,1);
+		edict_t* pentSpawnSpot = EntSelectSpawnPoint(this);
+		pev->origin = VARS(pentSpawnSpot)->origin + Vector(0, 0, 1);
 		pev->angles = VARS(pentSpawnSpot)->angles;
 	}
 	pev->v_angle.z = 0;	// Clear out roll
@@ -3847,32 +3876,40 @@ void CBasePlayer::CheatImpulseCommands( int iImpulse )
 
 	case 101:
 		gEvilImpulse101 = TRUE;
-		GiveNamedItem( "item_suit" );
-		GiveNamedItem( "item_battery" );
-		GiveNamedItem( "weapon_crowbar" );
-		GiveNamedItem( "weapon_9mmhandgun" );
-		GiveNamedItem( "ammo_9mmclip" );
-		GiveNamedItem( "weapon_shotgun" );
-		GiveNamedItem( "ammo_buckshot" );
-		GiveNamedItem( "weapon_9mmAR" );
-		GiveNamedItem( "ammo_9mmAR" );
-		GiveNamedItem( "ammo_ARgrenades" );
-		GiveNamedItem( "weapon_handgrenade" );
-		GiveNamedItem( "weapon_tripmine" );
-#ifndef OEM_BUILD
-		GiveNamedItem( "weapon_357" );
-		GiveNamedItem( "ammo_357" );
-		GiveNamedItem( "weapon_crossbow" );
-		GiveNamedItem( "ammo_crossbow" );
-		GiveNamedItem( "weapon_egon" );
-		GiveNamedItem( "weapon_gauss" );
-		GiveNamedItem( "ammo_gaussclip" );
-		GiveNamedItem( "weapon_rpg" );
-		GiveNamedItem( "ammo_rpgclip" );
-		GiveNamedItem( "weapon_satchel" );
-		GiveNamedItem( "weapon_snark" );
-		GiveNamedItem( "weapon_hornetgun" );
-#endif
+		GiveNamedItem("item_suit");
+		GiveNamedItem("item_battery");
+		GiveNamedItem("weapon_crowbar");
+		GiveNamedItem("weapon_9mmhandgun");
+		GiveNamedItem("ammo_9mmclip");
+		GiveNamedItem("weapon_shotgun");
+		GiveNamedItem("ammo_buckshot");
+		GiveNamedItem("weapon_9mmAR");
+		GiveNamedItem("ammo_9mmAR");
+		GiveNamedItem("ammo_ARgrenades");
+		GiveNamedItem("weapon_handgrenade");
+		GiveNamedItem("weapon_tripmine");
+		GiveNamedItem("weapon_357");
+		GiveNamedItem("ammo_357");
+		GiveNamedItem("weapon_crossbow");
+		GiveNamedItem("ammo_crossbow");
+		GiveNamedItem("weapon_egon");
+		GiveNamedItem("weapon_gauss");
+		GiveNamedItem("ammo_gaussclip");
+		GiveNamedItem("weapon_rpg");
+		GiveNamedItem("ammo_rpgclip");
+		GiveNamedItem("weapon_satchel");
+		GiveNamedItem("weapon_snark");
+		GiveNamedItem("weapon_hornetgun");
+		GiveNamedItem("weapon_eagle");
+		GiveNamedItem("weapon_sporelauncher");
+		GiveNamedItem("weapon_shockrifle");
+		GiveNamedItem("weapon_knife");
+		GiveNamedItem("weapon_m249");
+		GiveNamedItem("weapon_pipewrench");
+		GiveNamedItem("weapon_grapple");
+		GiveNamedItem("weapon_sniperrifle");
+		GiveNamedItem("weapon_displacer");
+		
 		gEvilImpulse101 = FALSE;
 		break;
 

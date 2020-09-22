@@ -525,6 +525,8 @@ void CBaseMonster :: MonsterThink ( void )
 
 	RunAI();
 
+	UpdateShockEffect();
+
 	float flInterval = StudioFrameAdvance( ); // animate
 
 // start or end a fidget
@@ -566,6 +568,68 @@ void CBaseMonster :: MonsterThink ( void )
 			ALERT( at_error, "Schedule stalled!!\n" );
 	}
 #endif
+}
+
+void CBaseMonster::AddShockEffect(float r, float g, float b, float size, float flShockDuration)
+{
+	if (pev->deadflag == DEAD_NO)
+	{
+		if (m_fShockEffect)
+		{
+			m_flShockDuration += flShockDuration;
+		}
+		else
+		{
+			m_iOldRenderMode = pev->rendermode;
+			m_iOldRenderFX = pev->renderfx;
+			m_OldRenderColor.x = pev->rendercolor.x;
+			m_OldRenderColor.y = pev->rendercolor.y;
+			m_OldRenderColor.z = pev->rendercolor.z;
+			m_flOldRenderAmt = pev->renderamt;
+
+			pev->rendermode = kRenderNormal;
+
+			pev->renderfx = kRenderFxGlowShell;
+			pev->rendercolor.x = r;
+			pev->rendercolor.y = g;
+			pev->rendercolor.z = b;
+			pev->renderamt = size;
+
+			m_fShockEffect = true;
+			m_flShockDuration = flShockDuration;
+			m_flShockTime = gpGlobals->time;
+		}
+	}
+}
+
+void CBaseMonster::UpdateShockEffect()
+{
+	if (m_fShockEffect && (gpGlobals->time - m_flShockTime > m_flShockDuration))
+	{
+		pev->rendermode = m_iOldRenderMode;
+		pev->renderfx = m_iOldRenderFX;
+		pev->rendercolor.x = m_OldRenderColor.x;
+		pev->rendercolor.y = m_OldRenderColor.y;
+		pev->rendercolor.z = m_OldRenderColor.z;
+		pev->renderamt = m_flOldRenderAmt;
+		m_flShockDuration = 0;
+		m_fShockEffect = false;
+	}
+}
+
+void CBaseMonster::ClearShockEffect()
+{
+	if (m_fShockEffect)
+	{
+		pev->rendermode = m_iOldRenderMode;
+		pev->renderfx = m_iOldRenderFX;
+		pev->rendercolor.x = m_OldRenderColor.x;
+		pev->rendercolor.y = m_OldRenderColor.y;
+		pev->rendercolor.z = m_OldRenderColor.z;
+		pev->renderamt = m_flOldRenderAmt;
+		m_flShockDuration = 0;
+		m_fShockEffect = false;
+	}
 }
 
 //=========================================================
@@ -2666,6 +2730,18 @@ void CBaseMonster :: HandleAnimEvent( MonsterEvent_t *pEvent )
 			EMIT_SOUND( edict(), CHAN_VOICE, pEvent->options, 1.0, ATTN_IDLE );
 		break;
 
+	case SCRIPT_EVENT_SOUND_VOICE_BODY:
+		EMIT_SOUND(edict(), CHAN_BODY, pEvent->options, VOL_NORM, ATTN_NORM);
+		break;
+
+	case SCRIPT_EVENT_SOUND_VOICE_VOICE:
+		EMIT_SOUND(edict(), CHAN_VOICE, pEvent->options, VOL_NORM, ATTN_NORM);
+		break;
+
+	case SCRIPT_EVENT_SOUND_VOICE_WEAPON:
+		EMIT_SOUND(edict(), CHAN_WEAPON, pEvent->options, VOL_NORM, ATTN_NORM);
+		break;
+		
 	case SCRIPT_EVENT_SENTENCE_RND1:		// Play a named sentence group 33% of the time
 		if (RANDOM_LONG(0,2) == 0)
 			break;

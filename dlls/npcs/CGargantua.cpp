@@ -700,6 +700,7 @@ void CGargantua::DeathEffect()
 void CGargantua::Killed(entvars_t* pevAttacker, int iGib)
 {
 	EyeOff();
+	ClearShockEffect();
 	UTIL_Remove(m_pEyeGlow);
 	m_pEyeGlow = nullptr;
 	CBaseMonster::Killed(pevAttacker, GIB_NEVER);
