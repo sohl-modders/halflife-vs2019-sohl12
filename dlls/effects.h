@@ -54,6 +54,7 @@ public:
 	void Animate( float frames );
 	void Expand( float scaleSpeed, float fadeSpeed );
 	void SpriteInit( const char *pSpriteName, const Vector &origin );
+	void SetFramerate(float framerate) { pev->framerate = framerate; }
 
 	virtual STATE GetState( void ) { return (pev->effects & EF_NODRAW)?STATE_OFF:STATE_ON; };
 

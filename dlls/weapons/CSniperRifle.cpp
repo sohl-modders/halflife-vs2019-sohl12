@@ -175,7 +175,7 @@ void CSniperRifle::SecondaryAttack()
 
 	//TODO: use UTIL_WeaponTimeBase() - Solokiller
 	//TODO: this doesn't really make sense
-	pev->nextthink = 0.0 + 0.1;
+	SetNextThink(0.1);
 
 	m_flNextSecondaryAttack = UTIL_WeaponTimeBase() + 0.1 + 0.5;
 }

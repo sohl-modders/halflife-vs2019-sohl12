@@ -61,6 +61,9 @@
     <Filter Include="Source Files\dlls\weapons">
       <UniqueIdentifier>{b2c486cd-7580-41ca-a9f5-f1d849343ad0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\dlls\gunman">
+      <UniqueIdentifier>{5cb906a2-ddb2-43f3-881f-11c2b0d148ac}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\dlls\airtank.cpp">
@@ -555,6 +558,39 @@
     <ClCompile Include="..\..\dlls\weapons\CSporeLauncher.cpp">
       <Filter>Source Files\dlls\weapons</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\dlls\npcs\CHGruntAlly.cpp">
+      <Filter>Source Files\dlls\npcs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dlls\npcs\CHGruntAllyMedic.cpp">
+      <Filter>Source Files\dlls\npcs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dlls\npcs\CHGruntAllyTorch.cpp">
+      <Filter>Source Files\dlls\npcs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dlls\gunman\CDecore.cpp">
+      <Filter>Source Files\dlls\gunman</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dlls\gunman\CDecoreMushroom.cpp">
+      <Filter>Source Files\dlls\gunman</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dlls\gunman\CGunmanCycler.cpp">
+      <Filter>Source Files\dlls\gunman</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dlls\gunman\CDecoreTorch.cpp">
+      <Filter>Source Files\dlls\gunman</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dlls\gunman\CDecoreTorchFlame.cpp">
+      <Filter>Source Files\dlls\gunman</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dlls\gunman\CGunmanUnarmed.cpp">
+      <Filter>Source Files\dlls\gunman</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dlls\gunman\COuranosaurus.cpp">
+      <Filter>Source Files\dlls\gunman</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dlls\gunman\CRandomSpeaker .cpp">
+      <Filter>Source Files\dlls\gunman</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\dlls\doors.h">
@@ -955,6 +991,42 @@
     </ClInclude>
     <ClInclude Include="..\..\dlls\weapons\CSporeLauncher.h">
       <Filter>Source Files\dlls\weapons</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\dlls\npcs\CHGruntAlly.h">
+      <Filter>Source Files\dlls\npcs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\dlls\npcs\CHGruntAllyMedic.h">
+      <Filter>Source Files\dlls\npcs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\dlls\npcs\CHGruntAllyTorch.h">
+      <Filter>Source Files\dlls\npcs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\dlls\gunman\CDecore.h">
+      <Filter>Source Files\dlls\gunman</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\dlls\gunman\CDecoreMushroom.h">
+      <Filter>Source Files\dlls\gunman</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\dlls\gunman\CGunmanCycler.h">
+      <Filter>Source Files\dlls\gunman</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\dlls\CCycler.h">
+      <Filter>Source Files\dlls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\dlls\gunman\CDecoreTorch.h">
+      <Filter>Source Files\dlls\gunman</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\dlls\gunman\CDecoreTorchFlame.h">
+      <Filter>Source Files\dlls\gunman</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\dlls\gunman\CGunmanUnarmed.h">
+      <Filter>Source Files\dlls\gunman</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\dlls\gunman\COuranosaurus.h">
+      <Filter>Source Files\dlls\gunman</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\dlls\gunman\CRandomSpeaker.h">
+      <Filter>Source Files\dlls\gunman</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

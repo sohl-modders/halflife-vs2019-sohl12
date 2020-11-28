@@ -1324,9 +1324,7 @@ void CBaseMonster :: SetActivity ( Activity NewActivity )
 //=========================================================
 void CBaseMonster :: SetSequenceByName ( const char *szSequence )
 {
-	int	iSequence;
-
-	iSequence = LookupSequence ( szSequence );
+	int iSequence = LookupSequence(szSequence);
 
 	// Set to the desired anim, or default anim if the desired is not present
 	if ( iSequence > ACTIVITY_NOT_AVAILABLE )

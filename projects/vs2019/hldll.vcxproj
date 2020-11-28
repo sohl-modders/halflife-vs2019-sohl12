@@ -133,6 +133,14 @@
     <ClCompile Include="..\..\dlls\gauss.cpp" />
     <ClCompile Include="..\..\dlls\ggrenade.cpp" />
     <ClCompile Include="..\..\dlls\globals.cpp" />
+    <ClCompile Include="..\..\dlls\gunman\CDecore.cpp" />
+    <ClCompile Include="..\..\dlls\gunman\CDecoreMushroom.cpp" />
+    <ClCompile Include="..\..\dlls\gunman\CDecoreTorch.cpp" />
+    <ClCompile Include="..\..\dlls\gunman\CDecoreTorchFlame.cpp" />
+    <ClCompile Include="..\..\dlls\gunman\CGunmanCycler.cpp" />
+    <ClCompile Include="..\..\dlls\gunman\CGunmanUnarmed.cpp" />
+    <ClCompile Include="..\..\dlls\gunman\COuranosaurus.cpp" />
+    <ClCompile Include="..\..\dlls\gunman\CRandomSpeaker .cpp" />
     <ClCompile Include="..\..\dlls\handgrenade.cpp" />
     <ClCompile Include="..\..\dlls\healthkit.cpp" />
     <ClCompile Include="..\..\dlls\hornetgun.cpp" />
@@ -178,6 +186,9 @@
     <ClCompile Include="..\..\dlls\npcs\CHAssassin.cpp" />
     <ClCompile Include="..\..\dlls\npcs\CHeadCrab.cpp" />
     <ClCompile Include="..\..\dlls\npcs\CHGrunt.cpp" />
+    <ClCompile Include="..\..\dlls\npcs\CHGruntAlly.cpp" />
+    <ClCompile Include="..\..\dlls\npcs\CHGruntAllyMedic.cpp" />
+    <ClCompile Include="..\..\dlls\npcs\CHGruntAllyTorch.cpp" />
     <ClCompile Include="..\..\dlls\npcs\CHGruntRepel.cpp" />
     <ClCompile Include="..\..\dlls\npcs\CHoundeye.cpp" />
     <ClCompile Include="..\..\dlls\npcs\CIchthyosaur.cpp" />
@@ -277,6 +288,7 @@
     <ClInclude Include="..\..\dlls\basemonster.h" />
     <ClInclude Include="..\..\dlls\CAllyMonster.h" />
     <ClInclude Include="..\..\dlls\cbase.h" />
+    <ClInclude Include="..\..\dlls\CCycler.h" />
     <ClInclude Include="..\..\dlls\cdll_dll.h" />
     <ClInclude Include="..\..\dlls\client.h" />
     <ClInclude Include="..\..\dlls\CSquadTalkMonster.h" />
@@ -292,6 +304,14 @@
     <ClInclude Include="..\..\dlls\extdll.h" />
     <ClInclude Include="..\..\dlls\func_break.h" />
     <ClInclude Include="..\..\dlls\gamerules.h" />
+    <ClInclude Include="..\..\dlls\gunman\CDecore.h" />
+    <ClInclude Include="..\..\dlls\gunman\CDecoreMushroom.h" />
+    <ClInclude Include="..\..\dlls\gunman\CDecoreTorch.h" />
+    <ClInclude Include="..\..\dlls\gunman\CDecoreTorchFlame.h" />
+    <ClInclude Include="..\..\dlls\gunman\CGunmanCycler.h" />
+    <ClInclude Include="..\..\dlls\gunman\CGunmanUnarmed.h" />
+    <ClInclude Include="..\..\dlls\gunman\COuranosaurus.h" />
+    <ClInclude Include="..\..\dlls\gunman\CRandomSpeaker.h" />
     <ClInclude Include="..\..\dlls\items.h" />
     <ClInclude Include="..\..\dlls\items\CGenericItem.h" />
     <ClInclude Include="..\..\dlls\items\CNuclearBomb.h" />
@@ -323,6 +343,9 @@
     <ClInclude Include="..\..\dlls\npcs\CHAssassin.h" />
     <ClInclude Include="..\..\dlls\npcs\CHeadCrab.h" />
     <ClInclude Include="..\..\dlls\npcs\CHGrunt.h" />
+    <ClInclude Include="..\..\dlls\npcs\CHGruntAlly.h" />
+    <ClInclude Include="..\..\dlls\npcs\CHGruntAllyMedic.h" />
+    <ClInclude Include="..\..\dlls\npcs\CHGruntAllyTorch.h" />
     <ClInclude Include="..\..\dlls\npcs\CHGruntRepel.h" />
     <ClInclude Include="..\..\dlls\npcs\CHoundeye.h" />
     <ClInclude Include="..\..\dlls\npcs\CIchthyosaur.h" />

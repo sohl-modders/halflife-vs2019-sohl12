@@ -54,7 +54,6 @@ public:
 	void ScheduleChange();
 	void Killed(entvars_t* pevAttacker, int iGib);
 	BOOL OccupySlot(int iDesiredSlot);
-	BOOL NoFriendlyFire();
 	BOOL NoFriendlyFire(BOOL playerAlly);
 
 	// squad functions still left in base class

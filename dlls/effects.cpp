@@ -1572,7 +1572,7 @@ void CSprite::AnimateThink( void )
 	Animate( pev->framerate * (gpGlobals->time - m_lastTime) );
 
 	SetNextThink( 0.1 );
-	m_lastTime			= gpGlobals->time;
+	m_lastTime	= gpGlobals->time;
 }
 
 void CSprite::AnimateUntilDead( void )

@@ -27,31 +27,10 @@
 #include "animation.h"
 #include "weapons.h"
 #include "player.h"
-
+#include "CCycler.h"
 
 #define TEMP_FOR_SCREEN_SHOTS
 #ifdef TEMP_FOR_SCREEN_SHOTS //===================================================
-
-class CCycler : public CBaseMonster
-{
-public:
-	void GenericCyclerSpawn(const char *szModel, Vector vecMin, Vector vecMax);
-	virtual int	ObjectCaps( void ) { return (CBaseEntity :: ObjectCaps() | FCAP_IMPULSE_USE); }
-	int TakeDamage( entvars_t* pevInflictor, entvars_t* pevAttacker, float flDamage, int bitsDamageType );
-	void Spawn( void );
-	void Think( void );
-	//void Pain( float flDamage );
-	void Use ( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value );
-
-	// Don't treat as a live target
-	virtual BOOL IsAlive( void ) { return FALSE; }
-
-	virtual int		Save( CSave &save );
-	virtual int		Restore( CRestore &restore );
-	static	TYPEDESCRIPTION m_SaveData[];
-
-	int			m_animate;
-};
 
 TYPEDESCRIPTION	CCycler::m_SaveData[] = 
 {
@@ -70,7 +49,6 @@ public:
 	void Spawn( void ) { GenericCyclerSpawn( STRING(pev->model), Vector(-16, -16, 0), Vector(16, 16, 72) ); }
 };
 LINK_ENTITY_TO_CLASS( cycler, CGenericCycler );
-
 
 
 // Probe droid imported for tech demo compatibility
@@ -142,9 +120,6 @@ void CCycler :: Spawn( )
 	}
 }
 
-
-
-
 //
 // cycler think
 //
@@ -152,10 +127,11 @@ void CCycler :: Think( void )
 {
 	SetNextThink( 0.1 );
 
-	if (m_animate)
+	if (m_animate > 0)
 	{
 		StudioFrameAdvance ( );
 	}
+	
 	if (m_fSequenceFinished && !m_fSequenceLoops)
 	{
 		// ResetSequenceInfo();
