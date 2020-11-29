@@ -27,7 +27,6 @@ class CTentacleMaw : public CBaseMonster
 {
 public:
 	void Spawn() override;
-	void Precache() override;
 };
 
 #endif // CTENTACLEMAW_H

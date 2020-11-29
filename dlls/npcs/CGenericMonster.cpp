@@ -123,7 +123,7 @@ void CGenericMonster::Spawn()
 
 	Precache();
 
-	SET_MODEL(ENT(pev), STRING(pev->model));
+	SetModel(pev->model);
 
 	if (vecSize != g_vecZero)
 	{
@@ -175,8 +175,6 @@ void CGenericMonster::Spawn()
 //=========================================================
 void CGenericMonster::Precache()
 {
-	PRECACHE_MODEL((char*)STRING(pev->model));
-
 	if (m_iszGibModel)
-		PRECACHE_MODEL((char*)STRING(m_iszGibModel)); //LRC
+		PrecacheModel((char*)STRING(m_iszGibModel)); //LRC
 }

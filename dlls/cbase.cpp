@@ -949,14 +949,19 @@ int	CBaseEntity :: DamageDecal( int bitsDamageType )
 
 void CBaseEntity::SetModel(const char* model)
 {
+	if (!FStringNull(pev->model)) //LRC
+		model = (char*)STRING(pev->model);
+
+	PrecacheModel((char*)model);
+	
 	if (!model || !(*model)) {
-		g_engfuncs.pfnSetModel(ENT(pev), "models/null.mdl");
+		g_engfuncs.pfnSetModel(edict(), "models/null.mdl");
 		return;
 	}
 	
 	//is this brush model?
 	if (model[0] == '*') {
-		g_engfuncs.pfnSetModel(ENT(pev), model);
+		g_engfuncs.pfnSetModel(edict(), model);
 		return;
 	}
 
@@ -964,33 +969,21 @@ void CBaseEntity::SetModel(const char* model)
 	byte* data = LOAD_FILE_FOR_ME((char*)model, NULL);
 	if (data) {
 		FREE_FILE(data);
-		g_engfuncs.pfnSetModel(ENT(pev), model);
+		g_engfuncs.pfnSetModel(edict(), model);
 		return;
 	}
 
 	char* ext = COM_FileExtension((char*)model);
 	if (FStrEq(ext, "mdl")) {
 		//this is model
-		g_engfuncs.pfnSetModel(ENT(pev), "models/error.mdl");
+		g_engfuncs.pfnSetModel(edict(), "models/error.mdl");
 	} else if (FStrEq(ext, "spr")) {
 		//this is sprite
-		g_engfuncs.pfnSetModel(ENT(pev), "sprites/error.spr");
+		g_engfuncs.pfnSetModel(edict(), "sprites/error.spr");
 	} else {
 		//set null model
-		g_engfuncs.pfnSetModel(ENT(pev), "models/null.mdl");
+		g_engfuncs.pfnSetModel(edict(), "models/null.mdl");
 	}
-}
-
-int CBaseEntity::PrecacheModel(string_t s, char* e) {
-	if (FStringNull(s))
-		return PrecacheModel(e);
-
-	return PrecacheModel(s);
-}
-
-int CBaseEntity::PrecacheModel(string_t str)
-{
-	return PrecacheModel((char*)STRING(str));
 }
 
 int CBaseEntity::PrecacheModel(char* str)

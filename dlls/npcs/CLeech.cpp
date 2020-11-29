@@ -85,12 +85,10 @@ void CLeech::Spawn()
 {
 	Precache();
 
-	if (pev->model)
-		SET_MODEL(ENT(pev), STRING(pev->model)); //LRC
-	else
-		SET_MODEL(ENT(pev), "models/leech.mdl");
+	SetModel("models/leech.mdl");
+	
 	// Just for fun
-	//	SET_MODEL(ENT(pev), "models/icky.mdl");
+	//	SetModel("models/icky.mdl");
 
 	//	UTIL_SetSize( pev, g_vecZero, g_vecZero );
 	UTIL_SetSize(pev, Vector(-1, -1, 0), Vector(1, 1, 2));
@@ -98,7 +96,8 @@ void CLeech::Spawn()
 	pev->solid = SOLID_SLIDEBOX;
 	pev->movetype = MOVETYPE_FLY;
 	SetBits(pev->flags, FL_SWIM);
-	if (pev->health == 0)
+	
+	if (!pev->health) //LRC
 		pev->health = gSkillData.leechHealth;
 
 	m_flFieldOfView = -0.5; // 180 degree FOV
@@ -194,11 +193,6 @@ void CLeech::AlertSound()
 
 void CLeech::Precache()
 {
-	if (pev->model)
-		PRECACHE_MODEL((char*)STRING(pev->model)); //LRC
-	else
-		PRECACHE_MODEL("models/leech.mdl");
-
 	PRECACHE_SOUND_ARRAY(pAttackSounds);
 	PRECACHE_SOUND_ARRAY(pAlertSounds);
 }

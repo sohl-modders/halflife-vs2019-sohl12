@@ -74,10 +74,7 @@ void CBarnacle::Spawn()
 {
 	Precache();
 
-	if (pev->model)
-		SetModel(pev->model); //LRC
-	else
-		SetModel("models/barnacle.mdl");
+	SetModel("models/barnacle.mdl");
 
 	UTIL_SetSize(pev, Vector(-16, -16, -32), Vector(16, 16, 0));
 
@@ -362,11 +359,6 @@ void CBarnacle::WaitTillDead()
 //=========================================================
 void CBarnacle::Precache()
 {
-	if (pev->model)
-		PrecacheModel(pev->model); //LRC
-	else
-		PrecacheModel("models/barnacle.mdl");
-
 	PrecacheSound("barnacle/bcl_alert2.wav"); //happy, lifting food up
 	PrecacheSound("barnacle/bcl_bite3.wav"); //just got food to mouth
 	PrecacheSound("barnacle/bcl_chew1.wav");

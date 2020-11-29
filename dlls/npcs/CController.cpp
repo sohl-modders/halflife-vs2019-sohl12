@@ -299,10 +299,7 @@ void CController::Spawn()
 {
 	Precache();
 
-	if (pev->model)
-		SET_MODEL(ENT(pev), STRING(pev->model)); //LRC
-	else
-		SET_MODEL(ENT(pev), "models/controller.mdl");
+	SetModel("models/controller.mdl");
 
 	UTIL_SetSize(pev, Vector(-32, -32, 0), Vector(32, 32, 64));
 
@@ -310,8 +307,8 @@ void CController::Spawn()
 	pev->movetype = MOVETYPE_FLY;
 	pev->flags |= FL_FLY;
 	m_bloodColor = BLOOD_COLOR_GREEN;
-
-	if (pev->health == 0)
+	
+	if (!pev->health) //LRC
 		pev->health = gSkillData.controllerHealth;
 
 	pev->view_ofs = Vector(0, 0, -2); // position of the eyes relative to monster's origin.
@@ -327,18 +324,13 @@ void CController::Spawn()
 //=========================================================
 void CController::Precache()
 {
-	if (pev->model)
-		PRECACHE_MODEL((char*)STRING(pev->model)); //LRC
-	else
-		PRECACHE_MODEL("models/controller.mdl");
-
 	PRECACHE_SOUND_ARRAY(pAttackSounds);
 	PRECACHE_SOUND_ARRAY(pIdleSounds);
 	PRECACHE_SOUND_ARRAY(pAlertSounds);
 	PRECACHE_SOUND_ARRAY(pPainSounds);
 	PRECACHE_SOUND_ARRAY(pDeathSounds);
 
-	PRECACHE_MODEL("sprites/xspark4.spr");
+	PrecacheModel("sprites/xspark4.spr");
 }
 
 //=========================================================

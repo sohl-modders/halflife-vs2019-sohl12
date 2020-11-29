@@ -255,10 +255,7 @@ void CHAssassin::Spawn()
 {
 	Precache();
 
-	if (pev->model)
-		SET_MODEL(ENT(pev), STRING(pev->model)); //LRC
-	else
-		SET_MODEL(ENT(pev), "models/hassassin.mdl");
+	SetModel("models/hassassin.mdl");
 	
 	UTIL_SetSize(pev, VEC_HUMAN_HULL_MIN, VEC_HUMAN_HULL_MAX);
 
@@ -267,7 +264,7 @@ void CHAssassin::Spawn()
 	m_bloodColor = BLOOD_COLOR_RED;
 	pev->effects = 0;
 	
-	if (pev->health == 0)
+	if (!pev->health) //LRC
 		pev->health = gSkillData.hassassinHealth;
 	
 	m_flFieldOfView = VIEW_FIELD_WIDE;
@@ -290,17 +287,12 @@ void CHAssassin::Spawn()
 //=========================================================
 void CHAssassin::Precache()
 {
-	if (pev->model)
-		PRECACHE_MODEL((char*)STRING(pev->model)); //LRC
-	else
-		PRECACHE_MODEL("models/hassassin.mdl");
+	PrecacheSound("weapons/pl_gun1.wav");
+	PrecacheSound("weapons/pl_gun2.wav");
 
-	PRECACHE_SOUND("weapons/pl_gun1.wav");
-	PRECACHE_SOUND("weapons/pl_gun2.wav");
+	PrecacheSound("debris/beamstart1.wav");
 
-	PRECACHE_SOUND("debris/beamstart1.wav");
-
-	m_iShell = PRECACHE_MODEL("models/shell.mdl"); // brass shell
+	m_iShell = PrecacheModel("models/shell.mdl"); // brass shell
 }
 
 

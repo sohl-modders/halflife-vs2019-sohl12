@@ -852,10 +852,7 @@ void CHGrunt::Spawn()
 {
 	Precache();
 
-	if (pev->model)
-		SET_MODEL(ENT(pev), STRING(pev->model)); //LRC
-	else
-		SET_MODEL(ENT(pev), "models/hgrunt.mdl");
+	SetModel("models/hgrunt.mdl");
 
 	UTIL_SetSize(pev, VEC_HUMAN_HULL_MIN, VEC_HUMAN_HULL_MAX);
 
@@ -864,7 +861,7 @@ void CHGrunt::Spawn()
 	m_bloodColor = BLOOD_COLOR_RED;
 	pev->effects = 0;
 
-	if (pev->health == 0)
+	if (!pev->health) //LRC
 		pev->health = gSkillData.hgruntHealth;
 
 	m_flFieldOfView = 0.2; // indicates the width of this monster's forward view cone ( as a dotproduct result )
@@ -925,33 +922,28 @@ void CHGrunt::Spawn()
 //=========================================================
 void CHGrunt::Precache()
 {
-	if (pev->model)
-		PRECACHE_MODEL((char*)STRING(pev->model)); //LRC
-	else
-		PRECACHE_MODEL("models/hgrunt.mdl");
+	PrecacheSound("weapons/dryfire1.wav"); //LRC
 
-	PRECACHE_SOUND("weapons/dryfire1.wav"); //LRC
+	PrecacheSound("hgrunt/gr_mgun1.wav");
+	PrecacheSound("hgrunt/gr_mgun2.wav");
 
-	PRECACHE_SOUND("hgrunt/gr_mgun1.wav");
-	PRECACHE_SOUND("hgrunt/gr_mgun2.wav");
+	PrecacheSound("hgrunt/gr_die1.wav");
+	PrecacheSound("hgrunt/gr_die2.wav");
+	PrecacheSound("hgrunt/gr_die3.wav");
 
-	PRECACHE_SOUND("hgrunt/gr_die1.wav");
-	PRECACHE_SOUND("hgrunt/gr_die2.wav");
-	PRECACHE_SOUND("hgrunt/gr_die3.wav");
+	PrecacheSound("hgrunt/gr_pain1.wav");
+	PrecacheSound("hgrunt/gr_pain2.wav");
+	PrecacheSound("hgrunt/gr_pain3.wav");
+	PrecacheSound("hgrunt/gr_pain4.wav");
+	PrecacheSound("hgrunt/gr_pain5.wav");
 
-	PRECACHE_SOUND("hgrunt/gr_pain1.wav");
-	PRECACHE_SOUND("hgrunt/gr_pain2.wav");
-	PRECACHE_SOUND("hgrunt/gr_pain3.wav");
-	PRECACHE_SOUND("hgrunt/gr_pain4.wav");
-	PRECACHE_SOUND("hgrunt/gr_pain5.wav");
+	PrecacheSound("hgrunt/gr_reload1.wav");
 
-	PRECACHE_SOUND("hgrunt/gr_reload1.wav");
+	PrecacheSound("weapons/glauncher.wav");
 
-	PRECACHE_SOUND("weapons/glauncher.wav");
+	PrecacheSound("weapons/sbarrel1.wav");
 
-	PRECACHE_SOUND("weapons/sbarrel1.wav");
-
-	PRECACHE_SOUND("zombie/claw_miss2.wav"); // because we use the basemonster SWIPE animation event
+	PrecacheSound("zombie/claw_miss2.wav"); // because we use the basemonster SWIPE animation event
 
 	// get voice pitch
 	if (RANDOM_LONG(0, 1))
@@ -959,8 +951,8 @@ void CHGrunt::Precache()
 	else
 		m_voicePitch = 100;
 
-	m_iBrassShell = PRECACHE_MODEL("models/shell.mdl"); // brass shell
-	m_iShotgunShell = PRECACHE_MODEL("models/shotgunshell.mdl");
+	m_iBrassShell = PrecacheModel("models/shell.mdl"); // brass shell
+	m_iShotgunShell = PrecacheModel("models/shotgunshell.mdl");
 }
 
 //=========================================================

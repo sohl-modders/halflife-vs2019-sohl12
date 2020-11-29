@@ -469,10 +469,7 @@ void CBullsquid::Spawn()
 {
 	Precache();
 
-	if (pev->model)
-		SET_MODEL(ENT(pev), STRING(pev->model)); //LRC
-	else
-		SET_MODEL(ENT(pev), "models/bullsquid.mdl");
+	SetModel("models/bullsquid.mdl");
 
 	UTIL_SetSize(pev, Vector(-32, -32, 0), Vector(32, 32, 64));
 
@@ -481,7 +478,7 @@ void CBullsquid::Spawn()
 	m_bloodColor = BLOOD_COLOR_GREEN;
 	pev->effects = 0;
 	
-	if (pev->health == 0)
+	if (!pev->health) //LRC
 		pev->health = gSkillData.bullsquidHealth;
 	
 	m_flFieldOfView = 0.2; // indicates the width of this monster's forward view cone ( as a dotproduct result )
@@ -498,46 +495,41 @@ void CBullsquid::Spawn()
 //=========================================================
 void CBullsquid::Precache()
 {
-	if (pev->model)
-		PRECACHE_MODEL((char*)STRING(pev->model)); //LRC
-	else
-		PRECACHE_MODEL("models/bullsquid.mdl");
+	PrecacheModel("sprites/bigspit.spr"); // spit projectile.
 
-	PRECACHE_MODEL("sprites/bigspit.spr"); // spit projectile.
+	iSquidSpitSprite = PrecacheModel("sprites/tinyspit.spr"); // client side spittle.
 
-	iSquidSpitSprite = PRECACHE_MODEL("sprites/tinyspit.spr"); // client side spittle.
+	PrecacheSound("zombie/claw_miss2.wav"); // because we use the basemonster SWIPE animation event
 
-	PRECACHE_SOUND("zombie/claw_miss2.wav"); // because we use the basemonster SWIPE animation event
+	PrecacheSound("bullchicken/bc_attack2.wav");
+	PrecacheSound("bullchicken/bc_attack3.wav");
 
-	PRECACHE_SOUND("bullchicken/bc_attack2.wav");
-	PRECACHE_SOUND("bullchicken/bc_attack3.wav");
+	PrecacheSound("bullchicken/bc_die1.wav");
+	PrecacheSound("bullchicken/bc_die2.wav");
+	PrecacheSound("bullchicken/bc_die3.wav");
 
-	PRECACHE_SOUND("bullchicken/bc_die1.wav");
-	PRECACHE_SOUND("bullchicken/bc_die2.wav");
-	PRECACHE_SOUND("bullchicken/bc_die3.wav");
+	PrecacheSound("bullchicken/bc_idle1.wav");
+	PrecacheSound("bullchicken/bc_idle2.wav");
+	PrecacheSound("bullchicken/bc_idle3.wav");
+	PrecacheSound("bullchicken/bc_idle4.wav");
+	PrecacheSound("bullchicken/bc_idle5.wav");
 
-	PRECACHE_SOUND("bullchicken/bc_idle1.wav");
-	PRECACHE_SOUND("bullchicken/bc_idle2.wav");
-	PRECACHE_SOUND("bullchicken/bc_idle3.wav");
-	PRECACHE_SOUND("bullchicken/bc_idle4.wav");
-	PRECACHE_SOUND("bullchicken/bc_idle5.wav");
+	PrecacheSound("bullchicken/bc_pain1.wav");
+	PrecacheSound("bullchicken/bc_pain2.wav");
+	PrecacheSound("bullchicken/bc_pain3.wav");
+	PrecacheSound("bullchicken/bc_pain4.wav");
 
-	PRECACHE_SOUND("bullchicken/bc_pain1.wav");
-	PRECACHE_SOUND("bullchicken/bc_pain2.wav");
-	PRECACHE_SOUND("bullchicken/bc_pain3.wav");
-	PRECACHE_SOUND("bullchicken/bc_pain4.wav");
+	PrecacheSound("bullchicken/bc_attackgrowl.wav");
+	PrecacheSound("bullchicken/bc_attackgrowl2.wav");
+	PrecacheSound("bullchicken/bc_attackgrowl3.wav");
 
-	PRECACHE_SOUND("bullchicken/bc_attackgrowl.wav");
-	PRECACHE_SOUND("bullchicken/bc_attackgrowl2.wav");
-	PRECACHE_SOUND("bullchicken/bc_attackgrowl3.wav");
+	PrecacheSound("bullchicken/bc_acid1.wav");
 
-	PRECACHE_SOUND("bullchicken/bc_acid1.wav");
+	PrecacheSound("bullchicken/bc_bite2.wav");
+	PrecacheSound("bullchicken/bc_bite3.wav");
 
-	PRECACHE_SOUND("bullchicken/bc_bite2.wav");
-	PRECACHE_SOUND("bullchicken/bc_bite3.wav");
-
-	PRECACHE_SOUND("bullchicken/bc_spithit1.wav");
-	PRECACHE_SOUND("bullchicken/bc_spithit2.wav");
+	PrecacheSound("bullchicken/bc_spithit1.wav");
+	PrecacheSound("bullchicken/bc_spithit2.wav");
 }
 
 //=========================================================

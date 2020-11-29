@@ -257,13 +257,18 @@ public:
 	// initialization functions
 	virtual void	Spawn( void ) { }
 	virtual void	Precache(void) { }
-	void			SetModel(string_t model) {
+
+	void SetModel(string_t model) {
 		SetModel(STRING(model));
 	}
-	virtual void	SetModel(const char* model);
+	
+	virtual void SetModel(const char* model);
 
-	int PrecacheModel(string_t s, char* e);
-	int PrecacheModel(string_t s);
+	int CBaseEntity::PrecacheModel(string_t str)
+	{
+		return PrecacheModel((char*)STRING(str));
+	}
+	
 	int PrecacheModel(char* s);
 
 	int PrecacheSound(string_t s, char* e)//precache default model if not found

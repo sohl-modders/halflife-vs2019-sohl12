@@ -27,7 +27,6 @@ class CSentry : public CBaseTurret
 {
 public:
 	void Spawn() override;
-	void Precache() override;
 
 	// other functions
 	void Shoot(Vector& vecSrc, Vector& vecDirToEnemy) override;

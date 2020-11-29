@@ -123,10 +123,7 @@ void CNihilanth::Spawn()
 	pev->movetype = MOVETYPE_FLY;
 	pev->solid = SOLID_BBOX;
 
-	if (pev->model)
-		SET_MODEL(ENT(pev), STRING(pev->model)); //LRC
-	else
-		SET_MODEL(edict(), "models/nihilanth.mdl");
+	SetModel("models/nihilanth.mdl");
 	
 	// UTIL_SetSize(pev, Vector( -300, -300, 0), Vector(300, 300, 512));
 	UTIL_SetSize(pev, Vector(-32, -32, 0), Vector(32, 32, 64));
@@ -135,7 +132,7 @@ void CNihilanth::Spawn()
 	pev->flags |= FL_MONSTER;
 	pev->takedamage = DAMAGE_AIM;
 	
-	if (pev->health == 0)
+	if (!pev->health) //LRC
 		pev->health = gSkillData.nihilanthHealth;
 	
 	pev->view_ofs = Vector(0, 0, 300);
@@ -177,12 +174,7 @@ void CNihilanth::Spawn()
 //=========================================================
 void CNihilanth::Precache()
 {
-	if (pev->model)
-		PRECACHE_MODEL((char*)STRING(pev->model)); //LRC
-	else
-		PRECACHE_MODEL("models/nihilanth.mdl");
-	
-	PRECACHE_MODEL("sprites/lgtning.spr");
+	PrecacheModel("sprites/lgtning.spr");
 	
 	UTIL_PrecacheOther("nihilanth_energy_ball");
 	UTIL_PrecacheOther("monster_alien_controller");
@@ -196,7 +188,7 @@ void CNihilanth::Precache()
 	PRECACHE_SOUND_ARRAY(pPainSounds);
 	PRECACHE_SOUND_ARRAY(pDeathSounds);
 	
-	PRECACHE_SOUND("debris/beamstart7.wav");
+	PrecacheSound("debris/beamstart7.wav");
 }
 
 //=========================================================

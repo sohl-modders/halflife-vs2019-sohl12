@@ -42,11 +42,8 @@ IMPLEMENT_SAVERESTORE(CTurret, CBaseTurret);
 void CTurret::Spawn()
 {
 	Precache();
-	
-	if (pev->model)
-		SET_MODEL(ENT(pev), STRING(pev->model)); //LRC
-	else
-		SET_MODEL(ENT(pev), "models/turret.mdl");
+
+	SetModel("models/turret.mdl");
 	
 	if (!pev->health)
 		pev->health = gSkillData.turretHealth;
@@ -80,12 +77,7 @@ void CTurret::Precache()
 {
 	CBaseTurret::Precache();
 	
-	if (pev->model)
-		PRECACHE_MODEL((char*)STRING(pev->model)); //LRC
-	else
-		PRECACHE_MODEL("models/turret.mdl");
-	
-	PRECACHE_MODEL(TURRET_GLOW_SPRITE);
+	PrecacheModel(TURRET_GLOW_SPRITE);
 }
 
 //=========================================================

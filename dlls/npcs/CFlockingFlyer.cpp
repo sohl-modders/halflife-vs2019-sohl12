@@ -55,6 +55,8 @@ IMPLEMENT_SAVERESTORE(CFlockingFlyer, CBaseMonster);
 void CFlockingFlyer::Spawn()
 {
 	Precache();
+
+	SetModel("models/boid.mdl");
 	
 	SpawnCommonCode();
 
@@ -70,9 +72,11 @@ void CFlockingFlyer::Spawn()
 //=========================================================
 void CFlockingFlyer::Precache()
 {
-	PRECACHE_MODEL("models/boid.mdl");
-	
-	CFlockingFlyerFlock::PrecacheFlockSounds();
+	PrecacheSound("boid/boid_alert1.wav");
+	PrecacheSound("boid/boid_alert2.wav");
+
+	PrecacheSound("boid/boid_idle1.wav");
+	PrecacheSound("boid/boid_idle2.wav");
 }
 
 //=========================================================
@@ -168,8 +172,7 @@ void CFlockingFlyer::SpawnCommonCode()
 	m_fPathBlocked = FALSE; // obstacles will be detected
 	m_flFieldOfView = 0.2;
 
-	//SET_MODEL(ENT(pev), "models/aflock.mdl");
-	SET_MODEL(ENT(pev), "models/boid.mdl");
+	SetModel("models/boid.mdl");
 
 	//	UTIL_SetSize(pev, Vector(0,0,0), Vector(0,0,0));
 	UTIL_SetSize(pev, Vector(-5, -5, 0), Vector(5, 5, 2));

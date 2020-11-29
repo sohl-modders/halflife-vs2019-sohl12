@@ -56,13 +56,10 @@ void CApache::Spawn()
 {
 	Precache();
 
+	SetModel("models/apache.mdl"); //LRC
+	
 	pev->movetype = MOVETYPE_FLY;
 	pev->solid = SOLID_BBOX;
-
-	if (pev->model)
-		SetModel(pev->model); //LRC
-	else
-		SetModel("models/apache.mdl");
 
 	UTIL_SetSize(pev, Vector(-32, -32, -64), Vector(32, 32, 0));
 	UTIL_SetOrigin(this, pev->origin);
@@ -70,7 +67,7 @@ void CApache::Spawn()
 	pev->flags |= FL_MONSTER;
 	pev->takedamage = DAMAGE_AIM;
 
-	if (pev->health == 0)
+	if (!pev->health) //LRC
 		pev->health = gSkillData.apacheHealth;
 
 	m_flFieldOfView = -0.707; // 270 degrees
@@ -99,11 +96,6 @@ void CApache::Spawn()
 //=========================================================
 void CApache::Precache()
 {
-	if (pev->model)
-		PrecacheModel(pev->model); //LRC
-	else
-		PrecacheModel("models/apache.mdl");
-
 	PrecacheSound("apache/ap_rotor1.wav");
 	PrecacheSound("apache/ap_rotor2.wav");
 	PrecacheSound("apache/ap_rotor3.wav");
@@ -317,7 +309,7 @@ void CApache::DyingThink()
 	if (/*!(pev->spawnflags & SF_NOWRECKAGE) && */(pev->flags & FL_ONGROUND))
 	{
 		CBaseEntity* pWreckage = Create("cycler_wreckage", pev->origin, pev->angles);
-		// SET_MODEL( ENT(pWreckage->pev), STRING(pev->model) );
+		// pWreckage->SetModel(pev->model);
 		UTIL_SetSize(pWreckage->pev, Vector(-200, -200, -128), Vector(200, 200, -32));
 		pWreckage->pev->frame = pev->frame;
 		pWreckage->pev->sequence = pev->sequence;

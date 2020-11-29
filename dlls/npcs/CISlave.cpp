@@ -94,6 +94,7 @@ int CISlave::IRelationship(CBaseEntity* pTarget)
 	if ((pTarget->IsPlayer()))
 		if ((pev->spawnflags & SF_MONSTER_WAIT_UNTIL_PROVOKED) && !(m_afMemory & bits_MEMORY_PROVOKED))
 			return R_NO;
+	
 	return CBaseMonster::IRelationship(pTarget);
 }
 
@@ -148,11 +149,20 @@ void CISlave::IdleSound()
 		SENTENCEG_PlayRndSz(ENT(pev), "SLV_IDLE", 0.85, ATTN_NORM, 0, m_voicePitch);
 	}
 
-#if 0
-	int side = RANDOM_LONG(0, 1) * 2 - 1;
-
-	ClearBeams();
-	ArmBeam(side);
+	ClearBeams(); int side;
+	switch (RANDOM_LONG(0, 1))
+	{
+	case 0:
+		side = RANDOM_LONG(0, 1) * 2 - 1;
+		ArmBeam(side);
+		break;
+	case 1:
+		side = RANDOM_LONG(0, 1) * 2 - 1;
+		ArmBeam(side);
+		side = RANDOM_LONG(0, 1) * 2 - 1;
+		ArmBeam(side);
+		break;
+	}
 
 	UTIL_MakeAimVectors(pev->angles);
 	Vector vecSrc = pev->origin + gpGlobals->v_right * 2 * side;
@@ -169,8 +179,7 @@ void CISlave::IdleSound()
 	WRITE_BYTE(0);		// decay * 0.1
 	MESSAGE_END();
 
-	EMIT_SOUND_DYN(ENT(pev), CHAN_WEAPON, "debris/zap1.wav", 1, ATTN_NORM, 0, 100);
-#endif
+	EMIT_SOUND_DYN(ENT(pev), CHAN_WEAPON, "debris/zap1.wav", 0.3, ATTN_NORM, 0, 100);
 }
 
 //=========================================================
@@ -337,8 +346,23 @@ void CISlave::HandleAnimEvent(MonsterEvent_t* pEvent)
 
 			if (!trace.fStartSolid)
 			{
-				CBaseEntity* pNew = Create("monster_alien_slave", m_hDead->pev->origin, m_hDead->pev->angles);
+				edict_t* pent = CREATE_NAMED_ENTITY(MAKE_STRING("monster_alien_slave"));
+				if (FNullEnt(pent)) {
+					ALERT(at_console, "NULL Ent in Create!\n");
+					return;
+				}
+
+				auto pNew = static_cast<CBaseMonster*>(Instance(pent));
 				pNew->pev->spawnflags |= 1;
+				pNew->m_iPlayerReact = m_hDead->m_iPlayerReact;
+				pNew->pev->model = m_hDead->pev->model;
+				pNew->pev->skin = m_hDead->pev->skin;
+				pNew->pev->angles = m_hDead->pev->angles;
+				pNew->pev->owner = m_hDead->pev->owner;
+				pNew->pev->origin = m_hDead->pev->origin;
+				pNew->SetClassify(m_hDead->Classify());
+				DispatchSpawn(pNew->edict());
+
 				WackBeam(-1, pNew);
 				WackBeam(1, pNew);
 				UTIL_Remove(m_hDead);
@@ -389,18 +413,15 @@ BOOL CISlave::CheckRangeAttack1(float flDot, float flDist)
 //=========================================================
 BOOL CISlave::CheckRangeAttack2(float flDot, float flDist)
 {
-	return FALSE;
-
-	if (m_flNextAttack > gpGlobals->time)
-	{
+	if (m_flNextAttack > gpGlobals->time && RANDOM_LONG(0, 1)) {
 		return FALSE;
 	}
 
 	m_hDead = nullptr;
 	m_iBravery = 0;
 
-	CBaseEntity* pEntity = nullptr;
-	while ((pEntity = UTIL_FindEntityByClassname(pEntity, "monster_alien_slave")) != nullptr)
+	CBaseMonster* pEntity = nullptr;
+	while ((pEntity = (CBaseMonster*)UTIL_FindEntityByClassname(pEntity, "monster_alien_slave")) != nullptr)
 	{
 		TraceResult tr;
 
@@ -423,10 +444,11 @@ BOOL CISlave::CheckRangeAttack2(float flDot, float flDist)
 			}
 		}
 	}
+	
 	if (m_hDead != NULL)
 		return TRUE;
-	else
-		return FALSE;
+
+	return FALSE;
 }
 
 //=========================================================
@@ -446,10 +468,7 @@ void CISlave::Spawn()
 {
 	Precache();
 
-	if (pev->model)
-		SET_MODEL(ENT(pev), STRING(pev->model)); //LRC
-	else
-		SET_MODEL(ENT(pev), "models/islave.mdl");
+	SetModel("models/islave.mdl");
 	
 	UTIL_SetSize(pev, VEC_HUMAN_HULL_MIN, VEC_HUMAN_HULL_MAX);
 
@@ -459,7 +478,7 @@ void CISlave::Spawn()
 	
 	pev->effects = 0;
 	
-	if (pev->health == 0)
+	if (!pev->health) //LRC
 		pev->health = gSkillData.slaveHealth;
 	
 	pev->view_ofs = Vector(0, 0, 64);// position of the eyes relative to monster's origin.
@@ -477,19 +496,14 @@ void CISlave::Spawn()
 //=========================================================
 void CISlave::Precache()
 {
-	if (pev->model)
-		PRECACHE_MODEL((char*)STRING(pev->model)); //LRC
-	else
-		PRECACHE_MODEL("models/islave.mdl");
-	
-	PRECACHE_MODEL("sprites/lgtning.spr");
-	PRECACHE_SOUND("debris/zap1.wav");
-	PRECACHE_SOUND("debris/zap4.wav");
-	PRECACHE_SOUND("weapons/electro4.wav");
-	PRECACHE_SOUND("hassault/hw_shoot1.wav");
-	PRECACHE_SOUND("zombie/zo_pain2.wav");
-	PRECACHE_SOUND("headcrab/hc_headbite.wav");
-	PRECACHE_SOUND("weapons/cbar_miss1.wav");
+	PrecacheModel("sprites/lgtning.spr");
+	PrecacheSound("debris/zap1.wav");
+	PrecacheSound("debris/zap4.wav");
+	PrecacheSound("weapons/electro4.wav");
+	PrecacheSound("hassault/hw_shoot1.wav");
+	PrecacheSound("zombie/zo_pain2.wav");
+	PrecacheSound("headcrab/hc_headbite.wav");
+	PrecacheSound("weapons/cbar_miss1.wav");
 
 	PRECACHE_SOUND_ARRAY(pAttackHitSounds);
 	PRECACHE_SOUND_ARRAY(pAttackMissSounds);

@@ -27,7 +27,6 @@ class CBabyCrab : public CHeadCrab
 {
 public:
 	void Spawn() override;
-	void Precache() override;
 	void SetYawSpeed() override;
 
 	float GetDamageAmount() override

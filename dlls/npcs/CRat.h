@@ -23,7 +23,6 @@ class CRat : public CBaseMonster
 {
 public:
 	void Spawn() override;
-	void Precache() override;
 	void SetYawSpeed() override;
 	int Classify() override;
 };

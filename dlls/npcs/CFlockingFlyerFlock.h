@@ -36,9 +36,6 @@ public:
 	int Restore(CRestore& restore) override;
 	static TYPEDESCRIPTION m_SaveData[];
 
-	// Sounds are shared by the flock
-	static void PrecacheFlockSounds();
-
 	int m_cFlockSize = 8; //from game definition file
 	float m_flFlockRadius = 128; //from game definition file
 };

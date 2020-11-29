@@ -242,10 +242,7 @@ void CHeadCrab::Spawn()
 {
 	Precache();
 
-	if (pev->model)
-		SET_MODEL(ENT(pev), STRING(pev->model)); //LRC
-	else
-		SET_MODEL(ENT(pev), "models/headcrab.mdl");
+	SetModel("models/headcrab.mdl");
 	
 	UTIL_SetSize(pev, Vector(-12, -12, 0), Vector(12, 12, 24));
 
@@ -255,7 +252,7 @@ void CHeadCrab::Spawn()
 	
 	pev->effects = 0;
 	
-	if (pev->health == 0)
+	if (!pev->health) //LRC
 		pev->health = gSkillData.headcrabHealth;
 	
 	pev->view_ofs = Vector(0, 0, 20); // position of the eyes relative to monster's origin.
@@ -273,11 +270,6 @@ void CHeadCrab::Spawn()
 //=========================================================
 void CHeadCrab::Precache()
 {
-	if (pev->model)
-		PRECACHE_MODEL((char*)STRING(pev->model)); //LRC
-	else
-		PRECACHE_MODEL("models/headcrab.mdl");
-
 	PRECACHE_SOUND_ARRAY(pIdleSounds);
 	PRECACHE_SOUND_ARRAY(pAlertSounds);
 	PRECACHE_SOUND_ARRAY(pPainSounds);

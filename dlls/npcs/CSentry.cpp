@@ -27,29 +27,13 @@
 LINK_ENTITY_TO_CLASS(monster_sentry, CSentry);
 
 //=========================================================
-// Precache
-//=========================================================
-void CSentry::Precache()
-{
-	CBaseTurret::Precache();
-	
-	if (pev->model)
-		PRECACHE_MODEL((char*)STRING(pev->model)); //LRC
-	else
-		PRECACHE_MODEL("models/sentry.mdl");
-}
-
-//=========================================================
 // Spawn
 //=========================================================
 void CSentry::Spawn()
 {
-	Precache();
-
-	if (pev->model)
-		SET_MODEL(ENT(pev), STRING(pev->model)); //LRC
-	else
-		SET_MODEL(ENT(pev), "models/sentry.mdl");
+	CBaseTurret::Precache();
+	
+	SetModel("models/sentry.mdl");
 
 	if (!pev->health) //LRC
 		pev->health = gSkillData.sentryHealth;

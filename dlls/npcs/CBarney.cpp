@@ -359,11 +359,8 @@ void CBarney::HandleAnimEvent(MonsterEvent_t* pEvent)
 void CBarney::Spawn()
 {
 	Precache();
-
-	if (pev->model)
-		PrecacheModel(pev->model); //LRC
-	else
-		PrecacheModel("models/barney.mdl");
+	
+	SetModel("models/barney.mdl"); //LRC
 	
 	UTIL_SetSize(pev, VEC_HUMAN_HULL_MIN, VEC_HUMAN_HULL_MAX);
 
@@ -371,7 +368,7 @@ void CBarney::Spawn()
 	pev->movetype = MOVETYPE_STEP;
 	m_bloodColor = BLOOD_COLOR_RED;
 	
-	if (pev->health == 0) //LRC
+	if (!pev->health) //LRC
 		pev->health = gSkillData.barneyHealth;
 	
 	pev->view_ofs = Vector(0, 0, 50); // position of the eyes relative to monster's origin.
@@ -393,11 +390,6 @@ void CBarney::Spawn()
 //=========================================================
 void CBarney::Precache()
 {
-	if (pev->model)
-		PrecacheModel(pev->model); //LRC
-	else
-		PrecacheModel("models/barney.mdl");
-
 	PrecacheSound("barney/ba_attack1.wav");
 	PrecacheSound("barney/ba_attack2.wav");
 

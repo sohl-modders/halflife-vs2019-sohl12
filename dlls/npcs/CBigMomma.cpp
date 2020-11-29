@@ -381,10 +381,7 @@ void CBigMomma::Spawn()
 {
 	Precache();
 
-	if (pev->model)
-		SET_MODEL(ENT(pev), STRING(pev->model)); //LRC
-	else
-		SET_MODEL(ENT(pev), "models/big_mom.mdl");
+	SetModel("models/big_mom.mdl");
 
 	UTIL_SetSize(pev, Vector(-32, -32, 0), Vector(32, 32, 64));
 
@@ -392,7 +389,7 @@ void CBigMomma::Spawn()
 	pev->movetype = MOVETYPE_STEP;
 	m_bloodColor = BLOOD_COLOR_GREEN;
 
-	if (pev->health == 0)
+	if (!pev->health) //LRC
 		pev->health = 150 * gSkillData.bigmommaHealthFactor;
 
 	pev->view_ofs = Vector(0, 0, 128); // position of the eyes relative to monster's origin.
@@ -410,11 +407,6 @@ void CBigMomma::Spawn()
 //=========================================================
 void CBigMomma::Precache()
 {
-	if (pev->model)
-		PRECACHE_MODEL((char*)STRING(pev->model)); //LRC
-	else
-		PRECACHE_MODEL("models/big_mom.mdl");
-
 	PRECACHE_SOUND_ARRAY(pChildDieSounds);
 	PRECACHE_SOUND_ARRAY(pSackSounds);
 	PRECACHE_SOUND_ARRAY(pDeathSounds);
@@ -427,7 +419,7 @@ void CBigMomma::Precache()
 
 	UTIL_PrecacheOther(BIG_CHILDCLASS);
 	
-	gSpitSprite = PRECACHE_MODEL("sprites/mommaspout.spr"); // client side spittle.
+	gSpitSprite = PrecacheModel("sprites/mommaspout.spr"); // client side spittle.
 }
 
 //=========================================================
@@ -493,7 +485,8 @@ void CBigMomma::NodeReach()
 	Forget(bits_MEMORY_FIRED_NODE);
 
 	pev->netname = pTarget->pev->target;
-	if (pTarget->pev->health == 0)
+
+	if (!pTarget->pev->health) //LRC
 		Remember(bits_MEMORY_ADVANCE_NODE); // Move on if no health at this node
 }
 

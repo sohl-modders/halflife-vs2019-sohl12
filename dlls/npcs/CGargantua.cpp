@@ -514,10 +514,7 @@ void CGargantua::Spawn()
 {
 	Precache();
 
-	if (pev->model)
-		SET_MODEL(ENT(pev), STRING(pev->model)); //LRC
-	else
-		SET_MODEL(ENT(pev), "models/garg.mdl");
+	SetModel("models/garg.mdl");
 
 	UTIL_SetSize(pev, Vector(-32, -32, 0), Vector(32, 32, 64));
 
@@ -525,7 +522,7 @@ void CGargantua::Spawn()
 	pev->movetype = MOVETYPE_STEP;
 	m_bloodColor = BLOOD_COLOR_GREEN;
 
-	if (pev->health == 0)
+	if (!pev->health) //LRC
 		pev->health = gSkillData.gargantuaHealth;
 
 	//pev->view_ofs		= Vector ( 0, 0, 96 );// taken from mdl file
@@ -549,17 +546,12 @@ void CGargantua::Spawn()
 //=========================================================
 void CGargantua::Precache()
 {
-	if (pev->model)
-		PRECACHE_MODEL((char*)STRING(pev->model)); //LRC
-	else
-		PRECACHE_MODEL("models/garg.mdl");
+	PrecacheModel(GARG_EYE_SPRITE_NAME);
+	PrecacheModel(GARG_BEAM_SPRITE_NAME);
+	PrecacheModel(GARG_BEAM_SPRITE2);
 
-	PRECACHE_MODEL(GARG_EYE_SPRITE_NAME);
-	PRECACHE_MODEL(GARG_BEAM_SPRITE_NAME);
-	PRECACHE_MODEL(GARG_BEAM_SPRITE2);
-
-	gStompSprite = PRECACHE_MODEL(GARG_STOMP_SPRITE_NAME);
-	gGargGibModel = PRECACHE_MODEL(GARG_GIB_MODEL);
+	gStompSprite = PrecacheModel(GARG_STOMP_SPRITE_NAME);
+	gGargGibModel = PrecacheModel(GARG_GIB_MODEL);
 
 	PRECACHE_SOUND_ARRAY(pAttackHitSounds);
 	PRECACHE_SOUND_ARRAY(pBeamAttackSounds);

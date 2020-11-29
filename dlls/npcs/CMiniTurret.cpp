@@ -27,10 +27,7 @@ void CMiniTurret::Spawn()
 {
 	Precache();
 	
-	if (pev->model)
-		SET_MODEL(ENT(pev), STRING(pev->model)); //LRC
-	else
-		SET_MODEL(ENT(pev), "models/miniturret.mdl");
+	SetModel("models/miniturret.mdl");
 	
 	if (!pev->health)
 		pev->health = gSkillData.miniturretHealth;
@@ -55,14 +52,9 @@ void CMiniTurret::Precache()
 {
 	CBaseTurret::Precache();
 	
-	if (pev->model)
-		PRECACHE_MODEL((char*)STRING(pev->model)); //LRC
-	else
-		PRECACHE_MODEL("models/miniturret.mdl");
-	
-	PRECACHE_SOUND("weapons/hks1.wav");
-	PRECACHE_SOUND("weapons/hks2.wav");
-	PRECACHE_SOUND("weapons/hks3.wav");
+	PrecacheSound("weapons/hks1.wav");
+	PrecacheSound("weapons/hks2.wav");
+	PrecacheSound("weapons/hks3.wav");
 }
 
 void CMiniTurret::Shoot(Vector& vecSrc, Vector& vecDirToEnemy)

@@ -34,10 +34,7 @@ void CBabyCrab::Spawn()
 {
 	CHeadCrab::Spawn();
 	
-	if (pev->model)
-		SetModel(pev->model); //LRC
-	else
-		SetModel("models/baby_headcrab.mdl");
+	SetModel("models/baby_headcrab.mdl"); //LRC
 	
 	pev->rendermode = kRenderTransTexture;
 	pev->renderamt = 192;
@@ -45,19 +42,6 @@ void CBabyCrab::Spawn()
 	UTIL_SetSize(pev, Vector(-12, -12, 0), Vector(12, 12, 24));
 
 	pev->health = gSkillData.headcrabHealth * 0.25;	// less health than full grown
-}
-
-//=========================================================
-// Precache
-//=========================================================
-void CBabyCrab::Precache()
-{
-	if (pev->model)
-		PrecacheModel(pev->model); //LRC
-	else
-		PrecacheModel("models/baby_headcrab.mdl");
-	
-	CHeadCrab::Precache();
 }
 
 //=========================================================

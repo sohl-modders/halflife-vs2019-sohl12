@@ -54,12 +54,7 @@ void CRat::SetYawSpeed()
 //=========================================================
 void CRat::Spawn()
 {
-	Precache();
-
-	if (pev->model)
-		SET_MODEL(ENT(pev), STRING(pev->model)); //LRC
-	else
-		SET_MODEL(ENT(pev), "models/bigrat.mdl");
+	SetModel("models/bigrat.mdl");
 	
 	UTIL_SetSize(pev, Vector(0, 0, 0), Vector(0, 0, 0));
 
@@ -74,15 +69,4 @@ void CRat::Spawn()
 	m_MonsterState = MONSTERSTATE_NONE;
 
 	MonsterInit();
-}
-
-//=========================================================
-// Precache - precaches all resources this monster needs
-//=========================================================
-void CRat::Precache()
-{
-	if (pev->model)
-		PRECACHE_MODEL((char*)STRING(pev->model)); //LRC
-	else
-		PRECACHE_MODEL("models/bigrat.mdl");
 }

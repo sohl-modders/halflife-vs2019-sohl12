@@ -88,10 +88,7 @@ void CGMan::Spawn()
 {
 	Precache();
 
-	if (pev->model)
-		SET_MODEL(ENT(pev), STRING(pev->model)); //LRC
-	else
-		SET_MODEL(ENT(pev), "models/gman.mdl");
+	SetModel("models/gman.mdl");
 	
 	UTIL_SetSize(pev, VEC_HUMAN_HULL_MIN, VEC_HUMAN_HULL_MAX);
 
@@ -99,24 +96,13 @@ void CGMan::Spawn()
 	pev->movetype = MOVETYPE_STEP;
 	m_bloodColor = DONT_BLEED;
 	
-	if (pev->health == 0) //LRC
+	if (!pev->health) //LRC
 		pev->health = 100;
 	
 	m_flFieldOfView = 0.5;// indicates the width of this monster's forward view cone ( as a dotproduct result )
 	m_MonsterState = MONSTERSTATE_NONE;
 
 	MonsterInit();
-}
-
-//=========================================================
-// Precache
-//=========================================================
-void CGMan::Precache()
-{
-	if (pev->model)
-		PRECACHE_MODEL((char*)STRING(pev->model)); //LRC
-	else
-		PRECACHE_MODEL("models/gman.mdl");
 }
 
 //=========================================================

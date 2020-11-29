@@ -83,7 +83,7 @@ public:
 
 	int m_voicePitch;
 
-	EHANDLE m_hDead;
+	CBaseMonster* m_hDead;
 
 	static const char* pAttackHitSounds[];
 	static const char* pAttackMissSounds[];

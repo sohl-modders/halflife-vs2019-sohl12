@@ -221,10 +221,8 @@ void CHoundeye::Spawn()
 {
 	Precache();
 
-	if (pev->model)
-		SET_MODEL(ENT(pev), STRING(pev->model)); //LRC
-	else
-		SET_MODEL(ENT(pev), "models/houndeye.mdl");
+	SetModel("models/houndeye.mdl");
+	
 	UTIL_SetSize(pev, Vector(-16, -16, 0), Vector(16, 16, 36));
 
 	pev->solid = SOLID_SLIDEBOX;
@@ -232,7 +230,7 @@ void CHoundeye::Spawn()
 	m_bloodColor = BLOOD_COLOR_YELLOW;
 	pev->effects = 0;
 	
-	if (pev->health == 0)
+	if (!pev->health) //LRC
 		pev->health = gSkillData.houndeyeHealth;
 	
 	pev->yaw_speed = 5;
@@ -251,40 +249,35 @@ void CHoundeye::Spawn()
 //=========================================================
 void CHoundeye::Precache()
 {
-	if (pev->model)
-		PRECACHE_MODEL((char*)STRING(pev->model)); //LRC
-	else
-		PRECACHE_MODEL("models/houndeye.mdl");
+	PrecacheSound("houndeye/he_alert1.wav");
+	PrecacheSound("houndeye/he_alert2.wav");
+	PrecacheSound("houndeye/he_alert3.wav");
 
-	PRECACHE_SOUND("houndeye/he_alert1.wav");
-	PRECACHE_SOUND("houndeye/he_alert2.wav");
-	PRECACHE_SOUND("houndeye/he_alert3.wav");
+	PrecacheSound("houndeye/he_die1.wav");
+	PrecacheSound("houndeye/he_die2.wav");
+	PrecacheSound("houndeye/he_die3.wav");
 
-	PRECACHE_SOUND("houndeye/he_die1.wav");
-	PRECACHE_SOUND("houndeye/he_die2.wav");
-	PRECACHE_SOUND("houndeye/he_die3.wav");
+	PrecacheSound("houndeye/he_idle1.wav");
+	PrecacheSound("houndeye/he_idle2.wav");
+	PrecacheSound("houndeye/he_idle3.wav");
 
-	PRECACHE_SOUND("houndeye/he_idle1.wav");
-	PRECACHE_SOUND("houndeye/he_idle2.wav");
-	PRECACHE_SOUND("houndeye/he_idle3.wav");
+	PrecacheSound("houndeye/he_hunt1.wav");
+	PrecacheSound("houndeye/he_hunt2.wav");
+	PrecacheSound("houndeye/he_hunt3.wav");
 
-	PRECACHE_SOUND("houndeye/he_hunt1.wav");
-	PRECACHE_SOUND("houndeye/he_hunt2.wav");
-	PRECACHE_SOUND("houndeye/he_hunt3.wav");
+	PrecacheSound("houndeye/he_pain1.wav");
+	PrecacheSound("houndeye/he_pain3.wav");
+	PrecacheSound("houndeye/he_pain4.wav");
+	PrecacheSound("houndeye/he_pain5.wav");
 
-	PRECACHE_SOUND("houndeye/he_pain1.wav");
-	PRECACHE_SOUND("houndeye/he_pain3.wav");
-	PRECACHE_SOUND("houndeye/he_pain4.wav");
-	PRECACHE_SOUND("houndeye/he_pain5.wav");
+	PrecacheSound("houndeye/he_attack1.wav");
+	PrecacheSound("houndeye/he_attack3.wav");
 
-	PRECACHE_SOUND("houndeye/he_attack1.wav");
-	PRECACHE_SOUND("houndeye/he_attack3.wav");
+	PrecacheSound("houndeye/he_blast1.wav");
+	PrecacheSound("houndeye/he_blast2.wav");
+	PrecacheSound("houndeye/he_blast3.wav");
 
-	PRECACHE_SOUND("houndeye/he_blast1.wav");
-	PRECACHE_SOUND("houndeye/he_blast2.wav");
-	PRECACHE_SOUND("houndeye/he_blast3.wav");
-
-	m_iSpriteTexture = PRECACHE_MODEL("sprites/shockwave.spr");
+	m_iSpriteTexture = PrecacheModel("sprites/shockwave.spr");
 }
 
 //=========================================================

@@ -378,10 +378,7 @@ void CIchthyosaur::Spawn()
 {
 	Precache();
 
-	if (pev->model)
-		SET_MODEL(ENT(pev), STRING(pev->model)); //LRC
-	else
-		SET_MODEL(ENT(pev), "models/icky.mdl");
+	SetModel("models/icky.mdl");
 	
 	UTIL_SetSize(pev, Vector(-32, -32, -32), Vector(32, 32, 32));
 
@@ -389,7 +386,7 @@ void CIchthyosaur::Spawn()
 	pev->movetype = MOVETYPE_FLY;
 	m_bloodColor = BLOOD_COLOR_GREEN;
 	
-	if (pev->health == 0)
+	if (!pev->health) //LRC
 		pev->health = gSkillData.ichthyosaurHealth;
 	
 	pev->view_ofs = Vector(0, 0, 16);
@@ -423,11 +420,6 @@ void CIchthyosaur::Spawn()
 //=========================================================
 void CIchthyosaur::Precache()
 {
-	if (pev->model)
-		PRECACHE_MODEL((char*)STRING(pev->model)); //LRC
-	else
-		PRECACHE_MODEL("models/icky.mdl");
-
 	PRECACHE_SOUND_ARRAY(pIdleSounds);
 	PRECACHE_SOUND_ARRAY(pAlertSounds);
 	PRECACHE_SOUND_ARRAY(pAttackSounds);
