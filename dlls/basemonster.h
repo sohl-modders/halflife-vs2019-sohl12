@@ -129,6 +129,11 @@ public:
 	int Classify(void) override { return m_iClass ? m_iClass : CLASS_NONE; }
 	void SetClassify(int classID = CLASS_NONE) { m_iClass = classID ? classID : CLASS_NONE; }
 
+	virtual void SetHealth(float health) { //LRC
+		if (!pev->health)
+			pev->health = health;
+	}
+
 	int BloodColor(void) override { return m_bloodColor; }
 
 	CBaseMonster* MyMonsterPointer(void) override { return this; }

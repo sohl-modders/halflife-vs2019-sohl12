@@ -132,8 +132,7 @@ void CNihilanth::Spawn()
 	pev->flags |= FL_MONSTER;
 	pev->takedamage = DAMAGE_AIM;
 	
-	if (!pev->health) //LRC
-		pev->health = gSkillData.nihilanthHealth;
+	SetHealth(gSkillData.nihilanthHealth);
 	
 	pev->view_ofs = Vector(0, 0, 300);
 

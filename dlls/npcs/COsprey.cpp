@@ -84,7 +84,8 @@ void COsprey::Spawn()
 	pev->takedamage = DAMAGE_YES;
 	m_flRightHealth = 200;
 	m_flLeftHealth = 200;
-	pev->health = 400;
+
+	SetHealth(400);
 
 	pev->speed = 80; //LRC - default speed, in case path corners don't give a speed.
 

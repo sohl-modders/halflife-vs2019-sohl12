@@ -389,8 +389,7 @@ void CBigMomma::Spawn()
 	pev->movetype = MOVETYPE_STEP;
 	m_bloodColor = BLOOD_COLOR_GREEN;
 
-	if (!pev->health) //LRC
-		pev->health = 150 * gSkillData.bigmommaHealthFactor;
+	SetHealth(gSkillData.bigmommaHealthFactor);
 
 	pev->view_ofs = Vector(0, 0, 128); // position of the eyes relative to monster's origin.
 

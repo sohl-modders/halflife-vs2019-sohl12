@@ -589,8 +589,7 @@ void CScientist::Spawn()
 	pev->movetype = MOVETYPE_STEP;
 	m_bloodColor = BLOOD_COLOR_RED;
 	
-	if (!pev->health) //LRC
-		pev->health = gSkillData.scientistHealth;
+	SetHealth(gSkillData.scientistHealth);
 	
 	pev->view_ofs = Vector(0, 0, 50); // position of the eyes relative to monster's origin.
 	m_flFieldOfView = VIEW_FIELD_WIDE;

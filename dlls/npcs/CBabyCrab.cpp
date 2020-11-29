@@ -41,7 +41,7 @@ void CBabyCrab::Spawn()
 	
 	UTIL_SetSize(pev, Vector(-12, -12, 0), Vector(12, 12, 24));
 
-	pev->health = gSkillData.headcrabHealth * 0.25;	// less health than full grown
+	SetHealth(gSkillData.headcrabHealth * 0.25); // less health than full grown
 }
 
 //=========================================================

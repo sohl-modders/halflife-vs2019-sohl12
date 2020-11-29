@@ -307,9 +307,8 @@ void CController::Spawn()
 	pev->movetype = MOVETYPE_FLY;
 	pev->flags |= FL_FLY;
 	m_bloodColor = BLOOD_COLOR_GREEN;
-	
-	if (!pev->health) //LRC
-		pev->health = gSkillData.controllerHealth;
+
+	SetHealth(gSkillData.controllerHealth);
 
 	pev->view_ofs = Vector(0, 0, -2); // position of the eyes relative to monster's origin.
 	m_flFieldOfView = VIEW_FIELD_FULL;

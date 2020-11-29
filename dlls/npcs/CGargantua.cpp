@@ -522,8 +522,7 @@ void CGargantua::Spawn()
 	pev->movetype = MOVETYPE_STEP;
 	m_bloodColor = BLOOD_COLOR_GREEN;
 
-	if (!pev->health) //LRC
-		pev->health = gSkillData.gargantuaHealth;
+	SetHealth(gSkillData.gargantuaHealth);
 
 	//pev->view_ofs		= Vector ( 0, 0, 96 );// taken from mdl file
 	m_flFieldOfView = -0.2; // width of forward view cone ( as a dotproduct result )

@@ -148,38 +148,6 @@ void CISlave::IdleSound()
 	{
 		SENTENCEG_PlayRndSz(ENT(pev), "SLV_IDLE", 0.85, ATTN_NORM, 0, m_voicePitch);
 	}
-
-	ClearBeams(); int side;
-	switch (RANDOM_LONG(0, 1))
-	{
-	case 0:
-		side = RANDOM_LONG(0, 1) * 2 - 1;
-		ArmBeam(side);
-		break;
-	case 1:
-		side = RANDOM_LONG(0, 1) * 2 - 1;
-		ArmBeam(side);
-		side = RANDOM_LONG(0, 1) * 2 - 1;
-		ArmBeam(side);
-		break;
-	}
-
-	UTIL_MakeAimVectors(pev->angles);
-	Vector vecSrc = pev->origin + gpGlobals->v_right * 2 * side;
-	MESSAGE_BEGIN(MSG_PVS, SVC_TEMPENTITY, vecSrc);
-	WRITE_BYTE(TE_DLIGHT);
-	WRITE_COORD(vecSrc.x);	// X
-	WRITE_COORD(vecSrc.y);	// Y
-	WRITE_COORD(vecSrc.z);	// Z
-	WRITE_BYTE(8);		// radius * 0.1
-	WRITE_BYTE(255);		// r
-	WRITE_BYTE(180);		// g
-	WRITE_BYTE(96);		// b
-	WRITE_BYTE(10);		// time * 10
-	WRITE_BYTE(0);		// decay * 0.1
-	MESSAGE_END();
-
-	EMIT_SOUND_DYN(ENT(pev), CHAN_WEAPON, "debris/zap1.wav", 0.3, ATTN_NORM, 0, 100);
 }
 
 //=========================================================
@@ -477,9 +445,8 @@ void CISlave::Spawn()
 	m_bloodColor = BLOOD_COLOR_GREEN;
 	
 	pev->effects = 0;
-	
-	if (!pev->health) //LRC
-		pev->health = gSkillData.slaveHealth;
+
+	SetHealth(gSkillData.slaveHealth);
 	
 	pev->view_ofs = Vector(0, 0, 64);// position of the eyes relative to monster's origin.
 	m_flFieldOfView = VIEW_FIELD_WIDE; // NOTE: we need a wide field of view so npc will notice player and say hello

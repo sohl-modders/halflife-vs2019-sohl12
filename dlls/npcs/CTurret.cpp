@@ -45,8 +45,7 @@ void CTurret::Spawn()
 
 	SetModel("models/turret.mdl");
 	
-	if (!pev->health)
-		pev->health = gSkillData.turretHealth;
+	SetHealth(gSkillData.turretHealth);
 	
 	m_HackedGunPos = Vector(0, 0, 12.75);
 	m_flMaxSpin = TURRET_MAXSPIN;

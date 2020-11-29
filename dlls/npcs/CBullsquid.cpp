@@ -477,9 +477,8 @@ void CBullsquid::Spawn()
 	pev->movetype = MOVETYPE_STEP;
 	m_bloodColor = BLOOD_COLOR_GREEN;
 	pev->effects = 0;
-	
-	if (!pev->health) //LRC
-		pev->health = gSkillData.bullsquidHealth;
+
+	SetHealth(gSkillData.bullsquidHealth);
 	
 	m_flFieldOfView = 0.2; // indicates the width of this monster's forward view cone ( as a dotproduct result )
 	m_MonsterState = MONSTERSTATE_NONE;

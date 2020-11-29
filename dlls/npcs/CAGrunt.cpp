@@ -517,8 +517,7 @@ void CAGrunt::Spawn()
 
 	pev->effects = 0;
 
-	if (!pev->health) //LRC
-		pev->health = gSkillData.agruntHealth;
+	SetHealth(gSkillData.agruntHealth);
 
 	m_flFieldOfView = 0.2; // indicates the width of this monster's forward view cone ( as a dotproduct result )
 	m_MonsterState = MONSTERSTATE_NONE;

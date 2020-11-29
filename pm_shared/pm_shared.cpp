@@ -3075,16 +3075,21 @@ void PM_CheckParamters( void )
 		pmove->cmd.upmove      *= fRatio;
 	}
 
-	if ( pmove->flags & FL_FROZEN ||
-		 pmove->flags & FL_ONTRAIN || 
-		 pmove->dead )
+	if (pmove->flags & FL_FROZEN || pmove->dead)
 	{
 		pmove->cmd.forwardmove = 0;
 		pmove->cmd.sidemove    = 0;
 		pmove->cmd.upmove      = 0;
 	}
 
-
+	if (pmove->flags & FL_ONTRAIN)
+	{
+		pmove->cmd.forwardmove = 0;
+		pmove->cmd.sidemove = 0;
+		pmove->cmd.upmove = 0;
+		//G-Cont Save LRC fix and return tracktrain ducking, if tracktrain "oncontrols"
+	}
+	
 	PM_DropPunchAngle( pmove->punchangle );
 
 	// Take angles from command.
@@ -3548,7 +3553,7 @@ void PM_Move ( struct playermove_s *ppmove, int server )
 	}
 
 	// In single player, reset friction after each movement to FrictionModifier Triggers work still.
-	if ( !pmove->multiplayer && ( pmove->movetype == MOVETYPE_WALK  ) )
+	if (pmove->movetype == MOVETYPE_WALK)
 	{
 		pmove->friction = 1.0f;
 	}

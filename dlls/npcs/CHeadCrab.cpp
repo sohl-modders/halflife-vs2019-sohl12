@@ -251,9 +251,8 @@ void CHeadCrab::Spawn()
 	m_bloodColor = BLOOD_COLOR_GREEN;
 	
 	pev->effects = 0;
-	
-	if (!pev->health) //LRC
-		pev->health = gSkillData.headcrabHealth;
+
+	SetHealth(gSkillData.headcrabHealth);
 	
 	pev->view_ofs = Vector(0, 0, 20); // position of the eyes relative to monster's origin.
 	pev->yaw_speed = 5;

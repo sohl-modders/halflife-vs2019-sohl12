@@ -228,6 +228,7 @@ TYPEDESCRIPTION	CTriggerRelay::m_SaveData[] =
 {
 	DEFINE_FIELD( CTriggerRelay, m_triggerType, FIELD_INTEGER ),
 	DEFINE_FIELD( CTriggerRelay, m_sMaster, FIELD_STRING ),
+	DEFINE_FIELD( CTriggerRelay, m_iszAltTarget, FIELD_STRING),//G-Cont. in garagedoordemo code without this stuff, demo don't work with save\load ;)
 };
 
 IMPLEMENT_SAVERESTORE(CTriggerRelay,CBaseDelay);
@@ -250,7 +251,7 @@ void CTriggerRelay::KeyValue( KeyValueData *pkvd )
 		switch( type )
 		{
 		case 0:
-			m_triggerType = USE_OFF;
+			m_triggerType = USE_ON;
 			break;
 		case 2:
 			m_triggerType = USE_TOGGLE;
@@ -265,7 +266,7 @@ void CTriggerRelay::KeyValue( KeyValueData *pkvd )
 			m_triggerType = USE_SET;
 			break;
 		default:
-			m_triggerType = USE_ON;
+			m_triggerType = USE_OFF;
 			break;
 		}
 		pkvd->fHandled = TRUE;
@@ -277,6 +278,8 @@ void CTriggerRelay::KeyValue( KeyValueData *pkvd )
 
 void CTriggerRelay::Spawn( void )
 {
+	if (FStringNull(m_triggerType)) //G-Cont. Hmm... In original Half-life, all nice works without this stuff
+		m_triggerType = USE_ON;
 }
 
 void CTriggerRelay::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value )

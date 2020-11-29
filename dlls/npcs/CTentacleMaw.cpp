@@ -36,7 +36,9 @@ void CTentacleMaw::Spawn()
 	pev->solid = SOLID_NOT;
 	pev->movetype = MOVETYPE_STEP;
 	pev->effects = 0;
-	pev->health = 75;
+
+	SetHealth(75);
+	
 	pev->yaw_speed = 8;
 	pev->sequence = 0;
 

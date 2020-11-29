@@ -35,13 +35,14 @@ void CSentry::Spawn()
 	
 	SetModel("models/sentry.mdl");
 
-	if (!pev->health) //LRC
-		pev->health = gSkillData.sentryHealth;
+	SetHealth(gSkillData.sentryHealth);
 	
 	m_HackedGunPos = Vector(0, 0, 48);
 	pev->view_ofs.z = 48;
 	
-	m_flMaxWait = 1E6;
+	if (m_flMaxWait == 0) //g-cont.
+		m_flMaxWait = TURRET_MAXWAIT;
+	
 	m_flMaxSpin = 1E6;
 
 	CBaseTurret::Spawn();

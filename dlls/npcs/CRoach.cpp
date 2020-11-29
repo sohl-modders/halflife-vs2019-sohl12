@@ -94,7 +94,8 @@ void CRoach::Spawn()
 	m_bloodColor = BLOOD_COLOR_YELLOW;
 	
 	pev->effects = 0;
-	pev->health = 1;
+
+	SetHealth(1);
 	
 	m_flFieldOfView = 0.5; // indicates the width of this monster's forward view cone ( as a dotproduct result )
 	m_MonsterState = MONSTERSTATE_NONE;

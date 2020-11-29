@@ -100,7 +100,9 @@ void CTentacle::Spawn()
 	pev->solid = SOLID_BBOX;
 	pev->movetype = MOVETYPE_FLY;
 	pev->effects = 0;
-	pev->health = 75;
+
+	SetHealth(75);
+	
 	pev->sequence = 0;
 
 	SetModel("models/tentacle2.mdl");

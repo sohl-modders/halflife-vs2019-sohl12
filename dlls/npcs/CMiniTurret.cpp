@@ -28,9 +28,8 @@ void CMiniTurret::Spawn()
 	Precache();
 	
 	SetModel("models/miniturret.mdl");
-	
-	if (!pev->health)
-		pev->health = gSkillData.miniturretHealth;
+
+	SetHealth(gSkillData.miniturretHealth);
 	
 	m_HackedGunPos = Vector(0, 0, 12.75);
 	m_flMaxSpin = 0;

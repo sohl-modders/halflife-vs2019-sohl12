@@ -18,7 +18,6 @@
 #include "cbase.h"
 #include "monsters.h"
 #include "schedule.h"
-#include "squadmonster.h"
 #include "weapons.h"
 #include "soundent.h"
 #include "scripted.h"
@@ -263,9 +262,8 @@ void CHAssassin::Spawn()
 	pev->movetype = MOVETYPE_STEP;
 	m_bloodColor = BLOOD_COLOR_RED;
 	pev->effects = 0;
-	
-	if (!pev->health) //LRC
-		pev->health = gSkillData.hassassinHealth;
+
+	SetHealth(gSkillData.hassassinHealth);
 	
 	m_flFieldOfView = VIEW_FIELD_WIDE;
 	// indicates the width of this monster's forward view cone ( as a dotproduct result )
