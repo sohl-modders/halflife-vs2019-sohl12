@@ -76,6 +76,23 @@ void U_Srand( unsigned int seed )
 	glSeed = seed_table[ seed & 0xff ];
 }
 
+//LRC
+char* COM_FileExtension(char* in)
+{
+	static char exten[8];
+	int             i;
+
+	while (*in && *in != '.')
+		in++;
+	if (!*in)
+		return "";
+	in++;
+	for (i = 0; i < 7 && *in; i++, in++)
+		exten[i] = *in;
+	exten[i] = 0;
+	return exten;
+}
+
 /*
 =====================
 UTIL_SharedRandomLong
@@ -1469,10 +1486,6 @@ void UTIL_BloodStream( const Vector &origin, const Vector &direction, int color,
 	if ( !UTIL_ShouldShowBlood( color ) )
 		return;
 
-	if ( g_Language == LANGUAGE_GERMAN && color == BLOOD_COLOR_RED )
-		color = 0;
-
-	
 	MESSAGE_BEGIN( MSG_PVS, SVC_TEMPENTITY, origin );
 		WRITE_BYTE( TE_BLOODSTREAM );
 		WRITE_COORD( origin.x );
@@ -1493,9 +1506,6 @@ void UTIL_BloodDrips( const Vector &origin, const Vector &direction, int color, 
 
 	if ( color == DONT_BLEED || amount == 0 )
 		return;
-
-	if ( g_Language == LANGUAGE_GERMAN && color == BLOOD_COLOR_RED )
-		color = 0;
 
 	if ( g_pGameRules->IsMultiplayer() )
 	{
@@ -1960,9 +1970,7 @@ BOOL UTIL_IsValidEntity( edict_t *pent )
 
 void UTIL_PrecacheOther( const char *szClassname )
 {
-	edict_t	*pent;
-
-	pent = CREATE_NAMED_ENTITY( MAKE_STRING( szClassname ) );
+	edict_t* pent = CREATE_NAMED_ENTITY(MAKE_STRING(szClassname));
 	if ( FNullEnt( pent ) )
 	{
 		ALERT ( at_console, "NULL Ent in UTIL_PrecacheOther\n" );
@@ -1972,6 +1980,7 @@ void UTIL_PrecacheOther( const char *szClassname )
 	CBaseEntity *pEntity = CBaseEntity::Instance (VARS( pent ));
 	if (pEntity)
 		pEntity->Precache( );
+	
 	REMOVE_ENTITY(pent);
 }
 

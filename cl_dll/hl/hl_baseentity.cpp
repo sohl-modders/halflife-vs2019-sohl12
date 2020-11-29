@@ -61,9 +61,13 @@ void CBaseEntity::SetNextThink( float delay, BOOL correctSpeed ) { }//LRC
 void CBaseEntity::AbsoluteNextThink( float time, BOOL correctSpeed ) { }//LRC
 void CBaseEntity::ThinkCorrection( ) { }//LRC
 void CBaseEntity::UpdateOnRemove() { }
+void CBaseEntity::SetModel(const char* model) { g_engfuncs.pfnSetModel(ENT(pev), model); }
+int CBaseEntity::PrecacheSound(char* s) { return g_engfuncs.pfnPrecacheSound(s); }
+unsigned short CBaseEntity::PrecacheEvent(int type, const char* psz) { return g_engfuncs.pfnPrecacheEvent(type, psz); }
 
 // CBaseDelay Stubs
-void CBaseDelay :: KeyValue( struct KeyValueData_s * ) { }
+
+void CBaseDelay::KeyValue( struct KeyValueData_s * ) { }
 int CBaseDelay::Restore( class CRestore & ) { return 1; }
 int CBaseDelay::Save( class CSave & ) { return 1; }
 

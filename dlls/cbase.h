@@ -166,6 +166,11 @@ public:
 
 	CBaseEntity * operator = (CBaseEntity *pEntity);
 	CBaseEntity * operator ->();
+
+	template<typename T> T* Entity()
+	{
+		return static_cast<T*>(operator CBaseEntity * ());
+	}
 };
 
 /**
@@ -180,7 +185,7 @@ T EHANDLE_cast(EHANDLE& handle)
 //
 // Base Entity.  All entity types derive from this
 //
-class CBaseEntity 
+class CBaseEntity
 {
 public:
 	// Constructor.  Set engine to use C/C++ callback functions
@@ -250,9 +255,38 @@ public:
 	virtual BOOL IsAlias( void ) { return FALSE; }
 
 	// initialization functions
-	virtual void	Spawn( void ) { return; }
-	virtual void	Precache( void ) { return; }
-	virtual void	KeyValue( KeyValueData* pkvd)
+	virtual void	Spawn( void ) { }
+	virtual void	Precache(void) { }
+	void			SetModel(string_t model) {
+		SetModel(STRING(model));
+	}
+	virtual void	SetModel(const char* model);
+
+	int PrecacheModel(string_t s, char* e);
+	int PrecacheModel(string_t s);
+	int PrecacheModel(char* s);
+
+	int PrecacheSound(string_t s, char* e)//precache default model if not found
+	{
+		if (FStringNull(s))
+			return PrecacheSound(e);
+
+		return PrecacheSound(s);
+	}
+
+	int PrecacheSound(string_t s) {
+		return PrecacheSound((char*)STRING(s));
+	}
+	
+	int PrecacheSound(char* s);
+
+	unsigned short PrecacheEvent(int type, const char* psz);
+
+	unsigned short PrecacheEvent(const char* psz) {
+		return PrecacheEvent(1, psz);
+	}
+	
+	virtual void KeyValue( KeyValueData* pkvd)
 	{
 		//LRC - MoveWith for all!
 		if (FStrEq(pkvd->szKeyName, "movewith"))
@@ -405,13 +439,27 @@ public:
 	static CBaseEntity *Instance( entvars_t *pev ) { return Instance( ENT( pev ) ); }
 	static CBaseEntity *Instance( int eoffset) { return Instance( ENT( eoffset) ); }
 
+	template<typename T>
+	static T* Instance(edict_t* pent) {
+		if (!pent)
+			pent = ENT(0);
+		CBaseEntity* pEnt = (CBaseEntity*)GET_PRIVATE(pent);
+		return static_cast<T*>(pEnt);
+	}
+
+	template<typename T>
+	static T* Instance(entvars_t* pev) { return Instance<T>(ENT(pev)); }
+
 	CBaseMonster *GetMonsterPointer( entvars_t *pevMonster ) 
 	{ 
 		CBaseEntity *pEntity = Instance( pevMonster );
+		
 		if ( pEntity )
 			return pEntity->MyMonsterPointer();
+		
 		return NULL;
 	}
+	
 	CBaseMonster *GetMonsterPointer( edict_t *pentMonster ) 
 	{ 
 		CBaseEntity *pEntity = Instance( pentMonster );
@@ -420,8 +468,6 @@ public:
 		return NULL;
 	}
 
-
-	
 	// Ugly code to lookup all functions to make sure they are exported when set.
 #ifdef _DEBUG
 	void FunctionCheck( void *pFunction, char *name ) 

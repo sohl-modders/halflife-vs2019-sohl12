@@ -38,10 +38,17 @@
 extern CGraph WorldGraph;
 extern CSoundEnt *pSoundEnt;
 
-extern CBaseEntity				*g_pLastSpawn;
-DLL_GLOBAL edict_t				*g_pBodyQueueHead;
-CGlobalState					gGlobalState;
-extern DLL_GLOBAL	int			gDisplayTitle;
+extern CBaseEntity		*g_pLastSpawn;
+DLL_GLOBAL edict_t		*g_pBodyQueueHead;
+CGlobalState			gGlobalState;
+extern DLL_GLOBAL	int	gDisplayTitle;
+
+DLL_GLOBAL	short		g_sModelIndexNullModel; //null model index
+DLL_GLOBAL	short		g_sModelIndexErrorModel;//error model index
+DLL_GLOBAL	short		g_sModelIndexNullSprite;//null sprite index
+DLL_GLOBAL	short		g_sModelIndexErrorSprite;//error sprite index
+DLL_GLOBAL	short		g_sSoundIndexNullSound;//null sound index
+DLL_GLOBAL	unsigned short	g_usEventIndexNullEvent;//null event index
 
 extern void W_Precache(void);
 
@@ -481,6 +488,12 @@ void CWorld :: Spawn( void )
 
 void CWorld :: Precache( void )
 {
+	g_sSoundIndexNullSound = PRECACHE_SOUND("common/null.wav");
+	g_sModelIndexNullModel = PRECACHE_MODEL("models/null.mdl");
+	g_sModelIndexErrorModel = PRECACHE_MODEL("models/error.mdl");
+	g_sModelIndexNullSprite = PRECACHE_MODEL("sprites/null.spr");
+	g_sModelIndexErrorSprite = PRECACHE_MODEL("sprites/error.spr");
+	
 	//LRC - set up the world lists
 	g_pWorld = this;
 	m_pAssistLink = NULL;
@@ -530,7 +543,6 @@ void CWorld :: Precache( void )
 
 	TEXTURETYPE_Init();
 
-
 // the area based ambient sounds MUST be the first precache_sounds
 
 // player precaches     
@@ -539,32 +551,23 @@ void CWorld :: Precache( void )
 	ClientPrecache();
 
 // sounds used from C physics code
-	PRECACHE_SOUND("common/null.wav");				// clears sound channels
 
-	PRECACHE_SOUND( "items/suitchargeok1.wav" );//!!! temporary sound for respawning weapons.
-	PRECACHE_SOUND( "items/gunpickup2.wav" );// player picks up a gun.
+	PrecacheSound( "items/suitchargeok1.wav" );//!!! temporary sound for respawning weapons.
+	PrecacheSound( "items/gunpickup2.wav" );// player picks up a gun.
 
-	PRECACHE_SOUND( "common/bodydrop3.wav" );// dead bodies hitting the ground (animation events)
-	PRECACHE_SOUND( "common/bodydrop4.wav" );
+	PrecacheSound( "common/bodydrop3.wav" );// dead bodies hitting the ground (animation events)
+	PrecacheSound( "common/bodydrop4.wav" );
 	
-	g_Language = (int)CVAR_GET_FLOAT( "sv_language" );
-	if ( g_Language == LANGUAGE_GERMAN )
-	{
-		PRECACHE_MODEL( "models/germangibs.mdl" );
-	}
-	else
-	{
-		PRECACHE_MODEL( "models/hgibs.mdl" );
-		PRECACHE_MODEL( "models/agibs.mdl" );
-	}
+	PrecacheModel( "models/hgibs.mdl" );
+	PrecacheModel( "models/agibs.mdl" );
 
-	PRECACHE_SOUND ("weapons/ric1.wav");
-	PRECACHE_SOUND ("weapons/ric2.wav");
-	PRECACHE_SOUND ("weapons/ric3.wav");
-	PRECACHE_SOUND ("weapons/ric4.wav");
-	PRECACHE_SOUND ("weapons/ric5.wav");
+	PrecacheSound("weapons/ric1.wav");
+	PrecacheSound("weapons/ric2.wav");
+	PrecacheSound("weapons/ric3.wav");
+	PrecacheSound("weapons/ric4.wav");
+	PrecacheSound("weapons/ric5.wav");
 
-	PRECACHE_MODEL( "sprites/null.spr" ); //LRC
+	PrecacheModel( "sprites/null.spr" ); //LRC
 
 //
 // Setup light animation tables. 'a' is total darkness, 'z' is maxbright.
@@ -644,7 +647,6 @@ void CWorld :: Precache( void )
 		CVAR_SET_FLOAT( "mp_defaultteam", 0 );
 	}
 }
-
 
 //
 // Just to ignore the "wad" field.

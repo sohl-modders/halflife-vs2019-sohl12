@@ -70,7 +70,7 @@ void CAirtank :: Spawn( void )
 
 void CAirtank::Precache( void )
 {
-	PRECACHE_MODEL("models/w_oxygen.mdl");
+	PrecacheModel("models/w_oxygen.mdl");
 	PRECACHE_SOUND("doors/aliendoor3.wav");
 }
 

@@ -301,6 +301,8 @@ extern float		UTIL_Approach( float target, float value, float speed );
 extern float		UTIL_ApproachAngle( float target, float value, float speed );
 extern float		UTIL_AngleDistance( float next, float cur );
 
+extern char*		COM_FileExtension(char* in); //LRC
+
 /**
 *	Utility function to format strings without creating a buffer to store the result in.
 *	@param format Format string.
@@ -405,12 +407,6 @@ extern DLL_GLOBAL const Vector g_vecZero;
 //
 // Un-comment only as needed
 //
-#define LANGUAGE_ENGLISH				0
-#define LANGUAGE_GERMAN					1
-#define LANGUAGE_FRENCH					2
-#define LANGUAGE_BRITISH				3
-
-extern DLL_GLOBAL int			g_Language;
 
 #define AMBIENT_SOUND_STATIC			0	// medium radius attenuation
 #define AMBIENT_SOUND_EVERYWHERE		1

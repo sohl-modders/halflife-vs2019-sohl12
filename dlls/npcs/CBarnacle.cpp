@@ -75,9 +75,9 @@ void CBarnacle::Spawn()
 	Precache();
 
 	if (pev->model)
-		SET_MODEL(ENT(pev), STRING(pev->model)); //LRC
+		SetModel(pev->model); //LRC
 	else
-		SET_MODEL(ENT(pev), "models/barnacle.mdl");
+		SetModel("models/barnacle.mdl");
 
 	UTIL_SetSize(pev, Vector(-16, -16, -32), Vector(16, 16, 0));
 
@@ -363,17 +363,17 @@ void CBarnacle::WaitTillDead()
 void CBarnacle::Precache()
 {
 	if (pev->model)
-		PRECACHE_MODEL((char*)STRING(pev->model)); //LRC
+		PrecacheModel(pev->model); //LRC
 	else
-		PRECACHE_MODEL("models/barnacle.mdl");
+		PrecacheModel("models/barnacle.mdl");
 
-	PRECACHE_SOUND("barnacle/bcl_alert2.wav"); //happy, lifting food up
-	PRECACHE_SOUND("barnacle/bcl_bite3.wav"); //just got food to mouth
-	PRECACHE_SOUND("barnacle/bcl_chew1.wav");
-	PRECACHE_SOUND("barnacle/bcl_chew2.wav");
-	PRECACHE_SOUND("barnacle/bcl_chew3.wav");
-	PRECACHE_SOUND("barnacle/bcl_die1.wav");
-	PRECACHE_SOUND("barnacle/bcl_die3.wav");
+	PrecacheSound("barnacle/bcl_alert2.wav"); //happy, lifting food up
+	PrecacheSound("barnacle/bcl_bite3.wav"); //just got food to mouth
+	PrecacheSound("barnacle/bcl_chew1.wav");
+	PrecacheSound("barnacle/bcl_chew2.wav");
+	PrecacheSound("barnacle/bcl_chew3.wav");
+	PrecacheSound("barnacle/bcl_die1.wav");
+	PrecacheSound("barnacle/bcl_die3.wav");
 }
 
 //=========================================================

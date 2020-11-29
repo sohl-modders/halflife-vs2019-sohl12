@@ -293,7 +293,7 @@ void CFuncShine :: Spawn( void )
 	pev->effects |= EF_NODRAW;
 
 	// not that we actually need to precache it here, but we do need to make sure it exists
-	PRECACHE_MODEL( (char*)STRING(pev->message) );
+	PrecacheModel(pev->message);
 }
 
 void CFuncShine :: Activate( void )

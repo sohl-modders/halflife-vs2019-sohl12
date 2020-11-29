@@ -33,6 +33,13 @@ extern Vector VecBModelOrigin( entvars_t* pevBModel );
 extern DLL_GLOBAL Vector		g_vecAttackDir;
 extern DLL_GLOBAL int			g_iSkillLevel;
 
+extern DLL_GLOBAL	short		g_sModelIndexNullModel; //null model index
+extern DLL_GLOBAL	short		g_sModelIndexErrorModel;//error model index
+extern DLL_GLOBAL	short		g_sModelIndexNullSprite;//null sprite index
+extern DLL_GLOBAL	short		g_sModelIndexErrorSprite;//error sprite index
+extern DLL_GLOBAL	short		g_sSoundIndexNullSound;//null sound index
+extern DLL_GLOBAL	unsigned short	g_usEventIndexNullEvent;//null event index
+
 static DLL_FUNCTIONS gFunctionTable = 
 {
 	GameDLLInit,				//pfnGameInit
@@ -100,31 +107,29 @@ static DLL_FUNCTIONS gFunctionTable =
 static void SetObjectCollisionBox( entvars_t *pev );
 
 extern "C" {
-
 	int GetEntityAPI( DLL_FUNCTIONS *pFunctionTable, int interfaceVersion )
-{
-	if ( !pFunctionTable || interfaceVersion != INTERFACE_VERSION )
 	{
-		return FALSE;
+		if ( !pFunctionTable || interfaceVersion != INTERFACE_VERSION )
+		{
+			return FALSE;
+		}
+		
+		memcpy( pFunctionTable, &gFunctionTable, sizeof( DLL_FUNCTIONS ) );
+		return TRUE;
 	}
-	
-	memcpy( pFunctionTable, &gFunctionTable, sizeof( DLL_FUNCTIONS ) );
-	return TRUE;
-}
 
-int GetEntityAPI2( DLL_FUNCTIONS *pFunctionTable, int *interfaceVersion )
-{
-	if ( !pFunctionTable || *interfaceVersion != INTERFACE_VERSION )
+	int GetEntityAPI2( DLL_FUNCTIONS *pFunctionTable, int *interfaceVersion )
 	{
-		// Tell engine what version we had, so it can figure out who is out of date.
-		*interfaceVersion = INTERFACE_VERSION;
-		return FALSE;
+		if ( !pFunctionTable || *interfaceVersion != INTERFACE_VERSION )
+		{
+			// Tell engine what version we had, so it can figure out who is out of date.
+			*interfaceVersion = INTERFACE_VERSION;
+			return FALSE;
+		}
+		
+		memcpy( pFunctionTable, &gFunctionTable, sizeof( DLL_FUNCTIONS ) );
+		return TRUE;
 	}
-	
-	memcpy( pFunctionTable, &gFunctionTable, sizeof( DLL_FUNCTIONS ) );
-	return TRUE;
-}
-
 }
 
 
@@ -444,60 +449,6 @@ void SaveReadFields( SAVERESTOREDATA *pSaveData, const char *pname, void *pBaseD
 {
 	CRestore restoreHelper( pSaveData );
 	restoreHelper.ReadFields( pname, pBaseData, pFields, fieldCount );
-}
-
-
-edict_t * EHANDLE::Get( void ) 
-{ 
-	if (m_pent)
-	{
-		if (m_pent->serialnumber == m_serialnumber) 
-			return m_pent; 
-		else
-			return NULL;
-	}
-	return NULL; 
-};
-
-edict_t * EHANDLE::Set( edict_t *pent ) 
-{ 
-	m_pent = pent;  
-	if (pent) 
-		m_serialnumber = m_pent->serialnumber; 
-	return pent; 
-};
-
-
-EHANDLE :: operator CBaseEntity *() 
-{ 
-	return (CBaseEntity *)GET_PRIVATE( Get( ) ); 
-};
-
-
-CBaseEntity * EHANDLE :: operator = (CBaseEntity *pEntity)
-{
-	if (pEntity)
-	{
-		m_pent = ENT( pEntity->pev );
-		if (m_pent)
-			m_serialnumber = m_pent->serialnumber;
-	}
-	else
-	{
-		m_pent = NULL;
-		m_serialnumber = 0;
-	}
-	return pEntity;
-}
-
-EHANDLE :: operator int ()
-{
-	return Get() != NULL;
-}
-
-CBaseEntity * EHANDLE :: operator -> ()
-{
-	return (CBaseEntity *)GET_PRIVATE( Get( ) ); 
 }
 
 //LRC
@@ -829,8 +780,9 @@ int CBaseEntity::Restore( CRestore &restore )
 		maxs = pev->maxs;
 
 
-		PRECACHE_MODEL( (char *)STRING(pev->model) );
-		SET_MODEL(ENT(pev), STRING(pev->model));
+		PrecacheModel(pev->model);
+		SetModel(pev->model);
+    	
 		UTIL_SetSize(pev, mins, maxs);	// Reset them
 	}
 
@@ -984,7 +936,6 @@ BOOL CBaseEntity::ShouldToggle( USE_TYPE useType )
 	return TRUE;
 }
 
-
 int	CBaseEntity :: DamageDecal( int bitsDamageType )
 {
 	if ( pev->rendermode == kRenderTransAlpha )
@@ -996,27 +947,153 @@ int	CBaseEntity :: DamageDecal( int bitsDamageType )
 	return DECAL_GUNSHOT1 + RANDOM_LONG(0,4);
 }
 
+void CBaseEntity::SetModel(const char* model)
+{
+	if (!model || !(*model)) {
+		g_engfuncs.pfnSetModel(ENT(pev), "models/null.mdl");
+		return;
+	}
+	
+	//is this brush model?
+	if (model[0] == '*') {
+		g_engfuncs.pfnSetModel(ENT(pev), model);
+		return;
+	}
 
+	//verify file exists
+	byte* data = LOAD_FILE_FOR_ME((char*)model, NULL);
+	if (data) {
+		FREE_FILE(data);
+		g_engfuncs.pfnSetModel(ENT(pev), model);
+		return;
+	}
+
+	char* ext = COM_FileExtension((char*)model);
+	if (FStrEq(ext, "mdl")) {
+		//this is model
+		g_engfuncs.pfnSetModel(ENT(pev), "models/error.mdl");
+	} else if (FStrEq(ext, "spr")) {
+		//this is sprite
+		g_engfuncs.pfnSetModel(ENT(pev), "sprites/error.spr");
+	} else {
+		//set null model
+		g_engfuncs.pfnSetModel(ENT(pev), "models/null.mdl");
+	}
+}
+
+int CBaseEntity::PrecacheModel(string_t s, char* e) {
+	if (FStringNull(s))
+		return PrecacheModel(e);
+
+	return PrecacheModel(s);
+}
+
+int CBaseEntity::PrecacheModel(string_t str)
+{
+	return PrecacheModel((char*)STRING(str));
+}
+
+int CBaseEntity::PrecacheModel(char* str)
+{
+	if (!str || !*str) {
+		ALERT(at_console, "Warning: modelname not specified\n");
+		return g_sModelIndexNullModel; //set null model
+	}
+	
+	//no need to precacahe brush
+	if (str[0] == '*') return 0;
+
+	//verify file exists
+	byte* data = LOAD_FILE_FOR_ME(str, NULL);
+	if (data)
+	{
+		FREE_FILE(data);
+		return g_engfuncs.pfnPrecacheModel(str);
+	}
+
+	char* ext = COM_FileExtension(str);
+	if (FStrEq(ext, "mdl"))
+	{
+		//this is model
+		ALERT(at_console, "Warning: model \"%s\" not found!\n", str);
+		return g_sModelIndexErrorModel;
+	}
+	
+	if (FStrEq(ext, "spr"))
+	{
+		//this is sprite
+		ALERT(at_console, "Warning: sprite \"%s\" not found!\n", str);
+		return g_sModelIndexErrorSprite;
+	}
+
+	//unknown format
+	ALERT(at_console, "Warning: invalid name \"%s\"!\n", str);
+	return g_sModelIndexNullModel; //set null model
+}
+
+int CBaseEntity::PrecacheSound(char* s)
+{
+	if (!s || !*s) 
+		return g_sSoundIndexNullSound; //set null sound
+
+	//NOTE: Engine function as predicted for sound folder
+	//But LOAD_FILE_FOR_ME don't known about this. Set it manualy
+
+	char path[256];		//g-cont.
+	char* sound = s;		//sounds from model events can contains a symbol '*'.
+				//remove this for sucessfully loading a sound	
+	if (sound[0] == '*')sound++;	//only for fake path, engine needs this prefix!
+	sprintf(path, "sound/%s", sound);
+
+	//verify file exists
+	byte* data = LOAD_FILE_FOR_ME(path, NULL);
+	if (data)
+	{
+		FREE_FILE(data);
+		return g_engfuncs.pfnPrecacheSound(s);
+	}
+
+	char* ext = COM_FileExtension(s);
+	if (FStrEq(ext, "wav"))
+	{
+		//this is sound
+		ALERT(at_console, "Warning: sound \"%s\" not found!\n", s);
+		return g_sSoundIndexNullSound; //set null sound
+	}
+	else
+	{
+		//unknown format
+		ALERT(at_console, "Warning: invalid name \"%s\"!\n", s);
+		return g_sSoundIndexNullSound; //set null sound
+	}
+}
+
+unsigned short CBaseEntity::PrecacheEvent(int type, const char* psz)
+{
+	byte* data = LOAD_FILE_FOR_ME((char*)psz, NULL);
+	if (data) {
+		FREE_FILE(data);
+		return g_engfuncs.pfnPrecacheEvent(type, psz);
+	}
+
+	ALERT(at_console, "Warning: event \"%s\" not found!\n", psz);
+	return g_engfuncs.pfnPrecacheEvent(type, "events/null.sc");
+}
 
 // NOTE: szName must be a pointer to constant memory, e.g. "monster_class" because the entity
 // will keep a pointer to it after this call.
 CBaseEntity * CBaseEntity::Create( const char *szName, const Vector &vecOrigin, const Vector &vecAngles, edict_t *pentOwner )
 {
-	edict_t	*pent;
-	CBaseEntity *pEntity;
-
-	pent = CREATE_NAMED_ENTITY( MAKE_STRING( szName ));
-	if ( FNullEnt( pent ) )
-	{
+	edict_t* pent = CREATE_NAMED_ENTITY(MAKE_STRING(szName));
+	if ( FNullEnt( pent ) ) {
 		ALERT ( at_console, "NULL Ent in Create!\n" );
 		return NULL;
 	}
-	pEntity = Instance( pent );
+	
+	CBaseEntity* pEntity = Instance(pent);
 	pEntity->pev->owner = pentOwner;
 	pEntity->pev->origin = vecOrigin;
 	pEntity->pev->angles = vecAngles;
 	DispatchSpawn( pEntity->edict() );
 	return pEntity;
 }
-
-

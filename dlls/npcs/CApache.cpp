@@ -60,9 +60,9 @@ void CApache::Spawn()
 	pev->solid = SOLID_BBOX;
 
 	if (pev->model)
-		SET_MODEL(ENT(pev), STRING(pev->model)); //LRC
+		SetModel(pev->model); //LRC
 	else
-		SET_MODEL(ENT(pev), "models/apache.mdl");
+		SetModel("models/apache.mdl");
 
 	UTIL_SetSize(pev, Vector(-32, -32, -64), Vector(32, 32, 0));
 	UTIL_SetOrigin(this, pev->origin);
@@ -100,25 +100,25 @@ void CApache::Spawn()
 void CApache::Precache()
 {
 	if (pev->model)
-		PRECACHE_MODEL((char*)STRING(pev->model)); //LRC
+		PrecacheModel(pev->model); //LRC
 	else
-		PRECACHE_MODEL("models/apache.mdl");
+		PrecacheModel("models/apache.mdl");
 
-	PRECACHE_SOUND("apache/ap_rotor1.wav");
-	PRECACHE_SOUND("apache/ap_rotor2.wav");
-	PRECACHE_SOUND("apache/ap_rotor3.wav");
-	PRECACHE_SOUND("apache/ap_whine1.wav");
+	PrecacheSound("apache/ap_rotor1.wav");
+	PrecacheSound("apache/ap_rotor2.wav");
+	PrecacheSound("apache/ap_rotor3.wav");
+	PrecacheSound("apache/ap_whine1.wav");
 
-	PRECACHE_SOUND("weapons/mortarhit.wav");
+	PrecacheSound("weapons/mortarhit.wav");
 
-	m_iSpriteTexture = PRECACHE_MODEL("sprites/white.spr");
+	m_iSpriteTexture = PrecacheModel("sprites/white.spr");
 
-	PRECACHE_SOUND("turret/tu_fire1.wav");
+	PrecacheSound("turret/tu_fire1.wav");
 
-	PRECACHE_MODEL("sprites/lgtning.spr");
+	PrecacheModel("sprites/lgtning.spr");
 
-	m_iExplode = PRECACHE_MODEL("sprites/fexplo.spr");
-	m_iBodyGibs = PRECACHE_MODEL("models/metalplategibs_green.mdl");
+	m_iExplode = PrecacheModel("sprites/fexplo.spr");
+	m_iBodyGibs = PrecacheModel("models/metalplategibs_green.mdl");
 
 	UTIL_PrecacheOther("hvr_rocket");
 }

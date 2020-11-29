@@ -123,6 +123,7 @@
     <ClCompile Include="..\..\dlls\effects\CSpiral.cpp" />
     <ClCompile Include="..\..\dlls\effects\CStomp.cpp" />
     <ClCompile Include="..\..\dlls\egon.cpp" />
+    <ClCompile Include="..\..\dlls\ehandle.cpp" />
     <ClCompile Include="..\..\dlls\explode.cpp" />
     <ClCompile Include="..\..\dlls\func_break.cpp" />
     <ClCompile Include="..\..\dlls\func_tank.cpp" />
