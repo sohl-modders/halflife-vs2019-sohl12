@@ -15,10 +15,17 @@
 #define LF_DESIRED_INFO			(1<<10)
 #define LF_DESIRED_ACTION		(1<<11)
 
-#define LF_ALIASLIST			(1<<12)
+#define LF_MOVENONE				(1<<12)
+#define LF_MERGEPOS				(1<<13)
+#define LF_PARENTMOVE			(1<<14)
+#define LF_ANGULAR				(1<<15)
+#define LF_POSTORG				(1<<16)
+#define LF_POINTENTITY			(1<<17)
+
+#define LF_ALIASLIST			(1<<18)
 
 // an entity must have one of these flags set in order to be in the AssistList
-#define LF_ASSISTLIST  (LF_DOASSIST|LF_DODESIRED)
+#define LF_ASSISTLIST  (LF_DOASSIST|LF_DODESIRED|LF_MERGEPOS|LF_POSTORG)
 
 extern void			CheckDesiredList( void );
 extern void			CheckAssistList ( void );
@@ -39,6 +46,7 @@ extern void			UTIL_SetVelocity		( CBaseEntity *pEnt,	const Vector vecSet );
 extern void			UTIL_SetAngles			( CBaseEntity* pEntity, const Vector vecAngles );
 extern void			UTIL_SetAngles			( CBaseEntity* pEntity, const Vector vecAngles, BOOL bInitiator );
 extern void			UTIL_SetAvelocity		( CBaseEntity *pEnt, const Vector vecSet );
+extern void			UTIL_MergePos			( CBaseEntity* pEnt, const int loopbreaker = 100);
 
 extern void			UTIL_SetMoveWithVelocity( CBaseEntity *pEnt, const Vector vecSet, int loopbreaker );
 extern void			UTIL_SetMoveWithAvelocity( CBaseEntity *pEnt, const Vector vecSet, int loopbreaker );

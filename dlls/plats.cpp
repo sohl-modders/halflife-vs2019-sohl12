@@ -1666,9 +1666,17 @@ void CFuncTrackTrain :: UpdateSound( void )
 	}
 }
 
-void CFuncTrackTrain :: PostponeNext( void )
+void CFuncTrackTrain::ClearPointers(void)
 {
-	UTIL_DesiredAction(this);
+	CBaseEntity::ClearPointers();
+	m_ppath = NULL;
+}
+
+void CFuncTrackTrain::PostponeNext(void)
+{
+	//g-cont. well...
+	if (m_pAssistLink) UTIL_DesiredAction(this);
+	else DesiredAction();  //this simply fix LAARGE BUG with func_traktrain in spirit ;) g-cont
 }
 
 void CFuncTrackTrain :: DesiredAction( void ) // Next( void )

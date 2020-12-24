@@ -94,67 +94,8 @@ STATE CBaseDMStart::GetState( CBaseEntity *pEntity )
 void CBaseEntity::UpdateOnRemove( void )
 {
 	int	i;
-	CBaseEntity* pTemp;
 
-	if (!g_pWorld)
-	{
-		ALERT(at_debug, "UpdateOnRemove has no AssistList!\n");
-		return;
-	}
-
-	//LRC - remove this from the AssistList.
-	for (pTemp = g_pWorld; pTemp->m_pAssistLink != NULL; pTemp = pTemp->m_pAssistLink)
-	{
-		if (this == pTemp->m_pAssistLink)
-		{
-//			ALERT(at_console,"REMOVE: %s removed from the Assist List.\n", STRING(pev->classname));
-			pTemp->m_pAssistLink = this->m_pAssistLink;
-			this->m_pAssistLink = NULL;
-			break;
-		}
-	}
-
-	//LRC
-	if (m_pMoveWith)
-	{
-		// if I'm moving with another entity, take me out of the list. (otherwise things crash!)
-		pTemp = m_pMoveWith->m_pChildMoveWith;
-		if (pTemp == this)
-		{
-			m_pMoveWith->m_pChildMoveWith = this->m_pSiblingMoveWith;
-		}
-		else
-		{
-			while (pTemp->m_pSiblingMoveWith)
-			{
-				if (pTemp->m_pSiblingMoveWith == this)
-				{
-					pTemp->m_pSiblingMoveWith = this->m_pSiblingMoveWith;
-					break;
-				}
-				pTemp = pTemp->m_pSiblingMoveWith;
-			}
-
-		}
-//		ALERT(at_console,"REMOVE: %s removed from the %s ChildMoveWith list.\n", STRING(pev->classname), STRING(m_pMoveWith->pev->targetname));
-	}
-
-	//LRC - do the same thing if another entity is moving with _me_.
-	if (m_pChildMoveWith)
-	{
-		CBaseEntity* pCur = m_pChildMoveWith;
-		CBaseEntity* pNext;
-		while (pCur != NULL)
-		{
-			pNext = pCur->m_pSiblingMoveWith;
-			// bring children to a stop
-			UTIL_SetMoveWithVelocity(pCur, g_vecZero, 100);
-			UTIL_SetMoveWithAvelocity(pCur, g_vecZero, 100);
-			pCur->m_pMoveWith = NULL;
-			pCur->m_pSiblingMoveWith = NULL;
-			pCur = pNext;
-		}
-	}
+	ResetParent();
 
 	if ( FBitSet( pev->flags, FL_GRAPHED ) )
 	{
