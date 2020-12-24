@@ -1729,22 +1729,22 @@ BOOL UTIL_IsFacing( entvars_t *pevTest, const Vector &reference )
 	return FALSE;
 }
 
+//LRC - randomized vectors of the form "0 0 0 .. 1 0 0"
 void UTIL_StringToVector( float *pVector, const char *pString )
 {
-	char *pstr, *pfront, tempString[128];
+	char* pstr, * pfront, tempString[128];
 	int	j;
+	float pAltVec[3];
 
-	strcpy( tempString, pString );
+	strcpy(tempString, pString);
 	pstr = pfront = tempString;
 
-	for ( j = 0; j < 3; j++ )			// lifted from pr_edict.c
+	for (j = 0; j < 3; j++)			// lifted from pr_edict.c
 	{
-		pVector[j] = atof( pfront );
+		pVector[j] = atof(pfront);
 
-		while ( *pstr && *pstr != ' ' )
-			pstr++;
-		if (!*pstr)
-			break;
+		while (*pstr && *pstr != ' ') pstr++;
+		if (!*pstr) break;
 		pstr++;
 		pfront = pstr;
 	}
@@ -1754,11 +1754,23 @@ void UTIL_StringToVector( float *pVector, const char *pString )
 		ALERT( at_error, "Bad field in entity!! %s:%s == \"%s\"\n",
 			pkvd->szClassName, pkvd->szKeyName, pkvd->szValue );
 		*/
-		for (j = j+1;j < 3; j++)
+		for (j = j + 1; j < 3; j++)
 			pVector[j] = 0;
 	}
-}
+	else if (*pstr == '.')
+	{
+		pstr++;
+		if (*pstr != '.') return;
+		pstr++;
+		if (*pstr != ' ') return;
 
+		UTIL_StringToVector(pAltVec, pstr);
+
+		pVector[0] = RANDOM_FLOAT(pVector[0], pAltVec[0]);
+		pVector[1] = RANDOM_FLOAT(pVector[1], pAltVec[1]);
+		pVector[2] = RANDOM_FLOAT(pVector[2], pAltVec[2]);
+	}
+}
 
 //LRC - randomized vectors of the form "0 0 0 .. 1 0 0"
 void UTIL_StringToRandomVector( float *pVector, const char *pString )
@@ -2059,7 +2071,6 @@ char* GetStringForState( STATE state )
 		return "STATE_UNKNOWN!?";
 	}
 }
-
 
 // --------------------------------------------------------------
 //
