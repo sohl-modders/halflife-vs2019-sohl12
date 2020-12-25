@@ -203,6 +203,7 @@
     <ClCompile Include="..\..\dlls\props\CDeadBarney.cpp" />
     <ClCompile Include="..\..\dlls\props\CDeadGenericMonster.cpp" />
     <ClCompile Include="..\..\dlls\props\CDeadHGrunt.cpp" />
+    <ClCompile Include="..\..\dlls\props\CDeadMonster.cpp" />
     <ClCompile Include="..\..\dlls\props\CDeadScientist.cpp" />
     <ClCompile Include="..\..\dlls\props\CSittingScientist.cpp" />
     <ClCompile Include="..\..\dlls\python.cpp" />
@@ -219,7 +220,7 @@
     <ClCompile Include="..\..\dlls\squadmonster.cpp" />
     <ClCompile Include="..\..\dlls\squeakgrenade.cpp" />
     <ClCompile Include="..\..\dlls\subs.cpp" />
-    <ClCompile Include="..\..\dlls\talkmonster.cpp" />
+    <ClCompile Include="..\..\dlls\CTalkMonster.cpp" />
     <ClCompile Include="..\..\dlls\teamplay_gamerules.cpp" />
     <ClCompile Include="..\..\dlls\tempmonster.cpp" />
     <ClCompile Include="..\..\dlls\triggers.cpp" />
@@ -244,6 +245,7 @@
     <ClInclude Include="..\..\dlls\cbase.h" />
     <ClInclude Include="..\..\dlls\cdll_dll.h" />
     <ClInclude Include="..\..\dlls\client.h" />
+    <ClInclude Include="..\..\dlls\CTalkMonster.h" />
     <ClInclude Include="..\..\dlls\decals.h" />
     <ClInclude Include="..\..\dlls\defaultai.h" />
     <ClInclude Include="..\..\dlls\doors.h" />
@@ -311,6 +313,7 @@
     <ClInclude Include="..\..\dlls\props\CDeadBarney.h" />
     <ClInclude Include="..\..\dlls\props\CDeadGenericMonster.h" />
     <ClInclude Include="..\..\dlls\props\CDeadHGrunt.h" />
+    <ClInclude Include="..\..\dlls\props\CDeadMonster.h" />
     <ClInclude Include="..\..\dlls\props\CDeadScientist.h" />
     <ClInclude Include="..\..\dlls\props\CSittingScientist.h" />
     <ClInclude Include="..\..\dlls\saverestore.h" />
@@ -321,7 +324,6 @@
     <ClInclude Include="..\..\dlls\soundent.h" />
     <ClInclude Include="..\..\dlls\spectator.h" />
     <ClInclude Include="..\..\dlls\squadmonster.h" />
-    <ClInclude Include="..\..\dlls\talkmonster.h" />
     <ClInclude Include="..\..\dlls\teamplay_gamerules.h" />
     <ClInclude Include="..\..\dlls\trains.h" />
     <ClInclude Include="..\..\dlls\util.h" />

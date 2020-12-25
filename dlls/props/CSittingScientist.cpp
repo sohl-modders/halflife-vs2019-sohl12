@@ -17,7 +17,7 @@
 #include "util.h"
 #include "cbase.h"
 #include "monsters.h"
-#include "talkmonster.h"
+#include "CTalkMonster.h"
 
 #include "npcs/CScientist.h"
 #include "CSittingScientist.h"

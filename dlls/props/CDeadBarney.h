@@ -19,24 +19,15 @@
 //=========================================================
 // Class definition of CDeadBarney
 //=========================================================
-class CDeadBarney : public CBaseMonster
+class CDeadBarney : public CDeadMonster
 {
 public:
 	void Spawn() override;
-	void Precache() override;
+	int	Classify() override { return CLASS_PLAYER_ALLY; }
 	
-	int Classify() override
-	{
-		return CLASS_NONE;
+	const char* getPos(int pos) const override {
+		return m_szPoses[pos % ARRAYSIZE(m_szPoses)];
 	}
-
-	void KeyValue(KeyValueData* pkvd) override;
-
-	int Save(CSave& save) override;
-	int Restore(CRestore& restore) override;
-	static TYPEDESCRIPTION m_SaveData[];
-	
-	int m_iPose;
 	
 	static const char* m_szPoses[3];
 };

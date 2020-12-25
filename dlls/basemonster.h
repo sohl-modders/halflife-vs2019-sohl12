@@ -245,8 +245,8 @@ public:
 	BOOL FRouteClear(void);
 	void RouteSimplify(CBaseEntity* pTargetEnt);
 	void AdvanceRoute(float distance);
-	virtual BOOL FTriangulate(const Vector& vecStart, const Vector& vecEnd, float flDist, CBaseEntity* pTargetEnt,
-	                          Vector* pApex);
+	int FTriangulate(const Vector& vecStart, const Vector& vecEnd, float flDist, CBaseEntity* pTargetEnt, 
+		Vector* pApexes, int n = 1, int tries = 8);
 	void MakeIdealYaw(Vector vecTarget);
 
 	virtual void SetYawSpeed(void)

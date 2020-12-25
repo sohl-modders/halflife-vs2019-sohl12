@@ -790,7 +790,7 @@ void CBaseEntity :: ThinkCorrection( void )
 }
 
 // give health
-int CBaseEntity :: TakeHealth( float flHealth, int bitsDamageType )
+int CBaseEntity :: TakeHealth(float flHealth, int bitsDamageType )
 {
 	if (!pev->takedamage)
 		return 0;
@@ -817,12 +817,12 @@ int CBaseEntity :: TakeDamage( entvars_t* pevInflictor, entvars_t* pevAttacker, 
 	// (that is, no actual entity projectile was involved in the attack so use the shooter's origin). 
 	if ( pevAttacker == pevInflictor )	
 	{
-		vecTemp = pevInflictor->origin - ( VecBModelOrigin(pev) );
+		vecTemp = pevAttacker->origin - VecBModelOrigin(pev);
 	}
 	else
 	// an actual missile was involved.
 	{
-		vecTemp = pevInflictor->origin - ( VecBModelOrigin(pev) );
+		vecTemp = pevInflictor->origin - VecBModelOrigin(pev);
 	}
 
 // this global is still used for glass and other non-monster killables, along with decals.
@@ -1229,9 +1229,15 @@ unsigned short CBaseEntity::PrecacheEvent(int type, const char* psz)
 // will keep a pointer to it after this call.
 CBaseEntity * CBaseEntity::Create( const char *szName, const Vector &vecOrigin, const Vector &vecAngles, edict_t *pentOwner )
 {
+	if (!szName)
+	{
+		ALERT(at_console, "Create() - No item name!\n");
+		return NULL;
+	}
+	
 	edict_t* pent = CREATE_NAMED_ENTITY(MAKE_STRING(szName));
 	if ( FNullEnt( pent ) ) {
-		ALERT ( at_console, "NULL Ent in Create!\n" );
+		ALERT(at_console, "NULL Ent in Create! (%s)\n", szName);
 		return NULL;
 	}
 	

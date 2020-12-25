@@ -234,9 +234,6 @@
     <ClCompile Include="..\..\dlls\subs.cpp">
       <Filter>Source Files\dlls</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\dlls\talkmonster.cpp">
-      <Filter>Source Files\dlls</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\dlls\teamplay_gamerules.cpp">
       <Filter>Source Files\dlls</Filter>
     </ClCompile>
@@ -447,6 +444,12 @@
     <ClCompile Include="..\..\dlls\ehandle.cpp">
       <Filter>Source Files\dlls</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\dlls\props\CDeadMonster.cpp">
+      <Filter>Source Files\dlls\props</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dlls\CTalkMonster.cpp">
+      <Filter>Source Files\dlls</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\dlls\doors.h">
@@ -564,9 +567,6 @@
       <Filter>Header Files\dlls</Filter>
     </ClInclude>
     <ClInclude Include="..\..\dlls\squadmonster.h">
-      <Filter>Header Files\dlls</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\dlls\talkmonster.h">
       <Filter>Header Files\dlls</Filter>
     </ClInclude>
     <ClInclude Include="..\..\dlls\teamplay_gamerules.h">
@@ -742,6 +742,12 @@
     </ClInclude>
     <ClInclude Include="..\..\dlls\projectiles\CHornet.h">
       <Filter>Source Files\dlls\projectiles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\dlls\props\CDeadMonster.h">
+      <Filter>Source Files\dlls\props</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\dlls\CTalkMonster.h">
+      <Filter>Source Files\dlls</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

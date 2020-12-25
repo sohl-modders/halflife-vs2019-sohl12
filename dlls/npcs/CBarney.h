@@ -17,7 +17,7 @@
 #define CBARNEY_H
 
 #ifndef TALKMONSTER_H
-#include "talkmonster.h"
+#include "CTalkMonster.h"
 #endif
 
 //=========================================================

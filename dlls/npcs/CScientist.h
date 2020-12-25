@@ -17,7 +17,7 @@
 #define CSCIENTIST_H
 
 #ifndef TALKMONSTER_H
-#include "talkmonster.h"
+#include "CTalkMonster.h"
 #endif
 
 #define		NUM_SCIENTIST_HEADS		4 // four heads available for scientist model

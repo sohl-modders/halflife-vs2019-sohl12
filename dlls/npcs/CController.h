@@ -86,7 +86,7 @@ public:
 	void PainSound() override;
 	void AlertSound() override;
 	void IdleSound() override;
-	void AttackSound();
+	void AttackSound() override;
 	void DeathSound() override;
 
 	static const char* pAttackSounds[];

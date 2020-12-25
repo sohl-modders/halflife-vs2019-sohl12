@@ -73,15 +73,6 @@ int CBaseFlyingMonster::CheckLocalMove(const Vector& vecStart, const Vector& vec
 }
 
 //=========================================================
-// FTriangulate
-//=========================================================
-BOOL CBaseFlyingMonster::FTriangulate(const Vector& vecStart, const Vector& vecEnd, float flDist,
-                                      CBaseEntity* pTargetEnt, Vector* pApex)
-{
-	return CBaseMonster::FTriangulate(vecStart, vecEnd, flDist, pTargetEnt, pApex);
-}
-
-//=========================================================
 // GetStoppedActivity
 //=========================================================
 Activity CBaseFlyingMonster::GetStoppedActivity()
