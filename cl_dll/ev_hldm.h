@@ -8,20 +8,7 @@
 #if !defined ( EV_HLDMH )
 #define EV_HLDMH
 
-// bullet types
-typedef	enum
-{
-	BULLET_NONE = 0,
-	BULLET_PLAYER_9MM, // glock
-	BULLET_PLAYER_MP5, // mp5
-	BULLET_PLAYER_357, // python
-	BULLET_PLAYER_BUCKSHOT, // shotgun
-	BULLET_PLAYER_CROWBAR, // crowbar swipe
-
-	BULLET_MONSTER_9MM,
-	BULLET_MONSTER_MP5,
-	BULLET_MONSTER_12MM,
-} Bullet;
+#include "bullet_types.h"
 
 enum glock_e {
 	GLOCK_IDLE1 = 0,
