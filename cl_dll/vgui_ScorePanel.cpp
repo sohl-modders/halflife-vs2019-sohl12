@@ -493,7 +493,7 @@ void ScorePanel::RebuildTeams()
 		int j;
 		for ( j = 1; j <= m_iNumTeams; j++ )
 		{
-			if ( g_TeamInfo[j].name[0] == '\0' )
+			if (!strlen((char*)g_TeamInfo[j].name[0]))
 				break;
 
 			if ( !stricmp( g_PlayerExtraInfo[i].teamname, g_TeamInfo[j].name ) )
@@ -505,7 +505,7 @@ void ScorePanel::RebuildTeams()
 			// search through for an empty team slot
 			for ( j = 1; j <= m_iNumTeams; j++ )
 			{
-				if ( g_TeamInfo[j].name[0] == '\0' )
+				if (!strlen((char*)g_TeamInfo[j].name[0]))
 					break;
 			}
 			m_iNumTeams = V_max( j, m_iNumTeams );

@@ -186,16 +186,16 @@ void SequencePrecache( void *pmodel, const char *pSequenceName )
 	}
 }
 
-void GetSequenceInfo( void *pmodel, entvars_t *pev, float *pflFrameRate, float *pflGroundSpeed )
+void GetSequenceInfo(void* pmodel, entvars_t* pev, float* pflFrameRate, float* pflGroundSpeed)
 {
 	studiohdr_t* pstudiohdr = (studiohdr_t*)pmodel;
-	if (! pstudiohdr)
+	if (!pstudiohdr)
 		return;
 
 	if (pev->sequence >= pstudiohdr->numseq)
 	{
-		*pflFrameRate = 0.0;
-		*pflGroundSpeed = 0.0;
+		*pflFrameRate = 0.0f;
+		*pflGroundSpeed = 0.0f;
 		return;
 	}
 
@@ -203,14 +203,14 @@ void GetSequenceInfo( void *pmodel, entvars_t *pev, float *pflFrameRate, float *
 
 	if (pseqdesc->numframes > 1)
 	{
-		*pflFrameRate = 256 * pseqdesc->fps / (pseqdesc->numframes - 1);
-		*pflGroundSpeed = sqrt( pseqdesc->linearmovement[0]*pseqdesc->linearmovement[0]+ pseqdesc->linearmovement[1]*pseqdesc->linearmovement[1]+ pseqdesc->linearmovement[2]*pseqdesc->linearmovement[2] );
+		*pflFrameRate = 256.0f * pseqdesc->fps / (pseqdesc->numframes - 1);
+		*pflGroundSpeed = sqrt(pseqdesc->linearmovement[0] * pseqdesc->linearmovement[0] + pseqdesc->linearmovement[1] * pseqdesc->linearmovement[1] + pseqdesc->linearmovement[2] * pseqdesc->linearmovement[2]);
 		*pflGroundSpeed = *pflGroundSpeed * pseqdesc->fps / (pseqdesc->numframes - 1);
 	}
 	else
 	{
-		*pflFrameRate = 256.0;
-		*pflGroundSpeed = 0.0;
+		*pflFrameRate = 256.0f;
+		*pflGroundSpeed = 0.0f;
 	}
 }
 
@@ -220,43 +220,42 @@ int GetSequenceFlags( void *pmodel, entvars_t *pev )
 	if ( !pstudiohdr || pev->sequence >= pstudiohdr->numseq )
 		return 0;
 
-	mstudioseqdesc_t	*pseqdesc;
-	pseqdesc = (mstudioseqdesc_t *)((byte *)pstudiohdr + pstudiohdr->seqindex) + (int)pev->sequence;
+	mstudioseqdesc_t* pseqdesc = (mstudioseqdesc_t*)((byte*)pstudiohdr + pstudiohdr->seqindex) + (int)pev->sequence;
 
 	return pseqdesc->flags;
 }
 
-int GetAnimationEvent( void *pmodel, entvars_t *pev, MonsterEvent_t *pMonsterEvent, float flStart, float flEnd, int index )
+int GetAnimationEvent(void* pmodel, entvars_t* pev, MonsterEvent_t* pMonsterEvent, float flStart, float flEnd, int index)
 {
 	studiohdr_t* pstudiohdr = (studiohdr_t*)pmodel;
-	if ( !pstudiohdr || pev->sequence >= pstudiohdr->numseq || !pMonsterEvent )
+	if (!pstudiohdr || pev->sequence >= pstudiohdr->numseq || !pMonsterEvent)
 		return 0;
 
 	mstudioseqdesc_t* pseqdesc = (mstudioseqdesc_t*)((byte*)pstudiohdr + pstudiohdr->seqindex) + (int)pev->sequence;
 	mstudioevent_t* pevent = (mstudioevent_t*)((byte*)pstudiohdr + pseqdesc->eventindex);
 
-	if (pseqdesc->numevents == 0 || index > pseqdesc->numevents )
+	if (pseqdesc->numevents == 0 || index > pseqdesc->numevents)
 		return 0;
 
 	if (pseqdesc->numframes > 1)
 	{
-		flStart *= (pseqdesc->numframes - 1) / 256.0;
-		flEnd *= (pseqdesc->numframes - 1) / 256.0;
+		flStart *= (pseqdesc->numframes - 1) / 256.0f;
+		flEnd *= (pseqdesc->numframes - 1) / 256.0f;
 	}
 	else
 	{
-		flStart = 0;
-		flEnd = 1.0;
+		flStart = 0.0f;
+		flEnd = 1.0f;
 	}
 
 	for (; index < pseqdesc->numevents; index++)
 	{
 		// Don't send client-side events to the server AI
-		if ( pevent[index].event >= EVENT_CLIENT )
+		if (pevent[index].event >= EVENT_CLIENT)
 			continue;
 
-		if ( (pevent[index].frame >= flStart && pevent[index].frame < flEnd) || 
-			((pseqdesc->flags & STUDIO_LOOPING) && flEnd >= pseqdesc->numframes - 1 && pevent[index].frame < flEnd - pseqdesc->numframes + 1) )
+		if ((pevent[index].frame >= flStart && pevent[index].frame < flEnd) ||
+			((pseqdesc->flags & STUDIO_LOOPING) && flEnd >= pseqdesc->numframes - 1 && pevent[index].frame < flEnd - pseqdesc->numframes + 1))
 		{
 			pMonsterEvent->event = pevent[index].event;
 			pMonsterEvent->options = pevent[index].options;
