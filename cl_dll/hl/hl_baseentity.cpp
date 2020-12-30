@@ -184,8 +184,8 @@ int CBaseMonster::IRelationship ( CBaseEntity *pTarget ) { return 0; }
 BOOL CBaseMonster :: FindCover ( Vector vecThreat, Vector vecViewOffset, float flMinDist, float flMaxDist ) { return FALSE; }
 BOOL CBaseMonster :: BuildNearestRoute ( Vector vecThreat, Vector vecViewOffset, float flMinDist, float flMaxDist ) { return FALSE; }
 CBaseEntity *CBaseMonster :: BestVisibleEnemy ( void ) { return NULL; }
-BOOL CBaseMonster :: FInViewCone ( CBaseEntity *pEntity ) { return FALSE; }
-BOOL CBaseMonster :: FInViewCone ( Vector *pOrigin ) { return FALSE; }
+bool CBaseMonster :: FInViewCone ( CBaseEntity *pEntity ) { return false; }
+bool CBaseMonster :: FInViewCone ( Vector *pOrigin ) { return false; }
 BOOL CBaseEntity :: FVisible ( CBaseEntity *pEntity ) { return FALSE; }
 BOOL CBaseEntity :: FVisible ( const Vector &vecOrigin ) { return FALSE; }
 void CBaseMonster :: MakeIdealYaw( Vector vecTarget ) { }

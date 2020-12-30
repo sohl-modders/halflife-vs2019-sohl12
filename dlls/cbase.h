@@ -121,6 +121,8 @@ typedef enum
 	USE_NOT = 6,
 } USE_TYPE;
 
+extern void UTIL_ServerPrintf(const char* const pszFormat, ...);
+extern void Cvar_DirectSet(cvar_t* pCvar, const float flValue);
 extern char* GetStringForUseType(USE_TYPE useType);
 
 extern void FireTargets(const char* targetName, CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value);

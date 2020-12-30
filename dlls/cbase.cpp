@@ -796,6 +796,9 @@ int CBaseEntity :: TakeHealth(float flHealth, int bitsDamageType )
 	if (!pev->takedamage)
 		return 0;
 
+	if (pev->health >= pev->max_health)
+		return pev->health;
+	
 	//AJH replaces all of below. This now returns the amount of health given. Should have exactly the same behaviour otherwise.
 	flHealth = (pev->max_health >= pev->health + flHealth) ? flHealth : (pev->max_health - pev->health);
 	pev->health += flHealth;
@@ -855,7 +858,6 @@ int CBaseEntity :: TakeDamage( entvars_t* pevInflictor, entvars_t* pevAttacker, 
 	return 1;
 }
 
-
 void CBaseEntity :: Killed( entvars_t *pevAttacker, int iGib )
 {
 	pev->takedamage = DAMAGE_NO;
@@ -867,10 +869,11 @@ void CBaseEntity :: Killed( entvars_t *pevAttacker, int iGib )
 CBaseEntity *CBaseEntity::GetNextTarget( void )
 {
 	if ( FStringNull( pev->target ) )
-		return NULL;
-	edict_t *pTarget = FIND_ENTITY_BY_TARGETNAME ( NULL, STRING(pev->target) );
+		return nullptr;
+	
+	edict_t *pTarget = FIND_ENTITY_BY_TARGETNAME (nullptr, STRING(pev->target) );
 	if ( FNullEnt(pTarget) )
-		return NULL;
+		return nullptr;
 
 	return Instance( pTarget );
 }
@@ -909,10 +912,10 @@ int CBaseEntity::Save( CSave &save )
 
 	if ( save.WriteEntVars( "ENTVARS", pev ) )
 	{
-		if (pev->targetname)
-			return save.WriteFields( "BASE", this, m_SaveData, ARRAYSIZE(m_SaveData) );
-		else
-			return save.WriteFields( "BASE", this, m_SaveData, ARRAYSIZE(m_SaveData) );
+	//	if (pev->targetname)
+	//		return save.WriteFields( "BASE", this, m_SaveData, ARRAYSIZE(m_SaveData) );
+		
+		return save.WriteFields( "BASE", this, m_SaveData, ARRAYSIZE(m_SaveData) );
 	}
 
 	return 0;
@@ -920,17 +923,14 @@ int CBaseEntity::Save( CSave &save )
 
 int CBaseEntity::Restore( CRestore &restore )
 {
-	int status;
-
-	status = restore.ReadEntVars( "ENTVARS", pev );
+	int status = restore.ReadEntVars("ENTVARS", pev);
 	if ( status )
 		status = restore.ReadFields( "BASE", this, m_SaveData, ARRAYSIZE(m_SaveData) );
 
     if ( pev->modelindex != 0 && !FStringNull(pev->model) )
 	{
-		Vector mins, maxs;
-		mins = pev->mins;	// Set model is about to destroy these
-		maxs = pev->maxs;
+		Vector mins = pev->mins;	// Set model is about to destroy these
+		Vector maxs = pev->maxs;
 
 
 		PrecacheModel(pev->model);
@@ -1024,22 +1024,6 @@ int CBaseEntity :: IsDormant( void )
 
 BOOL CBaseEntity :: IsInWorld( void )
 {
-	#ifdef ADM_LARGE_WORLD
-	// position 
-	if (pev->origin.x >= 32768) return FALSE;
-	if (pev->origin.y >= 32768) return FALSE;
-	if (pev->origin.z >= 32768) return FALSE;
-	if (pev->origin.x <= -32768) return FALSE;
-	if (pev->origin.y <= -32768) return FALSE;
-	if (pev->origin.z <= -32768) return FALSE;
-	// speed
-	if (pev->velocity.x >= 8000) return FALSE;
-	if (pev->velocity.y >= 8000) return FALSE;
-	if (pev->velocity.z >= 8000) return FALSE;
-	if (pev->velocity.x <= -8000) return FALSE;
-	if (pev->velocity.y <= -8000) return FALSE;
-	if (pev->velocity.z <= -8000) return FALSE;
-	#else
 		// position 
 	if (pev->origin.x >= 4096) return FALSE;
 	if (pev->origin.y >= 4096) return FALSE;
@@ -1054,7 +1038,6 @@ BOOL CBaseEntity :: IsInWorld( void )
 	if (pev->velocity.x <= -2000) return FALSE;
 	if (pev->velocity.y <= -2000) return FALSE;
 	if (pev->velocity.z <= -2000) return FALSE;
-	#endif
 
 	return TRUE;
 }

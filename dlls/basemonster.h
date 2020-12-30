@@ -163,8 +163,8 @@ public:
 	void EXPORT MonsterInitThink(void);
 	virtual void StartMonster(void);
 	virtual CBaseEntity* BestVisibleEnemy(void); // finds best visible enemy for attack
-	virtual BOOL FInViewCone(CBaseEntity* pEntity); // see if pEntity is in monster's view cone
-	virtual BOOL FInViewCone(Vector* pOrigin); // see if given location is in monster's view cone
+	virtual bool FInViewCone(CBaseEntity* pEntity); // see if pEntity is in monster's view cone
+	virtual bool FInViewCone(Vector* pOrigin); // see if given location is in monster's view cone
 	void HandleAnimEvent(MonsterEvent_t* pEvent) override;
 
 	virtual int CheckLocalMove(const Vector& vecStart, const Vector& vecEnd, CBaseEntity* pTarget, float* pflDist);
