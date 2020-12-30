@@ -630,30 +630,36 @@ int	CCineMonster::IgnoreConditions( void )
 }
 
 
-void ScriptEntityCancel( edict_t *pentCine )
+void ScriptEntityCancel(edict_t* pentCine)
 {
 	// make sure they are a scripted_sequence
-	if (FClassnameIs( pentCine, "scripted_sequence" ) || FClassnameIs( pentCine, "scripted_action" ))
+	if (FClassnameIs(pentCine, "scripted_sequence") || FClassnameIs(pentCine, "scripted_action"))
 	{
-		((CCineMonster *)VARS(pentCine))->m_iState = STATE_OFF;
-		CCineMonster *pCineTarget = GetClassPtr((CCineMonster *)VARS(pentCine));
-		// make sure they have a monster in mind for the script
-		CBaseEntity		*pEntity = pCineTarget->m_hTargetEnt;
-		CBaseMonster	*pTarget = NULL;
-		if ( pEntity )
-			pTarget = pEntity->MyMonsterPointer();
-		
+		CCineMonster* pCineTarget = GetClassPtr((CCineMonster*)VARS(pentCine));
+		CBaseMonster* pTarget = NULL;
+
+		if (pCineTarget)
+		{
+			pCineTarget->m_iState = STATE_OFF;
+
+			// make sure they have a monster in mind for the script
+			CBaseEntity* pEntity = pCineTarget->m_hTargetEnt;
+
+			if (pEntity)
+				pTarget = pEntity->MyMonsterPointer();
+		}
+
 		if (pTarget)
 		{
 			// make sure their monster is actually playing a script
-			if ( pTarget->m_MonsterState == MONSTERSTATE_SCRIPT )
+			if (pTarget->m_MonsterState == MONSTERSTATE_SCRIPT)
 			{
 				// tell them do die
 				pTarget->m_scriptState = CCineMonster::SCRIPT_CLEANUP;
 				// do it now
-				pTarget->CineCleanup( );
+				pTarget->CineCleanup();
 				//LRC - clean up so that if another script is starting immediately, the monster will notice it.
-				pTarget->ClearSchedule( );
+				pTarget->ClearSchedule();
 			}
 		}
 	}
@@ -717,13 +723,10 @@ void CCineMonster :: DelayStart( int state )
 // Find an entity that I'm interested in and precache the sounds he'll need in the sequence.
 void CCineMonster :: Activate( void )
 {
-	CBaseEntity		*pEntity;
-	CBaseMonster	*pTarget;
-
 	// The entity name could be a target name or a classname
 	// Check the targetname
-	pEntity = UTIL_FindEntityByTargetname(NULL, STRING(m_iszEntity));
-	pTarget = NULL;
+	CBaseEntity* pEntity = UTIL_FindEntityByTargetname(NULL, STRING(m_iszEntity));
+	CBaseMonster* pTarget = NULL;
 
 	while (!pTarget && pEntity)
 	{
@@ -895,18 +898,18 @@ BOOL CBaseMonster :: CineCleanup( )
 class CScriptedSentence : public CBaseToggle
 {
 public:
-	void Spawn( void );
-	void KeyValue( KeyValueData *pkvd );
-	void Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value );
+	void Spawn( void ) override;
+	void KeyValue( KeyValueData *pkvd ) override;
+	void Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value ) override;
 	void EXPORT FindThink( void );
 	void EXPORT DelayThink( void );
 	void EXPORT DurationThink( void );
-	int	 ObjectCaps( void ) { return (CBaseToggle :: ObjectCaps() & ~FCAP_ACROSS_TRANSITION); }
+	int	 ObjectCaps( void ) override { return (CBaseToggle :: ObjectCaps() & ~FCAP_ACROSS_TRANSITION); }
 
-	STATE GetState() { return m_playing?STATE_ON:STATE_OFF; }
+	STATE GetState() override { return m_playing?STATE_ON:STATE_OFF; }
 
-	virtual int		Save( CSave &save );
-	virtual int		Restore( CRestore &restore );
+	int		Save( CSave &save ) override;
+	int		Restore( CRestore &restore ) override;
 	
 	static	TYPEDESCRIPTION m_SaveData[];
 
@@ -1132,11 +1135,8 @@ BOOL CScriptedSentence :: AcceptableSpeaker( CBaseMonster *pMonster )
 
 CBaseMonster *CScriptedSentence :: FindEntity( CBaseEntity *pActivator )
 {
-	CBaseEntity *pTarget;
-	CBaseMonster *pMonster;
-
-	pTarget = UTIL_FindEntityByTargetname(NULL, STRING(m_iszEntity), pActivator);
-	pMonster = NULL;
+	CBaseEntity* pTarget = UTIL_FindEntityByTargetname(NULL, STRING(m_iszEntity), pActivator);
+	CBaseMonster* pMonster;
 
 	while ( pTarget )
 	{
@@ -1213,10 +1213,10 @@ BOOL CScriptedSentence :: StartSentence( CBaseMonster *pTarget )
 class CFurniture : public CBaseMonster
 {
 public:
-	void Spawn ( void );
+	void Spawn ( void ) override;
 	void Die( void );
-	int	 Classify ( void );
-	virtual int	ObjectCaps( void ) { return (CBaseMonster :: ObjectCaps() & ~FCAP_ACROSS_TRANSITION); }
+	int	 Classify ( void ) override;
+	int	ObjectCaps( void ) override { return (CBaseMonster :: ObjectCaps() & ~FCAP_ACROSS_TRANSITION); }
 };
 
 
