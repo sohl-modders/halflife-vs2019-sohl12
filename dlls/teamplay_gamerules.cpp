@@ -186,18 +186,12 @@ const char *CHalfLifeTeamplay::SetDefaultPlayerTeam( CBasePlayer *pPlayer )
 	RecountTeams();
 
 	// update the current player of the team he is joining
-	if (!strlen((char*)pPlayer->m_szTeamName[0]) || !IsValidTeam( pPlayer->m_szTeamName ) || defaultteam.value )
+	if (!strlen(pPlayer->m_szTeamName) || !IsValidTeam( pPlayer->m_szTeamName ) || defaultteam.value )
 	{
-		const char *pTeamName = NULL;
-		
+		const char* pTeamName = TeamWithFewestPlayers();
 		if ( defaultteam.value )
-		{
 			pTeamName = team_names[0];
-		}
-		else
-		{
-			pTeamName = TeamWithFewestPlayers();
-		}
+
 		strncpy( pPlayer->m_szTeamName, pTeamName, TEAM_NAME_LENGTH );
 	}
 
@@ -246,7 +240,7 @@ void CHalfLifeTeamplay::InitHUD( CBasePlayer *pPlayer )
 	// loop through all active players and send their team info to the new client
 	for ( i = 1; i <= gpGlobals->maxClients; i++ )
 	{
-		CBaseEntity *plr = UTIL_PlayerByIndex( i );
+		CBasePlayer *plr = UTIL_PlayerByIndex( i );
 		if ( plr && IsValidTeam( plr->TeamID() ) )
 		{
 			MESSAGE_BEGIN( MSG_ONE, gmsgTeamInfo, NULL, pPlayer->edict() );
@@ -256,7 +250,6 @@ void CHalfLifeTeamplay::InitHUD( CBasePlayer *pPlayer )
 		}
 	}
 }
-
 
 void CHalfLifeTeamplay::ChangePlayerTeam( CBasePlayer *pPlayer, const char *pTeamName, BOOL bKill, BOOL bGib )
 {
@@ -305,7 +298,6 @@ void CHalfLifeTeamplay::ChangePlayerTeam( CBasePlayer *pPlayer, const char *pTea
 		WRITE_SHORT( g_pGameRules->GetTeamIndex( pPlayer->m_szTeamName ) + 1 );
 	MESSAGE_END();
 }
-
 
 //=========================================================
 // ClientUserInfoChanged
@@ -529,7 +521,7 @@ const char *CHalfLifeTeamplay::TeamWithFewestPlayers( void )
 	// loop through all clients, count number of players on each team
 	for ( i = 1; i <= gpGlobals->maxClients; i++ )
 	{
-		CBaseEntity *plr = UTIL_PlayerByIndex( i );
+		CBasePlayer*plr = UTIL_PlayerByIndex( i );
 
 		if ( plr )
 		{
@@ -590,7 +582,7 @@ void CHalfLifeTeamplay::RecountTeams( bool bResendInfo )
 	// loop through all clients
 	for ( int i = 1; i <= gpGlobals->maxClients; i++ )
 	{
-		CBaseEntity *plr = UTIL_PlayerByIndex( i );
+		CBasePlayer*plr = UTIL_PlayerByIndex( i );
 
 		if ( plr )
 		{

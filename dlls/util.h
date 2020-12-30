@@ -216,6 +216,7 @@ inline BOOL FClassnameIs(entvars_t* pev, const char* szClassname)
 	{ return FStrEq(STRING(pev->classname), szClassname); }
 
 class CBaseEntity;
+class CBasePlayer;
 
 // Misc. Prototypes
 extern void			UTIL_SetSize			(entvars_t* pev, const Vector &vecMin, const Vector &vecMax);
@@ -243,7 +244,7 @@ extern CBaseEntity	*UTIL_FindEntityGeneric(const char *szName, Vector &vecSrc, f
 // returns a CBaseEntity pointer to a player by index.  Only returns if the player is spawned and connected
 // otherwise returns NULL
 // Index is 1 based
-extern CBaseEntity	*UTIL_PlayerByIndex( int playerIndex );
+extern CBasePlayer *UTIL_PlayerByIndex( int playerIndex );
 
 #define UTIL_EntitiesInPVS(pent)			(*g_engfuncs.pfnEntitiesInPVS)(pent)
 extern void			UTIL_MakeVectors		(const Vector &vecAngles);
@@ -262,6 +263,7 @@ extern void			UTIL_MakeInvVectors		( const Vector &vec, globalvars_t *pgv );
 
 extern void			UTIL_SetEdictOrigin			( edict_t *pEdict, const Vector &vecOrigin );
 extern void			UTIL_SetOrigin			( CBaseEntity* pEntity, const Vector &vecOrigin );
+extern void			UTIL_SetOrigin(entvars_t* pev, const Vector& vecOrigin);
 extern void			UTIL_EmitAmbientSound	( edict_t *entity, const Vector &vecOrigin, const char *samp, float vol, float attenuation, int fFlags, int pitch );
 extern void			UTIL_ParticleEffect		( const Vector &vecOrigin, const Vector &vecDirection, ULONG ulColor, ULONG ulCount );
 extern void			UTIL_ScreenShake		( const Vector &center, float amplitude, float frequency, float duration, float radius );
@@ -269,7 +271,9 @@ extern void			UTIL_ScreenShakeAll		( const Vector &center, float amplitude, floa
 extern void			UTIL_ShowMessage		( const char *pString, CBaseEntity *pPlayer );
 extern void			UTIL_ShowMessageAll		( const char *pString );
 extern void			UTIL_ScreenFadeAll		( const Vector &color, float fadeTime, float holdTime, int alpha, int flags );
+extern void			UTIL_ScreenFadeAll(const Vector& fadeSource, const Vector& color, float fadeTime, float fadeHold, int alpha, int flags);
 extern void			UTIL_ScreenFade			( CBaseEntity *pEntity, const Vector &color, float fadeTime, float fadeHold, int alpha, int flags );
+extern void			UTIL_ScreenFade(const Vector& fadeSource, CBaseEntity* pEntity, const Vector& color, float fadeTime, float fadeHold, int alpha, int flags);
 
 typedef enum { ignore_monsters=1, dont_ignore_monsters=0, missile=2 } IGNORE_MONSTERS;
 typedef enum { ignore_glass=1, dont_ignore_glass=0 } IGNORE_GLASS;
@@ -303,6 +307,10 @@ extern float		UTIL_AngleDistance( float next, float cur );
 
 extern char*		COM_FileExtension(char* in); //LRC
 
+extern bool			UTIL_TargetnameIsActivator(const char* targetName);
+extern bool			UTIL_TargetnameIsActivator(string_t targetName);
+extern void			UTIL_MuzzleLight(Vector vecSrc, float flRadius, byte r, byte g, byte b, float flTime, float flDecay);
+
 /**
 *	Utility function to format strings without creating a buffer to store the result in.
 *	@param format Format string.
@@ -315,7 +323,7 @@ extern char*		UTIL_VarArgs( const char *format, ... );
 extern void			UTIL_Remove( CBaseEntity *pEntity );
 extern BOOL			UTIL_IsValidEntity( edict_t *pent );
 extern BOOL			UTIL_TeamsMatch( const char *pTeamName1, const char *pTeamName2 );
-extern BOOL			UTIL_IsFacing( entvars_t *pevTest, const Vector &reference ); //LRC
+extern bool			UTIL_IsFacing( entvars_t *pevTest, const Vector &reference ); //LRC
 
 // Use for ease-in, ease-out style interpolation (accel/decel)
 extern float		UTIL_SplineFraction( float value, float scale );

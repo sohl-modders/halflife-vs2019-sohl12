@@ -230,7 +230,7 @@ void CHalfLifeMultiplay :: Think ( void )
 		// check if any player is over the frag limit
 		for ( int i = 1; i <= gpGlobals->maxClients; i++ )
 		{
-			CBaseEntity *pPlayer = UTIL_PlayerByIndex( i );
+			CBasePlayer *pPlayer = UTIL_PlayerByIndex( i );
 
 			if ( pPlayer && pPlayer->pev->frags >= flFragLimit )
 			{
@@ -447,7 +447,7 @@ void CHalfLifeMultiplay :: InitHUD( CBasePlayer *pl )
 	for ( int i = 1; i <= gpGlobals->maxClients; i++ )
 	{
 		// FIXME:  Probably don't need to cast this just to read m_iDeaths
-		CBasePlayer *plr = (CBasePlayer *)UTIL_PlayerByIndex( i );
+		CBasePlayer *plr = UTIL_PlayerByIndex( i );
 
 		if ( plr )
 		{
@@ -1444,7 +1444,7 @@ int CountPlayers( void )
 
 	for ( int i = 1; i <= gpGlobals->maxClients; i++ )
 	{
-		CBaseEntity *pEnt = UTIL_PlayerByIndex( i );
+		CBasePlayer *pEnt = UTIL_PlayerByIndex( i );
 
 		if ( pEnt )
 		{

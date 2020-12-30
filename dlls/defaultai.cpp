@@ -1052,28 +1052,26 @@ Schedule_t *CBaseMonster::ScheduleFromName( const char *pName )
 	return ScheduleInList( pName, m_scheduleList, ARRAYSIZE(m_scheduleList) );
 }
 
-
 Schedule_t *CBaseMonster :: ScheduleInList( const char *pName, Schedule_t **pList, int listCount )
 {
-	int i;
-	
 	if ( !pName )
 	{
 		ALERT( at_console, "%s set to unnamed schedule!\n", STRING(pev->classname) );
 		return NULL;
 	}
 
-
-	for ( i = 0; i < listCount; i++ )
+	for ( int i = 0; i < listCount; i++ )
 	{
 		if ( !pList[i]->pName )
 		{
 			ALERT( at_console, "Unnamed schedule!\n" );
 			continue;
 		}
+		
 		if ( stricmp( pName, pList[i]->pName ) == 0 )
 			return pList[i];
 	}
+	
 	return NULL;
 }
 

@@ -69,11 +69,14 @@ void CAmbient2D::Use( CBaseEntity* activator, CBaseEntity* caller, USE_TYPE useT
 {
 	for ( int i = 1; i <= gpGlobals->maxClients; i++ )
 	{
-		auto player = UTIL_PlayerByIndex( i );
-		if ( !player )
+		// manually find the single player. 
+		edict_t* pClient = g_engfuncs.pfnPEntityOfEntIndex(i);
+
+		// Can't play if the client is not connected!
+		if (!pClient)
 			continue;
 
-		MESSAGE_BEGIN( MSG_ONE, gmsg2DSound, g_vecZero, player->pev );
+		MESSAGE_BEGIN( MSG_ONE, gmsg2DSound, g_vecZero, pClient );
 		WRITE_BYTE( soundVolume * 255 );
 		WRITE_BYTE( soundChannel );
 		WRITE_BYTE( soundPitch );

@@ -181,12 +181,14 @@ void CAmbientMP3::Stop()
 {
 	for ( int i = 1; i <= gpGlobals->maxClients; i++ )
 	{
-		auto player = UTIL_PlayerByIndex( i );
-		if ( !player )
-			continue;
+		// manually find the single player. 
+		edict_t* pClient = g_engfuncs.pfnPEntityOfEntIndex(i);
 
-		edict_t* playerEdict = player->edict();
-		CLIENT_COMMAND( playerEdict, "mp3 stop\n" );
+		// Can't play if the client is not connected!
+		if (!pClient)
+			continue;
+		
+		CLIENT_COMMAND(pClient, "mp3 stop\n" );
 	}
 }
 
@@ -203,12 +205,14 @@ void CAmbientMP3::Play()
 	// This doesn't work on SERVER_COMMAND, unfortunately
 	for ( int i = 1; i <= gpGlobals->maxClients; i++ )
 	{
-		auto player = UTIL_PlayerByIndex( i );
-		if ( !player )
-			continue;
+		// manually find the single player. 
+		edict_t* pClient = g_engfuncs.pfnPEntityOfEntIndex(i);
 
-		edict_t* playerEdict = player->edict();
-		CLIENT_COMMAND( playerEdict, command );
+		// Can't play if the client is not connected!
+		if (!pClient)
+			continue;
+		
+		CLIENT_COMMAND(pClient, command );
 	}
 }
 

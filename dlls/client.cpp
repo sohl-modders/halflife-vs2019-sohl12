@@ -49,6 +49,7 @@ extern DLL_GLOBAL ULONG		g_ulModelIndexPlayer;
 extern DLL_GLOBAL BOOL		g_fGameOver;
 extern DLL_GLOBAL int		g_iSkillLevel;
 extern DLL_GLOBAL ULONG		g_ulFrameCount;
+extern DLL_GLOBAL bool		g_serveractive;
 
 extern void CopyToBodyQue(entvars_t* pev);
 extern int giPrecacheGrunt;
@@ -73,9 +74,8 @@ void set_suicide_frame(entvars_t* pev)
 	pev->solid		= SOLID_NOT;
 	pev->movetype	= MOVETYPE_TOSS;
 	pev->deadflag	= DEAD_DEAD;
-	pev->nextthink	= -1;
+	pev->nextthink = -1.0f;
 }
-
 
 /*
 ===========
@@ -93,7 +93,6 @@ BOOL ClientConnect( edict_t *pEntity, const char *pszName, const char *pszAddres
 //		ExitIntermission ();
 
 }
-
 
 /*
 ===========
@@ -118,24 +117,22 @@ void ClientDisconnect( edict_t *pEntity )
 		WRITE_STRING( text );
 	MESSAGE_END();
 
-	CSound *pSound;
-	pSound = CSoundEnt::SoundPointerForIndex( CSoundEnt::ClientSoundIndex( pEntity ) );
+	CSound* pSound = CSoundEnt::SoundPointerForIndex(CSoundEnt::ClientSoundIndex(pEntity));
+
+	// since this client isn't around to think anymore, reset their sound. 
+	if ( pSound )
 	{
-		// since this client isn't around to think anymore, reset their sound. 
-		if ( pSound )
-		{
-			pSound->Reset();
-		}
+		pSound->Reset();
 	}
 
 // since the edict doesn't get deleted, fix it so it doesn't interfere.
 	pEntity->v.takedamage = DAMAGE_NO;// don't attract autoaim
 	pEntity->v.solid = SOLID_NOT;// nonsolid
+	pEntity->v.effects = 0;// clear any effects
 	UTIL_SetEdictOrigin ( pEntity, pEntity->v.origin );
 
 	g_pGameRules->ClientDisconnected( pEntity );
 }
-
 
 // called by ClientKill and DeadThink
 void respawn(entvars_t* pev, BOOL fCopyCorpse)
@@ -152,7 +149,7 @@ void respawn(entvars_t* pev, BOOL fCopyCorpse)
 		GetClassPtr( (CBasePlayer *)pev)->Spawn( );
 	}
 	else
-	{       // restart the entire server
+	{   // restart the entire server
 		SERVER_COMMAND("reload\n");
 	}
 }
@@ -170,16 +167,16 @@ void ClientKill( edict_t *pEntity )
 {
 	entvars_t *pev = &pEntity->v;
 
-	CBasePlayer *pl = (CBasePlayer*) CBasePlayer::Instance( pev );
+	CBasePlayer* pPlayer = (CBasePlayer*) CBasePlayer::Instance( pev );
 
-	if ( pl->m_fNextSuicideTime > gpGlobals->time )
+	if (pPlayer->m_fNextSuicideTime > gpGlobals->time )
 		return;  // prevent suiciding too ofter
 
-	pl->m_fNextSuicideTime = gpGlobals->time + 1;  // don't let them suicide for 5 seconds after suiciding
+	pPlayer->m_fNextSuicideTime = gpGlobals->time + 1;  // don't let them suicide for 5 seconds after suiciding
 
 	// have the player kill themself
 	pev->health = 0;
-	pl->Killed( pev, GIB_NEVER );
+	pPlayer->Killed( pev, GIB_NEVER );
 
 //	pev->modelindex = g_ulModelIndexPlayer;
 //	pev->frags -= 2;		// extra penalty
@@ -195,11 +192,9 @@ called each time a player is spawned
 */
 void ClientPutInServer( edict_t *pEntity )
 {
-	CBasePlayer *pPlayer;
-
 	entvars_t *pev = &pEntity->v;
 
-	pPlayer = GetClassPtr((CBasePlayer *)pev);
+	CBasePlayer* pPlayer = GetClassPtr((CBasePlayer*)pev);
 	pPlayer->SetCustomDecalFrames(-1); // Assume none;
 
 	// Allocate a CBasePlayer for pev, and call spawn
@@ -212,10 +207,10 @@ void ClientPutInServer( edict_t *pEntity )
 	pPlayer->pev->iuser2 = 0; 
 }
 
+#ifndef NO_VOICEGAMEMGR
 #include "voice_gamemgr.h"
 extern CVoiceGameMgr g_VoiceGameMgr;
-
-
+#endif
 
 #if defined( _MSC_VER ) || defined( WIN32 )
 typedef wchar_t	uchar16;
@@ -235,7 +230,6 @@ bool Q_IsValidUChar32( uchar32 uVal )
 	return ( uVal < 0x110000u ) && ( (uVal - 0x00D800u) > 0x7FFu ) && ( (uVal & 0xFFFFu) < 0xFFFEu ) && ( ( uVal - 0x00FDD0u ) > 0x1Fu );
 }
 
-
 // Decode one character from a UTF-8 encoded string. Treats 6-byte CESU-8 sequences
 // as a single character, as if they were a correctly-encoded 4-byte UTF-8 sequence.
 int Q_UTF8ToUChar32( const char *pUTF8_, uchar32 &uValueOut, bool &bErrorOut )
@@ -244,8 +238,7 @@ int Q_UTF8ToUChar32( const char *pUTF8_, uchar32 &uValueOut, bool &bErrorOut )
 	
 	int nBytes = 1;
 	uint32 uValue = pUTF8[0];
-	uint32 uMinValue = 0;
-	
+
 	// 0....... single byte
 	if ( uValue < 0x80 )
 		goto decodeFinishedNoCheck;
@@ -256,7 +249,7 @@ int Q_UTF8ToUChar32( const char *pUTF8_, uchar32 &uValueOut, bool &bErrorOut )
 	
 	uValue = (uValue << 6) - (0xC0 << 6) + pUTF8[1] - 0x80;
 	nBytes = 2;
-	uMinValue = 0x80;
+	uint32 uMinValue = 0x80;
 	
 	// 110..... two-byte lead byte
 	if ( !( uValue & (0x20 << 6) ) )
@@ -308,8 +301,6 @@ decodeFinishedMaybeCESU8:
 	}
 	goto decodeFinished;
 }
-
-
 
 //-----------------------------------------------------------------------------
 // Purpose: Returns true if UTF-8 string contains invalid sequences.
@@ -411,7 +402,6 @@ void Host_Say( edict_t *pEntity, int teamonly )
 
 	strcat( text, p );
 	strcat( text, "\n" );
-
 
 	player->m_flNextChatTime = gpGlobals->time + CHAT_INTERVAL;
 
@@ -627,6 +617,11 @@ void ClientCommand( edict_t *pEntity )
 		if ( pPlayer->IsObserver() )
 			pPlayer->Observer_FindNextPlayer( atoi( CMD_ARGV(1) )?true:false );
 	}
+	else if (FStrEq(pcmd, "VModEnable"))
+	{
+		// clear 'Unknown command: VModEnable' in singleplayer
+		return;
+	}
 	else if ( g_pGameRules->ClientCommand( GetClassPtr((CBasePlayer *)pev), pcmd ) )
 	{
 		// MenuSelect returns true only if the command is properly handled,  so don't print a warning
@@ -715,8 +710,6 @@ void ClientUserInfoChanged( edict_t *pEntity, char *infobuffer )
 	g_pGameRules->ClientUserInfoChanged( GetClassPtr((CBasePlayer *)&pEntity->v), infobuffer );
 }
 
-DLL_GLOBAL int g_serveractive = 0;
-
 void ServerDeactivate( void )
 {
 	// make sure they reinitialise the World in the next server
@@ -724,12 +717,10 @@ void ServerDeactivate( void )
 	
 	// It's possible that the engine will call this function more times than is necessary
 	//  Therefore, only run it one time for each call to ServerActivate 
-	if ( g_serveractive != 1 )
-	{
+	if (!g_serveractive)
 		return;
-	}
 
-	g_serveractive = 0;
+	g_serveractive = false;
 
 	// Peform any shutdown operations here...
 	//
@@ -737,14 +728,11 @@ void ServerDeactivate( void )
 
 void ServerActivate( edict_t *pEdictList, int edictCount, int clientMax )
 {
-	int				i;
-	CBaseEntity		*pClass;
-
 	// Every call to ServerActivate should be matched by a call to ServerDeactivate
-	g_serveractive = 1;
+	g_serveractive = true;
 
 	// Clients have not been initialized yet
-	for ( i = 0; i < edictCount; i++ )
+	for ( int i = 0; i < edictCount; i++ )
 	{
 		if ( pEdictList[i].free )
 			continue;
@@ -753,7 +741,7 @@ void ServerActivate( edict_t *pEdictList, int edictCount, int clientMax )
 		if ( i < clientMax || !pEdictList[i].pvPrivateData )
 			continue;
 
-		pClass = CBaseEntity::Instance( &pEdictList[i] );
+		CBaseEntity* pClass = CBaseEntity::Instance(&pEdictList[i]);
 		// Activate this entity if it's got a class & isn't dormant
 		if ( pClass && !(pClass->pev->flags & FL_DORMANT) )
 		{
@@ -782,7 +770,8 @@ Called every frame before physics are run
 */
 void PlayerPreThink( edict_t *pEntity )
 {
-	entvars_t *pev = &pEntity->v;
+	//ALERT( at_console, "PreThink( %g, frametime %g )\n", gpGlobals->time, gpGlobals->frametime );
+	
 	CBasePlayer *pPlayer = (CBasePlayer *)GET_PRIVATE(pEntity);
 
 	if (pPlayer)
@@ -800,7 +789,8 @@ Called every frame after physics are run
 */
 void PlayerPostThink( edict_t *pEntity )
 {
-	entvars_t *pev = &pEntity->v;
+	//ALERT( at_console, "PostThink( %g, frametime %g )\n", gpGlobals->time, gpGlobals->frametime );
+	
 	CBasePlayer *pPlayer = (CBasePlayer *)GET_PRIVATE(pEntity);
 
 	if (pPlayer)
@@ -976,8 +966,8 @@ const char *GetGameDescription()
 {
 	if ( g_pGameRules ) // this function may be called before the world has spawned, and the game rules initialized
 		return g_pGameRules->GetGameDescription();
-	else
-		return GAME_NAME;
+	
+	return GAME_NAME;
 }
 
 /*
@@ -1043,7 +1033,6 @@ A spectator has joined the game
 */
 void SpectatorConnect( edict_t *pEntity )
 {
-	entvars_t *pev = &pEntity->v;
 	CBaseSpectator *pPlayer = (CBaseSpectator *)GET_PRIVATE(pEntity);
 
 	if (pPlayer)
@@ -1059,7 +1048,6 @@ A spectator has left the game
 */
 void SpectatorDisconnect( edict_t *pEntity )
 {
-	entvars_t *pev = &pEntity->v;
 	CBaseSpectator *pPlayer = (CBaseSpectator *)GET_PRIVATE(pEntity);
 
 	if (pPlayer)
@@ -1075,7 +1063,6 @@ A spectator has sent a usercmd
 */
 void SpectatorThink( edict_t *pEntity )
 {
-	entvars_t *pev = &pEntity->v;
 	CBaseSpectator *pPlayer = (CBaseSpectator *)GET_PRIVATE(pEntity);
 
 	if (pPlayer)
@@ -1145,7 +1132,7 @@ we could also use the pas/ pvs that we set in SetupVisibility, if we wanted to. 
 */
 int AddToFullPack( struct entity_state_s *state, int e, edict_t *ent, edict_t *host, int hostflags, int player, unsigned char *pSet )
 {
-	int					i;
+	int	i;
 
 	// don't send if flagged for NODRAW and it's not the host getting the message
 	if ( ( ent->v.effects == EF_NODRAW ) &&
@@ -1174,9 +1161,12 @@ int AddToFullPack( struct entity_state_s *state, int e, edict_t *ent, edict_t *h
 
 
 	// Don't send entity to local client if the client says it's predicting the entity itself.
-	if ( ent->v.flags & FL_SKIPLOCALHOST )
+	if (ent->v.flags & FL_SKIPLOCALHOST)
 	{
-		if ( ( hostflags & 1 ) && ( ent->v.owner == host ) )
+		if (hostflags & 4)
+			return 0; // it's a portal pass
+
+		if ((hostflags & 1) && (ent->v.owner == host))
 			return 0;
 	}
 	
@@ -1220,7 +1210,7 @@ int AddToFullPack( struct entity_state_s *state, int e, edict_t *ent, edict_t *h
 	//
 
 	// Round animtime to nearest millisecond
-	state->animtime   = (int)(1000.0 * ent->v.animtime ) / 1000.0;
+	state->animtime = (int)(1000.0f * ent->v.animtime) / 1000.0f;
 
 	memcpy( state->origin, ent->v.origin, 3 * sizeof( float ) );
 	memcpy( state->angles, ent->v.angles, 3 * sizeof( float ) );
@@ -1237,7 +1227,7 @@ int AddToFullPack( struct entity_state_s *state, int e, edict_t *ent, edict_t *h
 		
 	state->frame      = ent->v.frame;
 
-	state->skin       = ent->v.skin;
+	state->skin       = (short)ent->v.skin;
 	state->effects    = ent->v.effects;
 
 	// This non-player entity is being moved by the game .dll and not the physics simulation system
@@ -1270,12 +1260,12 @@ int AddToFullPack( struct entity_state_s *state, int e, edict_t *ent, edict_t *h
 		state->blending[i]   = ent->v.blending[i];
 	}
 
-	state->rendermode    = ent->v.rendermode;
-	state->renderamt     = ent->v.renderamt; 
-	state->renderfx      = ent->v.renderfx;
-	state->rendercolor.r = ent->v.rendercolor.x;
-	state->rendercolor.g = ent->v.rendercolor.y;
-	state->rendercolor.b = ent->v.rendercolor.z;
+	state->rendermode = ent->v.rendermode;
+	state->renderamt = (int)ent->v.renderamt;
+	state->renderfx = ent->v.renderfx;
+	state->rendercolor.r = (byte)ent->v.rendercolor.x;
+	state->rendercolor.g = (byte)ent->v.rendercolor.y;
+	state->rendercolor.b = (byte)ent->v.rendercolor.z;
 
 	state->aiment = 0;
 	if ( ent->v.aiment )
@@ -1295,6 +1285,12 @@ int AddToFullPack( struct entity_state_s *state, int e, edict_t *ent, edict_t *h
 		}
 	}
 
+	state->onground = 0;
+	if (ent->v.groundentity)
+	{
+		state->onground = ENTINDEX(ent->v.groundentity);
+	}
+
 	// HACK:  Somewhat...
 	// Class is overridden for non-players to signify a breakable glass object ( sort of a class? )
 	if ( !player )
@@ -1305,18 +1301,18 @@ int AddToFullPack( struct entity_state_s *state, int e, edict_t *ent, edict_t *h
 	// Special stuff for players only
 	if ( player )
 	{
-		memcpy( state->basevelocity, ent->v.basevelocity, 3 * sizeof( float ) );
+		memcpy(state->basevelocity, ent->v.basevelocity, 3 * sizeof(float));
 
-		state->weaponmodel  = MODEL_INDEX( STRING( ent->v.weaponmodel ) );
+		state->weaponmodel = MODEL_INDEX(STRING(ent->v.weaponmodel));
 		state->gaitsequence = ent->v.gaitsequence;
 		state->spectator = ent->v.flags & FL_SPECTATOR;
-		state->friction     = ent->v.friction;
+		state->friction = ent->v.friction;
 
-		state->gravity      = ent->v.gravity;
-//		state->team			= ent->v.team;
-//		
-		state->usehull      = ( ent->v.flags & FL_DUCKING ) ? 1 : 0;
-		state->health		= ent->v.health;
+		state->gravity = ent->v.gravity;
+		//state->team		= ent->v.team;
+
+		state->usehull = (ent->v.flags & FL_DUCKING) ? 1 : 0;
+		state->health = (int)ent->v.health;
 	}
 
 	return 1;
@@ -1422,21 +1418,18 @@ FIXME:  Move to script
 */
 void Entity_Encode( struct delta_s *pFields, const unsigned char *from, const unsigned char *to )
 {
-	entity_state_t *f, *t;
-	int localplayer = 0;
-	static int initialized = 0;
-
+	static bool initialized = false;
 	if ( !initialized )
 	{
 		Entity_FieldInit( pFields );
-		initialized = 1;
+		initialized = true;
 	}
 
-	f = (entity_state_t *)from;
-	t = (entity_state_t *)to;
+	entity_state_t* f = (entity_state_t*)from;
+	entity_state_t* t = (entity_state_t*)to;
 
 	// Never send origin to local player, it's sent with more resolution in clientdata_t structure
-	localplayer =  ( t->number - 1 ) == ENGINE_CURRENT_PLAYER();
+	int localplayer = (t->number - 1) == ENGINE_CURRENT_PLAYER();
 	if ( localplayer )
 	{
 		DELTA_UNSETBYINDEX( pFields, entity_field_alias[ FIELD_ORIGIN0 ].field );
@@ -1493,21 +1486,18 @@ Callback for sending entity_state_t for players info over network.
 */
 void Player_Encode( struct delta_s *pFields, const unsigned char *from, const unsigned char *to )
 {
-	entity_state_t *f, *t;
-	int localplayer = 0;
-	static int initialized = 0;
-
+	static bool initialized = false;
 	if ( !initialized )
 	{
 		Player_FieldInit( pFields );
-		initialized = 1;
+		initialized = true;
 	}
 
-	f = (entity_state_t *)from;
-	t = (entity_state_t *)to;
+	entity_state_t* f = (entity_state_t*)from;
+	entity_state_t* t = (entity_state_t*)to;
 
 	// Never send origin to local player, it's sent with more resolution in clientdata_t structure
-	localplayer =  ( t->number - 1 ) == ENGINE_CURRENT_PLAYER();
+	int localplayer = (t->number - 1) == ENGINE_CURRENT_PLAYER();
 	if ( localplayer )
 	{
 		DELTA_UNSETBYINDEX( pFields, entity_field_alias[ FIELD_ORIGIN0 ].field );
@@ -1576,20 +1566,17 @@ FIXME:  Move to script
 */
 void Custom_Encode( struct delta_s *pFields, const unsigned char *from, const unsigned char *to )
 {
-	entity_state_t *f, *t;
-	int beamType;
-	static int initialized = 0;
-
+	static bool initialized = false;
 	if ( !initialized )
 	{
 		Custom_Entity_FieldInit( pFields );
-		initialized = 1;
+		initialized = true;
 	}
 
-	f = (entity_state_t *)from;
-	t = (entity_state_t *)to;
+	entity_state_t* f = (entity_state_t*)from;
+	entity_state_t* t = (entity_state_t*)to;
 
-	beamType = t->rendermode & 0x0f;
+	int beamType = t->rendermode & 0x0f;
 		
 	if ( beamType != BEAM_POINTS && beamType != BEAM_ENTPOINT )
 	{
@@ -1636,12 +1623,9 @@ void RegisterEncoders( void )
 int GetWeaponData( struct edict_s *player, struct weapon_data_s *info )
 {
 #if defined( CLIENT_WEAPONS )
-	int i;
-	weapon_data_t *item;
 	entvars_t *pev = &player->v;
 	CBasePlayer *pl = dynamic_cast< CBasePlayer *>( CBasePlayer::Instance( pev ) );
-	CBasePlayerWeapon *gun;
-	
+
 	ItemInfo II;
 
 	memset( info, 0, 32 * sizeof( weapon_data_t ) );
@@ -1650,7 +1634,7 @@ int GetWeaponData( struct edict_s *player, struct weapon_data_s *info )
 		return 1;
 
 	// go through all of the weapons and make a list of the ones to pack
-	for ( i = 0 ; i < MAX_ITEM_TYPES ; i++ )
+	for ( int i = 0 ; i < MAX_ITEM_TYPES ; i++ )
 	{
 		if ( pl->m_rgpPlayerItems[ i ] )
 		{
@@ -1659,7 +1643,7 @@ int GetWeaponData( struct edict_s *player, struct weapon_data_s *info )
 
 			while ( pPlayerItem )
 			{
-				gun = dynamic_cast<CBasePlayerWeapon *>( pPlayerItem->GetWeaponPtr() );
+				CBasePlayerWeapon* gun = dynamic_cast<CBasePlayerWeapon*>(pPlayerItem->GetWeaponPtr());
 				if ( gun && gun->UseDecrement() )
 				{
 					// Get The ID.
@@ -1668,7 +1652,7 @@ int GetWeaponData( struct edict_s *player, struct weapon_data_s *info )
 
 					if ( II.iId >= 0 && II.iId < 32 )
 					{
-						item = &info[ II.iId ];
+						weapon_data_t* item = &info[II.iId];
 					 	
 						item->m_iId						= II.iId;
 						item->m_iClip					= gun->m_iClip;
@@ -1711,6 +1695,7 @@ void UpdateClientData ( const edict_t *ent, int sendweapons, struct clientdata_s
 {
 	if ( !ent || !ent->pvPrivateData )
 		return;
+	
 	entvars_t *		pev	= (entvars_t *)&ent->v;
 	CBasePlayer *	pl	= dynamic_cast< CBasePlayer *>(CBasePlayer::Instance( pev ));
 	entvars_t *		pevOrg = NULL;
@@ -1767,8 +1752,6 @@ void UpdateClientData ( const edict_t *ent, int sendweapons, struct clientdata_s
 		cd->iuser1			= pev->iuser1;
 		cd->iuser2			= pev->iuser2;
 	}
-
-	
 
 #if defined( CLIENT_WEAPONS )
 	if ( sendweapons )
@@ -1834,9 +1817,7 @@ void CmdStart( const edict_t *player, const struct usercmd_s *cmd, unsigned int 
 		return;
 
 	if ( pl->pev->groupinfo != 0 )
-	{
 		UTIL_SetGroupTrace( pl->pev->groupinfo, GROUP_OP_AND );
-	}
 
 	pl->random_seed = random_seed;
 }
@@ -1855,10 +1836,9 @@ void CmdEnd ( const edict_t *player )
 
 	if( !pl )
 		return;
+	
 	if ( pl->pev->groupinfo != 0 )
-	{
 		UTIL_UnsetGroupTrace();
-	}
 }
 
 /*
@@ -1880,7 +1860,7 @@ int	ConnectionlessPacket( const struct netadr_s *net_from, const char *args, cha
 
 	// Since we don't listen for anything here, just respond that it's a bogus message
 	// If we didn't reject the message, we'd return 1 for success instead.
-	return 0;
+	return max_buffer_size;
 }
 
 /*
@@ -1929,7 +1909,6 @@ to be created during play ( e.g., grenades, ammo packs, projectiles, corpses, et
 */
 void CreateInstancedBaselines ( void )
 {
-	int iret = 0;
 	entity_state_t state;
 
 	memset( &state, 0, sizeof( state ) );

@@ -152,22 +152,22 @@ void CNihilanth::Spawn()
 	m_iLevel = 1;
 	m_iTeleport = 1;
 
-	if (!strlen((char*)m_szRechargerTarget[0])) 
+	if (!strlen(m_szRechargerTarget))
 		strcpy(m_szRechargerTarget, "n_recharger");
-	
-	if (!strlen((char*)m_szDrawUse[0])) 
+
+	if (!strlen(m_szDrawUse))
 		strcpy(m_szDrawUse, "n_draw");
-	
-	if (!strlen((char*)m_szTeleportUse[0])) 
+
+	if (!strlen(m_szTeleportUse))
 		strcpy(m_szTeleportUse, "n_leaving");
-	
-	if (!strlen((char*)m_szTeleportTouch[0])) 
+
+	if (!strlen(m_szTeleportTouch))
 		strcpy(m_szTeleportTouch, "n_teleport");
-	
-	if (!strlen((char*)m_szDeadUse[0])) 
+
+	if (!strlen(m_szDeadUse))
 		strcpy(m_szDeadUse, "n_dead");
-	
-	if (!strlen((char*)m_szDeadTouch[0])) 
+
+	if (!strlen(m_szDeadTouch))
 		strcpy(m_szDeadTouch, "n_ending");
 	
 	// near death

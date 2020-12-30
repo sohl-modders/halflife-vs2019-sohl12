@@ -49,7 +49,7 @@ void CBasePlayer::Observer_FindNextPlayer( bool bReverse )
 		if (iCurrent < 1)
 			iCurrent = gpGlobals->maxClients;
 
-		CBaseEntity *pEnt = UTIL_PlayerByIndex( iCurrent );
+		CBasePlayer *pEnt = UTIL_PlayerByIndex( iCurrent );
 		if ( !pEnt )
 			continue;
 		if ( pEnt == this )
@@ -154,7 +154,7 @@ void CBasePlayer::Observer_CheckTarget()
 		}
 	}
 
-	CBasePlayer* target = (CBasePlayer*)(UTIL_PlayerByIndex( ENTINDEX(m_hObserverTarget->edict())));
+	CBasePlayer* target = UTIL_PlayerByIndex( ENTINDEX(m_hObserverTarget->edict()));
 
 	if ( !target )
 	{
@@ -179,7 +179,7 @@ void CBasePlayer::Observer_CheckProperties()
 	// try to find a traget if we have no current one
 	if ( pev->iuser1 == OBS_IN_EYE && m_hObserverTarget != NULL)
 	{
-		CBasePlayer* target = (CBasePlayer*)(UTIL_PlayerByIndex( ENTINDEX(m_hObserverTarget->edict())));
+		CBasePlayer* target = UTIL_PlayerByIndex( ENTINDEX(m_hObserverTarget->edict()));
 
 		if (!target )
 			return;

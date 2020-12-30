@@ -595,7 +595,7 @@ void CGamePlayerZone::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TY
 	if ( !CanFireForActivator( pActivator ) )
 		return;
 
-	CBaseEntity *pPlayer = NULL;
+	CBasePlayer *pPlayer = NULL;
 
 	for ( int i = 1; i <= gpGlobals->maxClients; i++ )
 	{

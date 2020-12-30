@@ -32,6 +32,7 @@ char PM_FindTextureType( char *name );
 extern Vector VecBModelOrigin( entvars_t* pevBModel );
 extern DLL_GLOBAL Vector		g_vecAttackDir;
 extern DLL_GLOBAL int			g_iSkillLevel;
+extern DLL_GLOBAL bool			g_serveractive;
 
 extern DLL_GLOBAL	short		g_sModelIndexNullModel; //null model index
 extern DLL_GLOBAL	short		g_sModelIndexErrorModel;//error model index

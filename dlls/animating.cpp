@@ -42,30 +42,30 @@ IMPLEMENT_SAVERESTORE( CBaseAnimating, CBaseDelay );
 // StudioFrameAdvance - advance the animation frame up to the current time
 // if an flInterval is passed in, only advance animation that number of seconds
 //=========================================================
-float CBaseAnimating :: StudioFrameAdvance ( float flInterval )
+float CBaseAnimating::StudioFrameAdvance(float flInterval)
 {
-	if (flInterval == 0.0)
+	if (flInterval == 0.0f)
 	{
-		flInterval = (gpGlobals->time - pev->animtime);
-		if (flInterval <= 0.001)
+		flInterval = gpGlobals->time - pev->animtime;
+		if (flInterval <= 0.001f)
 		{
 			pev->animtime = gpGlobals->time;
-			return 0.0;
+			return 0.0f;
 		}
 	}
-	if (! pev->animtime)
-		flInterval = 0.0;
-	
+	if (!pev->animtime)
+		flInterval = 0.0f;
+
 	pev->frame += flInterval * m_flFrameRate * pev->framerate;
 	pev->animtime = gpGlobals->time;
 
-	if (pev->frame < 0.0 || pev->frame >= 256.0) 
+	if (pev->frame < 0.0f || pev->frame >= 256.0f)
 	{
 		if (m_fSequenceLoops)
-			pev->frame -= (int)(pev->frame / 256.0) * 256.0;
+			pev->frame -= (int)(pev->frame / 256.0f) * 256.0f;
 		else
-			pev->frame = (pev->frame < 0.0) ? 0 : 255;
-		m_fSequenceFinished = TRUE;	// just in case it wasn't caught in GetEvents
+			pev->frame = (pev->frame < 0.0f) ? 0.0f : 255.0f;
+		m_fSequenceFinished = true;	// just in case it wasn't caught in GetEvents
 	}
 
 	return flInterval;
@@ -96,6 +96,7 @@ int CBaseAnimating :: LookupActivityHeaviest ( int activity )
 }
 
 //=========================================================
+// LookupSequence
 //=========================================================
 int CBaseAnimating :: LookupSequence ( const char *label )
 {
@@ -104,8 +105,8 @@ int CBaseAnimating :: LookupSequence ( const char *label )
 	return ::LookupSequence( pmodel, label );
 }
 
-
 //=========================================================
+// ResetSequenceInfo
 //=========================================================
 void CBaseAnimating :: ResetSequenceInfo ( )
 {
@@ -115,13 +116,12 @@ void CBaseAnimating :: ResetSequenceInfo ( )
 	m_fSequenceLoops = ((GetSequenceFlags() & STUDIO_LOOPING) != 0);
 	pev->animtime = gpGlobals->time;
 	pev->framerate = 1.0;
-	m_fSequenceFinished = FALSE;
+	m_fSequenceFinished = false;
 	m_flLastEventCheck = gpGlobals->time;
 }
 
-
-
 //=========================================================
+// GetSequenceFlags
 //=========================================================
 BOOL CBaseAnimating :: GetSequenceFlags( )
 {
@@ -153,9 +153,9 @@ void CBaseAnimating :: DispatchAnimEvents ( float flInterval )
 	float flEnd = pev->frame + flInterval * m_flFrameRate * pev->framerate;
 	m_flLastEventCheck = pev->animtime + flInterval;
 
-	m_fSequenceFinished = FALSE;
-	if (flEnd >= 256 || flEnd <= 0.0) 
-		m_fSequenceFinished = TRUE;
+	m_fSequenceFinished = false;
+	if (flEnd >= 256.0f || flEnd <= 0.0f)
+		m_fSequenceFinished = true;
 
 	int index = 0;
 

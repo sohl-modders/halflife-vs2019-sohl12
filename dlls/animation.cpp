@@ -31,7 +31,9 @@ typedef unsigned char byte;
 #include "activity.h"
 #endif
 
+#ifndef ACTIVITYMAP_H
 #include "activitymap.h"
+#endif
 
 #ifndef ANIMATION_H
 #include "animation.h"
@@ -45,7 +47,7 @@ typedef unsigned char byte;
 #include "enginecallback.h"
 #endif
 
-extern globalvars_t				*gpGlobals;
+extern globalvars_t	*gpGlobals;
 
 #pragma warning( disable : 4244 )
 
